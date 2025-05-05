@@ -1,93 +1,106 @@
 package tile;
 
 import java.awt.Graphics2D;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import javax.imageio.ImageIO;
+
 import main.GamePanel;
 
 public class TileManager {
 
     GamePanel gp;
-    Tile[] tile;  // Array untuk menyimpan tile
-    int[][] mapTileNum;  // Array untuk peta tile
+    Tile[] tile;
+    int mapTileNum [][];
 
     public TileManager(GamePanel gp){
         this.gp = gp;
-        tile = new Tile[200];  // Misalnya ada 200 tile yang disiapkan
-        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];  // Ukuran peta
-        getTileImages();  // Memuat gambar tile dari folder
-        loadMap("/maps/farm.csv");  // Ganti dengan path ke file CSV
+        tile = new Tile[10];
+        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+        getTileImage();
+        loadMap("/maps/farm.txt");
     }
 
-    // Memuat gambar untuk setiap tile dari folder
-    public void getTileImages() {
+    public void getTileImage(){
         try {
-            // Mengelompokkan tile berdasarkan folder, misalnya folder "House", "WaterTile", dll.
-            loadTileFolder("/tiles/Chest", 0);
-            loadTileFolder("/tiles/FarmLand", 10);
-            loadTileFolder("/tiles/Fences", 20);
-            loadTileFolder("/tiles/House", 30);
-            loadTileFolder("/tiles/oak_tree", 40);
-            loadTileFolder("/tiles/PathTile", 50);
-            loadTileFolder("/tiles/WaterTile", 60);
-        } catch (IOException e) {
+            tile[0] = new Tile();
+            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/water00.png"));
+            tile[1] = new Tile();
+            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/grass01.png"));
+            tile[2] = new Tile();
+            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/hut.png"));
+            tile[3] = new Tile();
+            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/od/House.png"));
+            tile[4] = new Tile();
+            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/tile_0.png"));
+            tile[5] = new Tile();
+            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/tile_3.png"));
+        } catch (IOException e){
             e.printStackTrace();
         }
     }
 
-    // Memuat tile dari setiap folder dan mengaitkan dengan ID yang sesuai
-    public void loadTileFolder(String folderPath, int startId) throws IOException {
-        File folder = new File(getClass().getResource(folderPath).getFile());
-        File[] tileFiles = folder.listFiles((dir, name) -> name.endsWith(".png"));
-        
-        // Pastikan ada file di dalam folder
-        if (tileFiles != null) {
-            for (int i = 0; i < tileFiles.length; i++) {
-                String tileFilePath = folderPath + "/" + tileFiles[i].getName();
-                tile[startId + i] = new Tile();
-                tile[startId + i].image = ImageIO.read(getClass().getResourceAsStream(tileFilePath));
-            }
-        }
-    }
+    public void loadMap(String filePath){
+        try{
+            InputStream io = getClass().getResourceAsStream(filePath);
+            BufferedReader br = new BufferedReader(new InputStreamReader(io));
 
-    // Membaca file CSV yang berisi ID tile
-    public void loadMap(String filePath) {
-        try {
-            List<int[]> data = CSVReader.readCSV(filePath);  // Membaca data dari CSV
+            int col = 0;
+            int row = 0;
 
-            for (int row = 0; row < gp.maxWorldRow; row++) {
-                for (int col = 0; col < gp.maxWorldCol; col++) {
-                    mapTileNum[col][row] = data.get(row)[col];  // Menyimpan ID tile di mapTileNum
+            while(col < gp.maxWorldCol && row < gp.maxWorldRow){
+                String line = br.readLine();
+
+                while(col < gp.maxWorldCol){
+                    String numbers[] = line.split(" ");
+                    int num = Integer.parseInt(numbers[col]);
+
+                    mapTileNum[col][row] = num;
+                    col ++;
+                }
+                if (col == gp.maxWorldCol){
+                    col = 0;
+                    row ++;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            br.close();
+
+        } catch (Exception e){
+
         }
+        
     }
 
-    // Menggambar peta berdasarkan ID tile yang disimpan di mapTileNum
-    public void draw(Graphics2D g2) {
-        int worldcol = 0;
+    public void draw(Graphics2D g2){
+        int worldcol =0 ;
         int worldrow = 0;
+        // int x = 0;
+        // int y = 0;
 
-        while (worldcol < gp.maxWorldCol && worldrow < gp.maxWorldRow) {
+        while (worldcol < gp.maxWorldCol && worldrow < gp.maxWorldRow){
+
             int tileNum = mapTileNum[worldcol][worldrow];
 
-            // Menghitung posisi dunia dan layar (kamera)
+            //camera setting
             int worldX = worldcol * gp.tileSize;
             int worldY = worldrow * gp.tileSize;
             int screenX = worldX - gp.player.wX + gp.player.screenX;
             int screenY = worldY - gp.player.wY + gp.player.screenY;
-
-            // Menggambar tile
             g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
             worldcol++;
+            // x += gp.tileSize;
 
-            if (worldcol == gp.maxWorldCol) {
+            if (worldcol == gp.maxWorldCol){
                 worldcol = 0;
+                // x = 0;
                 worldrow++;
+                // y += gp.tileSize;
             }
         }
     }
+    
+    
 }
