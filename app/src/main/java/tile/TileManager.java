@@ -19,7 +19,7 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[51];
+        tile = new Tile[60];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         getTileImage();
         loadMap("/maps/farmmm.txt");
@@ -103,7 +103,7 @@ public class TileManager {
     
             tile[18] = new Tile();
             tile[18].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/018.png"));
-            tile[18].collision = false;
+            tile[18].collision = true;
     
             tile[19] = new Tile();
             tile[19].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/019.png"));
@@ -233,6 +233,10 @@ public class TileManager {
             tile[50] = new Tile();
             tile[50].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/50.png"));
             tile[50].collision = false;
+
+            tile[51] = new Tile();
+            tile[51].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/51.png"));
+            tile[51].collision = false;
     
         } catch (IOException e) {
             e.printStackTrace();
@@ -287,13 +291,14 @@ public class TileManager {
             int worldY = worldrow * gp.tileSize;
             int screenX = worldX - gp.player.wX + gp.player.screenX;
             int screenY = worldY - gp.player.wY + gp.player.screenY;
+            
             g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
             worldcol++;
             // x += gp.tileSize;
 
             if (worldcol == gp.maxWorldCol){
                 worldcol = 0;
-                // x = 0;
+                // x = 0;c
                 worldrow++;
                 // y += gp.tileSize;
             }

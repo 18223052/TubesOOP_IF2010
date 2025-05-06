@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import entity.Player;
+import object.SuperObj;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -27,12 +28,14 @@ public class GamePanel extends JPanel implements Runnable {
     //FPS
     int fps = 60;
 
-    TileManager tileM = new TileManager(this);
+    public TileManager tileM = new TileManager(this);
 
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
     public Collision colCheck = new Collision(this);
+    public AssetSetter aSetter = new AssetSetter(this);
     public Player player = new Player(this,keyH);
+    public SuperObj obj[] = new SuperObj[100];
 
 
     //Posisi player
@@ -53,6 +56,10 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGameThread(){
         gameThread = new Thread(this);
         gameThread.start();
+    }
+
+    public void setup(){
+        aSetter.setObj();
     }
 
     @Override
@@ -97,6 +104,11 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
         tileM.draw(g2);
+        for (int i = 0; i < obj.length; i++){
+            if(obj[i] != null){
+                obj[i].draw(g2, this);
+            }
+        }
         player.draw(g2);
         g2.dispose();
     }
