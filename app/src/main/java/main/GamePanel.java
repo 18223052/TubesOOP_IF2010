@@ -101,6 +101,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update(){
         player.update();
+
+        tileM.checkTeleport();
     }
 
     public void paintComponent(Graphics g){
