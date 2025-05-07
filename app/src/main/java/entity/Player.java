@@ -16,8 +16,8 @@ public class Player extends Entity {
     GamePanel gp;
     KeyHandler keyH;
 
-    public final int screenX; // indicate where player draw at begin
-    public final int screenY;
+    public int screenX; // indicate where player draw at begin
+    public int screenY;
     
     // Interaction box for player actions
     private Rectangle interactionBox;
