@@ -19,7 +19,7 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[60];
+        tile = new Tile[200];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         getTileImage();
         loadMap("/maps/farmmm.txt");
@@ -27,6 +27,23 @@ public class TileManager {
 
     public void getTileImage() {
         try {
+            // for (int i = 0; i <= 190; i++) {
+            //     tile[i] = new Tile();
+                
+            //     // Format the number to ensure 3 digits (e.g., "052", "053", ...)
+            //     String filename = String.format("/tutor_tiles/%03d.png", i); 
+                
+            //     // Load the image for the tile
+            //     tile[i].image = ImageIO.read(getClass().getResourceAsStream(filename));
+                
+            //     // Set the collision flag (You can modify this logic based on your requirement)
+            //     if (i >= 16 && i <= 35 || i >= 50 && i <= 64) { // Example collision logic
+            //         tile[i].collision = false;
+            //     } else {
+            //         tile[i].collision = false;
+            //     }
+            // }
+            
             // Tile 0 - 15: Semua collision = false
             tile[0] = new Tile();
             tile[0].image = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/000.png"));
