@@ -18,6 +18,10 @@ public class TileManager {
     public int mapTileNum[][];
     private String currentMap = "/maps/farmmm.txt";
 
+    //debug
+    public static final int POND_TILE = 18;
+
+
     public TileManager(GamePanel gp) {
         this.gp = gp;
         tile = new Tile[200];
@@ -37,6 +41,7 @@ public class TileManager {
                 // (i >= 16 && i <= 35) || (i >= 101 && i <= 104) || (i >= 35 && i <= 194); // Example collision logic, adjust as needed
             }
             tile[16].collision = true;
+            tile[19].collision = true;
             tile[35].collision = true;
             tile[62].collision = true;
             tile[63].collision = true;
@@ -48,18 +53,33 @@ public class TileManager {
             tile[146].collision = true;
             tile[169].collision = true;
             tile[170].collision = true;
+
             tile[33].teleport = true;
             tile[33].destMap = "/maps/rumah.txt"; // Buat file map baru
             tile[33].destX = 26;
             tile[33].destY = 36;
             tile[33].sourceMap = "/maps/farmmm.txt";
+
             tile[109].teleport = true;
             tile[109].destMap = "/maps/farmmm.txt"; // Buat file map baru
             tile[109].destX = 19;
             tile[109].destY = 19;
             tile[109].sourceMap = "/maps/rumah.txt";
 
+            tile[116].teleport = true;
+            tile[116].destMap = "/maps/river.txt"; // Buat file map baru
+            tile[116].destX = 23;
+            tile[116].destY = 5;
+            tile[116].sourceMap = "/maps/farmmm.txt";
 
+            tile[179].teleport = true;
+            tile[179].destMap = "/maps/farmmm.txt"; // Buat file map baru
+            tile[179].destX = 31;
+            tile[179].destY = 47;
+            tile[179].sourceMap = "/maps/river.txt";
+            
+
+// 29 sampe 34
     
         } catch (IOException e) {
             e.printStackTrace();
