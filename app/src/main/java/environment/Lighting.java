@@ -187,7 +187,7 @@ public class Lighting {
     }
     
     // Helper method untuk mendapatkan nama state
-    private String getDayStateName(int state) {
+    public String getDayStateName(int state) {
         switch(state) {
             case DAY: return "DAY";
             case DUSK: return "DUSK";
