@@ -5,11 +5,14 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.font.*;
 
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
 import main.KeyHandler;
+import tile.TileManager;
 
 public class Player extends Entity {
     
@@ -70,12 +73,14 @@ public class Player extends Entity {
         }
     }
     
-    // Calculate player's current tile position
+// Perbaikan method calculatePlayerTilePosition di class Player
     private void calculatePlayerTilePosition() {
-        int playerCol = wX / gp.tileSize;
-        int playerRow = wY / gp.tileSize;
+        // Hitung posisi player dalam koordinat tile
+        // Tambahkan offset untuk mendapatkan posisi tengah player
+        int playerCol = (wX + gp.tileSize/2) / gp.tileSize;
+        int playerRow = (wY + gp.tileSize/2) / gp.tileSize;
         
-        // Calculate interaction tile based on direction
+        // Atur posisi tile interaksi berdasarkan arah player
         interactionTileCol = playerCol;
         interactionTileRow = playerRow;
         
@@ -201,12 +206,38 @@ public class Player extends Entity {
                 }
                 spriteCounter = 0;
             }
+
+        }
+
+        
+        if (keyH.interactPressed){
+            checkInteractionWithTile();
+            keyH.interactPressed = false;
         }
         
         // Update interaction box position after player moves
         updateInteractionBox();
     }
 
+    private void checkInteractionWithTile() {
+        // Dapatkan posisi tile yang diinteraksikan
+        int[] interactionTilePos = getInteractionTile();
+        int tileCol = interactionTilePos[0];
+        int tileRow = interactionTilePos[1];
+        
+        // Pastikan posisi valid (dalam batas map)
+        if(tileCol >= 0 && tileCol < gp.maxWorldCol && tileRow >= 0 && tileRow < gp.maxWorldRow) {
+            // Dapatkan ID tile
+            int tileNum = gp.tileM.mapTileNum[tileCol][tileRow];
+            
+            // Periksa tipe tile
+            if(tileNum == TileManager.POND_TILE) {
+                System.out.println("pond"); // Output debugging
+                // Di sini nanti bisa panggil fishing controller
+            } 
+
+        }
+    }
     public void draw(Graphics2D g2){
         BufferedImage image = null;
 
@@ -253,8 +284,14 @@ public class Player extends Entity {
         int screenY = interactionBox.y - wY + this.screenY;
         
         // Draw with a different color for visibility
-        g2.setColor(Color.GREEN);
+        g2.setColor(Color.WHITE);
         g2.drawRect(screenX, screenY, interactionBox.width, interactionBox.height);
+
+        // debug
+        // g2.setColor(Color.WHITE);
+        // g2.setFont(new Font("Arial", Font.BOLD, 10));
+        // g2.drawString("Tile: " + interactionTileCol + "," + interactionTileRow, 
+        //               screenX + 5, screenY + 15);
     }
     
     // Getter for interaction box (if needed elsewhere)
