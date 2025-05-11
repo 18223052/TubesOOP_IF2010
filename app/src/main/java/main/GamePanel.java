@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import entity.Player;
+import environment.EnvironmentManager;
 import object.SuperObj;
 import tile.TileManager;
 
@@ -40,6 +41,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int pauseState = 2;
 
+    EnvironmentManager eManager = new EnvironmentManager(this);
+
 
     //Posisi player
     int pX = 100;
@@ -63,6 +66,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setup(){
         aSetter.setObj();
+
+        eManager.setup();
     }
 
     @Override
@@ -103,6 +108,7 @@ public class GamePanel extends JPanel implements Runnable {
         player.update();
 
         tileM.checkTeleport();
+        eManager.update();
     }
 
     public void paintComponent(Graphics g){
@@ -115,6 +121,9 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
         player.draw(g2);
+
+        eManager.draw(g2);
+
         g2.dispose();
     }
 
