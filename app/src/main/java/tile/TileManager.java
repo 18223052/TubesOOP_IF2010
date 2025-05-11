@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
@@ -16,7 +15,7 @@ public class TileManager {
     GamePanel gp;
     public Tile[] tile;
     public int mapTileNum[][];
-    private String currentMap = "/maps/farmmm.txt";
+    public String currentMap = "/maps/farmmm.txt";
 
     public TileManager(GamePanel gp) {
         this.gp = gp;

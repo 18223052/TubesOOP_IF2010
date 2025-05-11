@@ -1,10 +1,10 @@
 package entity;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.awt.Color;
 
 import javax.imageio.ImageIO;
 
@@ -18,7 +18,7 @@ public class Player extends Entity {
 
     public int screenX; // indicate where player draw at begin
     public int screenY;
-    
+    public int hasKey=0;
     // Interaction box for player actions
     private Rectangle interactionBox;
     private int interactionDistance;
