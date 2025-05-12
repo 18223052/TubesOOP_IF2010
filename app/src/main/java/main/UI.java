@@ -96,6 +96,8 @@ public class UI {
         textY += lineHeight;
         g2.drawString("Energy", textX, textY);
         textY += lineHeight;
+        g2.drawString("Gold", textX, textY);
+        textY += lineHeight;
         g2.drawString("Partner", textX, textY);
         textY += lineHeight;
         // values
@@ -115,6 +117,11 @@ public class UI {
         textY += lineHeight;
 
         value = String.valueOf(gp.player.getFarmMap());
+        textX = getXforAllignToRight(value, tailX);
+        g2.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(gp.player.getGold());
         textX = getXforAllignToRight(value, tailX);
         g2.drawString(value, textX, textY);
         textY += lineHeight;

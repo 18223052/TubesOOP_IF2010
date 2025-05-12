@@ -11,6 +11,7 @@ import main.GamePanel;
 import main.InventoryController;
 import main.KeyHandler;
 import object.Bed;
+import object.Item;
 import object.SuperObj;
 import tile.TileManager;
 
@@ -102,6 +103,28 @@ public class Player extends Entity {
         farmMap = "anjoy";
         partner = null;
 
+    }
+
+    private Item activeItem = null;
+
+    public void setActiveItem(Item item) {
+        this.activeItem = item;
+        System.out.println("Active item set to: " + (activeItem != null ? activeItem.getName() : "none"));
+    }
+
+    public Item getActiveItem() {
+        return activeItem;
+    }
+
+    public void addGold(int amount) {
+        this.gold += amount;
+    }
+
+    public void addEnergy(int amount) {
+        this.energy += amount;
+        if (this.energy > 100) {
+            this.energy = 100;
+        }
     }
 
     public void getPlayerImage(){

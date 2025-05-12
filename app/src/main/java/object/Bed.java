@@ -4,13 +4,13 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Pond extends SuperObj {
+public class Bed extends SuperObj {
     
-    public Pond(){
-        name = "Pond";
+    public Bed(){
+        name = "Bed";
 
         try{
-            img = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/pond.png"));
+            img = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/086.png"));
         }
         catch(IOException e){
             e.printStackTrace();

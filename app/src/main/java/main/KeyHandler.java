@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.RenderingHints.Key;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -8,6 +7,11 @@ public class KeyHandler implements KeyListener {
 
     GamePanel gp;
     public boolean upPressed, downPressed, leftPressed, rightPressed, interactPressed;
+    public boolean inventoryPressed;
+    public boolean useItemPressed, discardItemPressed, sellItemPressed;
+    public boolean filterPressed;
+    private int currentFilterIndex = 0;
+    private String[] filters = {"all", "tools", "consumables", "crops", "fish"};
     
     public KeyHandler(GamePanel gp) {
         this.gp = gp;
@@ -17,7 +21,6 @@ public class KeyHandler implements KeyListener {
     public void keyTyped(KeyEvent e) {
     }
 
-    @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         
@@ -38,29 +41,44 @@ public class KeyHandler implements KeyListener {
         }
         // INVENTORY STATE
         else if(gp.gameState == gp.inventoryState) {
-            if (code == KeyEvent.VK_TAB) {
-                gp.gameState = gp.playState;
+            // Close inventory if TAB is pressed
+            if (code == KeyEvent.VK_I) {
+                if (gp.gameState == gp.playState) {
+                    gp.gameState = gp.inventoryState;
+                } else if (gp.gameState == gp.inventoryState) {
+                    gp.gameState = gp.playState;
+                }
+                inventoryPressed = true;
             }
-            // Navigation within inventory
-            if (code == KeyEvent.VK_W) {
+    
+            if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
                 gp.inventoryController.moveSelectionUp();
             }
-            if (code == KeyEvent.VK_S) {
+            if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
                 gp.inventoryController.moveSelectionDown();
             }
-            if (code == KeyEvent.VK_A) {
+            if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
                 gp.inventoryController.moveSelectionLeft();
             }
-            if (code == KeyEvent.VK_D) {
+            if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
                 gp.inventoryController.moveSelectionRight();
             }
             if (code == KeyEvent.VK_E) {
-                // Use selected item
                 gp.inventoryController.useItem(gp.inventoryController.getSelectedSlot());
+                useItemPressed = true;
             }
             if (code == KeyEvent.VK_Q) {
-                // Drop/discard selected item
                 gp.inventoryController.discardItem(gp.inventoryController.getSelectedSlot());
+                discardItemPressed = true;
+            }
+            if (code == KeyEvent.VK_S) {
+                gp.inventoryController.sellItem(gp.inventoryController.getSelectedSlot());
+                sellItemPressed = true;
+            }
+            if (code == KeyEvent.VK_F) {
+                currentFilterIndex = (currentFilterIndex + 1) % filters.length;
+                gp.inventoryController.setFilter(filters[currentFilterIndex]);
+                filterPressed = true;
             }
         }
     }
@@ -88,7 +106,7 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_E) {
             interactPressed = true;
         }
-        if (code == KeyEvent.VK_TAB) {
+        if (code == KeyEvent.VK_I) {
             gp.gameState = gp.inventoryState;
         }
         if (code == KeyEvent.VK_C){
