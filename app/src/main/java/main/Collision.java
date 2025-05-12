@@ -63,4 +63,10 @@ public class Collision {
             
         }
     }
+
+    // public int
+
+    // public int checkEntity(Entity entity, Entity[] target){
+
+    // }
 }
