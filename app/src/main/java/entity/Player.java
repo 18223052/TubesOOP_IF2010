@@ -12,6 +12,7 @@ import main.InventoryController;
 import main.KeyHandler;
 import object.Bed;
 import object.Item;
+import object.Soil;
 import object.SuperObj;
 import tile.TileManager;
 
@@ -20,7 +21,7 @@ public class Player extends Entity {
     // GamePanel gp;
     KeyHandler keyH;
 
-    public int screenX; // indicate where player draw at begin
+    public int screenX; 
     public int screenY;
     
     // Interaction box for player actions
@@ -53,7 +54,7 @@ public class Player extends Entity {
         solid.width = 32;
         solid.height = 32;
         
-        // Initialize interaction box
+
         interactionBox = new Rectangle();
         interactionBox.width = gp.tileSize;
         interactionBox.height = gp.tileSize;
@@ -333,7 +334,14 @@ public class Player extends Entity {
             if (obj instanceof Bed){
                 System.out.println("DEBUG INTERACTABLE bed");
                 // gp.sc.sleep();
-            } 
+            }
+            if (obj instanceof Soil){
+                if (activeItem != null && activeItem.getName().equals("Hoe")) {
+                System.out.println("DEBUG INTERACTABLE soil");}
+                else {
+                    System.out.println("gapake");
+                }
+            }
         }
     }
 

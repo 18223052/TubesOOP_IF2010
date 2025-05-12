@@ -5,45 +5,47 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-
 import javax.imageio.ImageIO;
 
-import main.AssetSetter;
 import main.GamePanel;
 import main.UtilityTool;
 
 public class TileManager {
-
     GamePanel gp;
     public Tile[] tile;
     public int mapTileNum[][];
-    private String currentMap = "/maps/farmmm.txt";
-    public AssetSetter aSetter = new AssetSetter(gp);
-    //debug
-    public static final int POND_TILE = 18;
-    public static final int BED_TILE = 86;
-
+    private String currentMap;
+    
+    // // Constants for special tiles
+    // public static final int POND_TILE = 18;
+    // public static final int BED_TILE = 86;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
         tile = new Tile[200];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+        currentMap = gp.currMap;
+        
+
         getTileImage();
-        loadMap("/maps/farmmm.txt");
+
+    }
+    
+    // Call this after all components are initialized
+    public void setup() {
+        loadMap(currentMap);
     }
 
     public void getTileImage() {
-
+        // Initialize all tile types
         for (int i = 0; i <= 194; i++) {
-            String fileName = String.format("%03d", i); // Format angka untuk memastikan 3 digit (misal 000, 001, ..., 194)
+            String fileName = String.format("%03d", i);
             boolean collision = (i >= 20 && i <= 32) || (i >= 65 && i <= 72) || (i >= 183 && i <= 190);
             
-
             setup(i, fileName, collision);
         }
    
-
+        // Set teleport properties
         tile[33].teleport = true;
         tile[33].destMap = "/maps/rumah.txt";
         tile[33].destX = 26;
@@ -68,7 +70,6 @@ public class TileManager {
         tile[179].destY = 47;
         tile[179].sourceMap = "/maps/river.txt";
    
-
         tile[16].collision = true;
         tile[19].collision = true;
         tile[35].collision = true;
@@ -82,9 +83,9 @@ public class TileManager {
         tile[146].collision = true;
         tile[169].collision = true;
         tile[170].collision = true;
+
     }
     
-
     public void setup(int idx, String imagePath, boolean collision){
         UtilityTool uTool = new UtilityTool();
         try{
@@ -98,49 +99,35 @@ public class TileManager {
     }
     
     public void checkTeleport() {
-        // Dapatkan posisi player dalam koordinat tile
+
         int playerCol = gp.player.wX / gp.tileSize;
         int playerRow = gp.player.wY / gp.tileSize;
         
 
         int tileNum = mapTileNum[playerCol][playerRow];
         if (tile[tileNum] != null && tile[tileNum].teleport) {
-
             if (tile[tileNum].sourceMap == null || tile[tileNum].sourceMap.equals(currentMap)) {
                 teleportPlayer(tile[tileNum].destMap, tile[tileNum].destX, tile[tileNum].destY);
-                // gp.eManager.saveLightingState();
             }
-
-            teleportPlayer(tile[tileNum].destMap, tile[tileNum].destX, tile[tileNum].destY);
         }
     }
     
-
     public void teleportPlayer(String mapPath, int destX, int destY) {
-        // Simpan posisi kamera sebelumnya
-        // int prevWorldX = gp.player.wX;
-        // int prevWorldY = gp.player.wY;
-        
-        // Load map baru
-        loadMap(mapPath);
-        
 
-        gp.player.wX = destX * gp.tileSize;
-        gp.player.wY = destY * gp.tileSize;
-        
-        gp.player.screenX = gp.screenWidth/2 - (gp.tileSize/2);
-        gp.player.screenY = gp.screenHeight/2 - (gp.tileSize/2);
-        
-
+        currentMap = mapPath;
         gp.currMap = mapPath;
         
 
-        gp.aSetter.clearObjects();
-        gp.aSetter.clearNPCs();
-        gp.setup();
+        loadMap(mapPath);
+        
+        // Set player position
+        gp.player.wX = destX * gp.tileSize;
+        gp.player.wY = destY * gp.tileSize;
+        
+
+        gp.changeMap();
     }
     
-
     public void loadMap(String filePath) {
         try {
             InputStream io = getClass().getResourceAsStream(filePath);
@@ -174,45 +161,41 @@ public class TileManager {
             }
             br.close();
             
-            // Perbarui currentMap
+            // Update the current map
             currentMap = filePath;
-
-            gp.setupExceptEnvironment();
+            
+            // gp.setupExceptEnvironment();
     
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
     public void draw(Graphics2D g2){
-        int worldcol =0 ;
+        int worldcol = 0;
         int worldrow = 0;
-        // int x = 0;
-        // int y = 0;
 
         while (worldcol < gp.maxWorldCol && worldrow < gp.maxWorldRow){
-
             int tileNum = mapTileNum[worldcol][worldrow];
 
-            //camera setting
+            // Camera setting
             int worldX = worldcol * gp.tileSize;
             int worldY = worldrow * gp.tileSize;
             int screenX = worldX - gp.player.wX + gp.player.screenX;
             int screenY = worldY - gp.player.wY + gp.player.screenY;
             
-            g2.drawImage(tile[tileNum].image, screenX, screenY, null);
+            // Only draw tiles visible on screen
+            if (screenX > -gp.tileSize && screenX < gp.screenWidth && 
+                screenY > -gp.tileSize && screenY < gp.screenHeight) {
+                g2.drawImage(tile[tileNum].image, screenX, screenY, null);
+            }
+            
             worldcol++;
-            // x += gp.tileSize;
 
             if (worldcol == gp.maxWorldCol){
                 worldcol = 0;
-                // x = 0;c
                 worldrow++;
-                // y += gp.tileSize;
             }
         }
     }
-    
-    
 }
