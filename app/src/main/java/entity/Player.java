@@ -12,6 +12,7 @@ import main.InventoryController;
 import main.KeyHandler;
 import object.Bed;
 import object.Item;
+import object.Soil;
 import object.SuperObj;
 import tile.TileManager;
 
@@ -333,7 +334,14 @@ public class Player extends Entity {
             if (obj instanceof Bed){
                 System.out.println("DEBUG INTERACTABLE bed");
                 // gp.sc.sleep();
-            } 
+            }
+            if (obj instanceof Soil){
+                if (activeItem != null && activeItem.getName().equals("Hoe")) {
+                System.out.println("DEBUG INTERACTABLE soil");}
+                else {
+                    System.out.println("gapake");
+                }
+            }
         }
     }
 

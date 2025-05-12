@@ -2,6 +2,7 @@ package main;
 import entity.NPC_mayortadi;
 import object.Bed;
 import object.ShippingBin;
+import object.Soil;
 
 public class AssetSetter {
     
@@ -31,7 +32,12 @@ public class AssetSetter {
             gp.obj[0] = new ShippingBin();
             gp.obj[0].wX = 20 * gp.tileSize;
             gp.obj[0].wY = 20 * gp.tileSize;
-            System.out.println("Objek ShippingBin diinisialisasi pada koordinat: " + gp.obj[0].wX + ", " + gp.obj[0].wY);
+
+            gp.obj[0] = new Soil();
+            gp.obj[0].wX = 23 * gp.tileSize;
+            gp.obj[0].wY = 24 * gp.tileSize;
+
+            // System.out.println("Objek ShippingBin diinisialisasi pada koordinat: " + gp.obj[0].wX + ", " + gp.obj[0].wY);
         }
         else if(gp.currMap.equals("/maps/river.txt")) {
             // Set objects for river map
