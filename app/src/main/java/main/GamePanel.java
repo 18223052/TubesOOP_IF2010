@@ -132,9 +132,9 @@ public class GamePanel extends JPanel implements Runnable {
     
     // starting item buat item awal
     private void addStartingItems() {
-        inventoryController.addItem(itemFactory.createTool("Hoe"));
-        inventoryController.addItem(itemFactory.createTool("WateringCan"));
-        inventoryController.addItem(itemFactory.createTool("FishingPole"));
+        inventoryController.addItem(itemFactory.createTool("hoe"));
+        inventoryController.addItem(itemFactory.createTool("wateringcan"));
+        inventoryController.addItem(itemFactory.createTool("fishingpole"));
     }
 
 
