@@ -24,19 +24,14 @@ public class UI {
     GamePanel gp;
     Font arial_40;
     Graphics2D g2;
-    Font retroFont, arial_20, arial_40;
-    Recipe recipe;
     Font retroFont, arial_20;
-    private Font maruMonica;
     Recipe recipe;
+    private Font maruMonica;
 
     int selectRecipe = 0;
     boolean hasIngradients, doneCooking, hasHotPapper;
 
     public String currentDialog = "";
-
-    int selectRecipe = 0;
-    boolean hasIngradients, doneCooking, hasHotPapper;
 
     public UI(GamePanel gp) {
         this.gp = gp;
