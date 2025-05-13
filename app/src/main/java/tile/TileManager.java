@@ -14,7 +14,7 @@ public class TileManager {
     GamePanel gp;
     public Tile[] tile;
     public int mapTileNum[][];
-    public String currentMap;
+    private String currentMap;
     
     // // Constants for special tiles
     // public static final int POND_TILE = 18;
@@ -197,9 +197,5 @@ public class TileManager {
                 worldrow++;
             }
         }
-    }
-
-    public String getMap(){
-        return this.currentMap;
     }
 }

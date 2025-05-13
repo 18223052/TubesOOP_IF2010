@@ -13,6 +13,7 @@ import main.KeyHandler;
 import object.Bed;
 import object.Item;
 import object.Soil;
+import object.Stove;
 import object.SuperObj;
 import tile.TileManager;
 
@@ -342,6 +343,12 @@ public class Player extends Entity {
                 else {
                     System.out.println("gapake");
                 }
+            }
+            if (obj instanceof Stove){
+                System.out.println("DEBUG INTERACTABLE stove");
+                // Cast to Stove and start cooking
+                Stove stove = (Stove) obj;
+                stove.startCooking(gp);
             }
         }
     }

@@ -110,72 +110,59 @@ public class ItemFactory {
     public Item createConsumable(String consumableName) {
         int buyPrice = 0;
         int sellPrice = 0;
-        int addEnergy = 0;
         
         switch (consumableName.toLowerCase()) {
             case "fishnchips":
                 buyPrice = 150;
                 sellPrice = 135;
-                addEnergy = 50;
                 break;
             case "baguette":
                 buyPrice = 100;
                 sellPrice = 80;
-                addEnergy = 25;
                 break;
             case "sashimi":
                 buyPrice = 300;
                 sellPrice = 275;
-                addEnergy = 70;
                 break;
             case "fugu":
                 buyPrice = 0;
                 sellPrice = 135;
-                addEnergy = 50;
                 break;
             case "wine":
                 buyPrice = 100;
                 sellPrice = 90;
-                addEnergy = 20;
                 break;
             case "pumpkinpie":
                 buyPrice = 120;
                 sellPrice = 100;
-                addEnergy = 35;
                 break;
             case "veggiesoup":
                 buyPrice = 140;
                 sellPrice = 120;
-                addEnergy = 40;
                 break;
             case "fishstew":
                 buyPrice = 280;
                 sellPrice = 260;
-                addEnergy = 70;
                 break;
             case "spakborsalad":
                 buyPrice = 0;
                 sellPrice = 250;
-                addEnergy = 70;
                 break;
             case "fishsandwich":
                 buyPrice = 200;
                 sellPrice = 180;
-                addEnergy = 50;
                 break;
             case "thelegendofspakbor":
                 buyPrice = 0;
                 sellPrice = 2000;
-                addEnergy = 100;
                 break;
             case "cookedpigshead":
                 buyPrice = 1000;
                 sellPrice = 0;
-                addEnergy = 100;
                 break;
         }
         
-        Item consumable = new Item(consumableName, buyPrice, sellPrice,addEnergy);
+        Item consumable = new Item(consumableName, buyPrice, sellPrice);
         consumable.category = "consumables";
         consumable.img = consumable.getImage(gp);
         return consumable;

@@ -8,17 +8,25 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
 import java.util.Objects;
 import java.util.List;
 
+import entity.Ingredient;
 import entity.NPC_mayortadi;
 import entity.Ingredient;
 import entity.Recipe;
+import entity.Recipe;
 
 public class UI {
+
     GamePanel gp;
+    Font arial_40;
     Graphics2D g2;
     Font retroFont, arial_20, arial_40;
+    Recipe recipe;
+    Font retroFont, arial_20;
     private Font maruMonica;
     Recipe recipe;
 
@@ -26,7 +34,10 @@ public class UI {
     boolean hasIngradients, doneCooking, hasHotPapper;
 
     public String currentDialog = "";
-    
+
+    int selectRecipe = 0;
+    boolean hasIngradients, doneCooking, hasHotPapper;
+
     public UI(GamePanel gp) {
         this.gp = gp;
         arial_40 = new Font("Arial", Font.PLAIN, 40);
@@ -45,12 +56,13 @@ public class UI {
             arial_20 = maruMonica.deriveFont(20f);
         }
     }
-    
+
     private void setupDefaultGraphics(Graphics2D g2) {
         g2.setFont(maruMonica);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.WHITE);
     }
+
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
@@ -73,11 +85,15 @@ public class UI {
         if (gp.gameState == gp.statsState){
             drawCharacterScreen();
         }
+        if (gp.gameState == gp.cookingState){
+            drawCookingMenu();
+        }
     }
 
     public void drawInventoryScreen(Graphics2D g2) {
 
-        gp.inventoryController.draw(g2);  }
+        gp.inventoryController.draw(g2);  
+    }
 
     public void drawCharacterScreen(){
       
@@ -152,6 +168,13 @@ public class UI {
         int y = gp.screenHeight / 2;
 
         g2.drawString(text, x, y);
+    }
+
+    public int getXforCenteredText(String text, int screenWidth) {
+        int length = (int) this.g2.getFontMetrics().getStringBounds(text, this.g2).getWidth();
+        // this.gp.getClass();
+        int x = screenWidth / 2 - length / 2;
+        return x;
     }
 
     public void drawDialogScreen() {
@@ -238,12 +261,11 @@ public class UI {
             g2.drawString("No one to talk to...", textX, textY);
         }
     }
-    
- 
+
     public void setDialog(String dialog) {
         this.currentDialog = dialog;
     }
-    
+
     public void drawSubWindow(int x, int y, int width, int height) {
    
         Color c = new Color(0, 0, 0, 210);
@@ -266,30 +288,6 @@ public class UI {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         int x = tailX - length;
         return x;
-    }
-
-    public void drawInventory(){
-        int frameX = gp.tileSize*9;
-        int frameY = gp.tileSize;
-        int frameWidth = gp.tileSize*6;
-        int frameHeight= gp.tileSize*5;
-
-        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
-    }
-
-    public void drawItemPickup(String itemName) {
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20F));
-        String msg = "Picked up: " + itemName;
-        int x = getXCenterText(msg);
-        int y = gp.tileSize * 5;
-        
- 
-        g2.setColor(Color.BLACK);
-        g2.drawString(msg, x+2, y+2);
-        
-
-        g2.setColor(Color.WHITE);
-        g2.drawString(msg, x, y);
     }
 
     public void drawCookingMenu() {
@@ -421,6 +419,10 @@ public class UI {
                     }
                 }
             }
+
         }
+
+        // System.out.println(gp.keyH.enterPressed);
+        // System.out.println(gp.keyH.keyPressed);
     }
 }
