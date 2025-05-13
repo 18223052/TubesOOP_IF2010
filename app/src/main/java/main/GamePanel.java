@@ -1,6 +1,9 @@
 package main;
 
 import javax.swing.JPanel;
+
+import controller.InventoryController;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Color;
@@ -64,10 +67,10 @@ public class GamePanel extends JPanel implements Runnable {
     private Thread gameThread;
     private int fps = 60;
     
-    // Player starting position
-    private int pX = 100;
-    private int pY = 100;
-    private int pSpeed = 4;
+    // // Player starting position
+    // private int pX = 100;
+    // private int pY = 100;
+    // private int pSpeed = 4;
 
 
     private boolean isComplete = false;

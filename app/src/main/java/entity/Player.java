@@ -8,11 +8,12 @@ import java.awt.Font;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import main.GamePanel;
-import main.InventoryController;
+import controller.InventoryController;
 import main.KeyHandler;
 import object.Bed;
 import object.Item;
 import object.Soil;
+import object.TV;
 import object.Stove;
 import object.SuperObj;
 import tile.TileManager;
@@ -205,21 +206,28 @@ public class Player extends Entity {
         return index;
     }
 
-    public int checkInteraction(SuperObj[] obj){
+    public int checkInteraction(SuperObj[] obj) {
         int idx = 999;
     
+
+        updateInteractionBox();
+    
+
         for (int i = 0; i < obj.length; i++) {
             if (obj[i] == null) {
-                // System.out.println("Objek ke-" + i + " adalah null!");  // Log objek null untuk debugging
                 continue;
             }
             
-            updateInteractionBox();
-    
-            Rectangle objectSolid = new Rectangle(obj[i].wX, obj[i].wY, gp.tileSize, gp.tileSize);
-    
-            if (interactionBox.intersects(objectSolid)) {
-                idx = i;
+
+            if (obj[i].width > 1 || obj[i].height > 1) {
+                if (obj[i].isInteractable(interactionBox)) {
+                    return i; 
+                }
+            } else {
+                Rectangle objectSolid = new Rectangle(obj[i].wX, obj[i].wY, gp.tileSize, gp.tileSize);
+                if (interactionBox.intersects(objectSolid)) {
+                    idx = i;
+                }
             }
         }
         return idx;
@@ -350,6 +358,9 @@ public class Player extends Entity {
                 Stove stove = (Stove) obj;
                 stove.startCooking(gp);
             }
+            if (obj instanceof TV){
+                System.out.println("DEBUG INTERACTABLE TV");
+            }
         }
     }
 
@@ -374,8 +385,6 @@ public class Player extends Entity {
 
     //     }
     // }
-
-
 
     public void draw(Graphics2D g2){
         BufferedImage image = null;
