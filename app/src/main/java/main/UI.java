@@ -7,19 +7,28 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
 import java.util.Objects;
 
+import entity.Ingredient;
 import entity.NPC_mayortadi;
+import entity.Recipe;
 
 public class UI {
+
     GamePanel gp;
+    Font arial_40;
     Graphics2D g2;
+    Recipe recipe;
     Font retroFont, arial_20;
     private Font maruMonica;
 
-
     public String currentDialog = "";
-    
+
+    int selectRecipe = 0;
+    boolean hasIngradients, doneCooking, hasHotPapper;
+
     public UI(GamePanel gp) {
         this.gp = gp;
 
@@ -37,12 +46,13 @@ public class UI {
             arial_20 = maruMonica.deriveFont(20f);
         }
     }
-    
+
     private void setupDefaultGraphics(Graphics2D g2) {
         g2.setFont(maruMonica);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.WHITE);
     }
+
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
@@ -65,11 +75,15 @@ public class UI {
         if (gp.gameState == gp.statsState){
             drawCharacterScreen();
         }
+        if (gp.gameState == gp.cookingState){
+            drawCookingMenu();
+        }
     }
 
     public void drawInventoryScreen(Graphics2D g2) {
 
-        gp.inventoryController.draw(g2);  }
+        gp.inventoryController.draw(g2);  
+    }
 
     public void drawCharacterScreen(){
       
@@ -144,6 +158,13 @@ public class UI {
         int y = gp.screenHeight / 2;
 
         g2.drawString(text, x, y);
+    }
+
+    public int getXforCenteredText(String text, int screenWidth) {
+        int length = (int) this.g2.getFontMetrics().getStringBounds(text, this.g2).getWidth();
+        // this.gp.getClass();
+        int x = screenWidth / 2 - length / 2;
+        return x;
     }
 
     public void drawDialogScreen() {
@@ -230,12 +251,11 @@ public class UI {
             g2.drawString("No one to talk to...", textX, textY);
         }
     }
-    
- 
+
     public void setDialog(String dialog) {
         this.currentDialog = dialog;
     }
-    
+
     public void drawSubWindow(int x, int y, int width, int height) {
    
         Color c = new Color(0, 0, 0, 210);
@@ -260,27 +280,139 @@ public class UI {
         return x;
     }
 
-    public void drawInventory(){
-        int frameX = gp.tileSize*9;
-        int frameY = gp.tileSize;
-        int frameWidth = gp.tileSize*6;
-        int frameHeight= gp.tileSize*5;
+    public void drawCookingMenu() {
+        // ganti hasIngradients menjadi false untuk test tidak memiliki ingradients
+        hasIngradients = true;
+        String text;
+        List<Recipe> recipes = recipe.getRecipeList();
 
-        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
-    }
+        int x = 20;
+        int y = x;
+        int width = gp.screenWidth / 3;
+        int height = gp.screenHeight / 2 + gp.tileSize + y;
+        drawSubWindow(x, y, width, height);
 
-    public void drawItemPickup(String itemName) {
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20F));
-        String msg = "Picked up: " + itemName;
-        int x = getXCenterText(msg);
-        int y = gp.tileSize * 5;
-        
- 
-        g2.setColor(Color.BLACK);
-        g2.drawString(msg, x+2, y+2);
-        
+        if (doneCooking) {
+            text = "Congratulations";
+            x += y;
+            y += gp.tileSize;
+            this.g2.setFont(this.g2.getFont().deriveFont(0, 20.0F));
+            this.g2.drawString(text, x, y);
+            y += 20;
+            this.g2.setFont(this.g2.getFont().deriveFont(0, 15.0F));
 
-        g2.setColor(Color.WHITE);
-        g2.drawString(msg, x, y);
+            y += this.g2.getFontMetrics().getHeight() * 2;
+            this.g2.drawString("You succeeded in cooking", x, y);
+            y += this.g2.getFontMetrics().getHeight();
+            this.g2.drawString(recipes.get(selectRecipe - 1).title, x, y);
+            y += this.g2.getFontMetrics().getHeight() * 2;
+            this.g2.drawString("Press 0 to recipe menu", x, y);
+
+            if (gp.keyH.singleNumPress == 0) {
+                selectRecipe = 0;
+                doneCooking = false;
+            }
+        } else if (selectRecipe == 0) {
+            text = "RECIPE LIST";
+            x += y;
+            y += gp.tileSize;
+            this.g2.setFont(this.g2.getFont().deriveFont(0, 20.0F));
+            this.g2.drawString(text, x, y);
+            y += 20;
+            this.g2.setFont(this.g2.getFont().deriveFont(0, 15.0F));
+
+            int i = 0;
+            for (Recipe recipe : recipes) {
+                i++;
+                y += this.g2.getFontMetrics().getHeight();
+                this.g2.drawString(i + ". " + recipe.title, x, y);
+            }
+            y += this.g2.getFontMetrics().getHeight() * 2;
+            this.g2.drawString("Press number you want to cook", x, y);
+            y += this.g2.getFontMetrics().getHeight();
+            this.g2.drawString("and hit enter.", x, y);
+
+            if (gp.keyH.enterPressed && !gp.keyH.multiNumPress.equals("")) {
+                if (Integer.parseInt(gp.keyH.multiNumPress) >= 1 && Integer.parseInt(gp.keyH.multiNumPress) < 11) {
+                    selectRecipe = Integer.parseInt(gp.keyH.multiNumPress);
+                    gp.keyH.multiNumPress = "";
+                }
+                // gp.keyH.keyPressed = "";
+            }
+        } else if (selectRecipe == -1) {
+            text = "Failed to Cook";
+            x += y;
+            y += gp.tileSize;
+            this.g2.setFont(this.g2.getFont().deriveFont(0, 20.0F));
+            this.g2.drawString(text, x, y);
+            y += 20;
+            this.g2.setFont(this.g2.getFont().deriveFont(0, 15.0F));
+
+            y += this.g2.getFontMetrics().getHeight() * 2;
+            this.g2.drawString("Please complete the ingredients", x, y);
+            y += this.g2.getFontMetrics().getHeight();
+            this.g2.drawString("to be able to cook.", x, y);
+            y += this.g2.getFontMetrics().getHeight() * 2;
+            this.g2.drawString("Press 0 to recipe menu", x, y);
+
+            if (gp.keyH.singleNumPress == 0) {
+                selectRecipe = 0;
+            }
+        } else {
+            if (selectRecipe == 8 && !hasHotPapper) {
+                text = "Failed to Open Recipe";
+                x += y;
+                y += gp.tileSize;
+                this.g2.setFont(this.g2.getFont().deriveFont(0, 20.0F));
+                this.g2.drawString(text, x, y);
+                y += 20;
+                this.g2.setFont(this.g2.getFont().deriveFont(0, 15.0F));
+
+                y += this.g2.getFontMetrics().getHeight() * 2;
+                this.g2.drawString("You must have a hot papper ", x, y);
+                y += this.g2.getFontMetrics().getHeight();
+                this.g2.drawString("to view the recipe.", x, y);
+                y += this.g2.getFontMetrics().getHeight() * 2;
+                this.g2.drawString("Press 0 to recipe menu", x, y);
+
+                if (gp.keyH.singleNumPress == 0) {
+                    selectRecipe = 0;
+                }
+            } else {
+                text = recipes.get(selectRecipe - 1).title + " Ingredient";
+                x += y;
+                y += gp.tileSize;
+                this.g2.setFont(this.g2.getFont().deriveFont(0, 20.0F));
+                this.g2.drawString(text, x, y);
+                y += 20;
+                int i = 0;
+                this.g2.setFont(this.g2.getFont().deriveFont(0, 15.0F));
+                for (Ingredient ingredient : recipes.get(selectRecipe - 1).ingredients) {
+                    i++;
+                    y += this.g2.getFontMetrics().getHeight();
+                    this.g2.drawString(i + ". " + ingredient.name + " " + ingredient.amount + "x", x, y);
+                }
+                y += this.g2.getFontMetrics().getHeight() * 2;
+                this.g2.drawString("Press 1 to cook", x, y);
+                y += this.g2.getFontMetrics().getHeight();
+                this.g2.drawString("Press 0 to recipe menu", x, y);
+                if (gp.keyH.singleNumPress == 0) {
+                    selectRecipe = 0;
+                } else if (gp.keyH.singleNumPress == 1) {
+                    hasIngradients = selectRecipe == 2 || selectRecipe == 5 || selectRecipe == 6 || selectRecipe == 9;
+
+                    if (hasIngradients) {
+                        doneCooking = true;
+                        // do event on successfully cooked
+                    } else {
+                        selectRecipe = -1;
+                    }
+                }
+            }
+
+        }
+
+        // System.out.println(gp.keyH.enterPressed);
+        // System.out.println(gp.keyH.keyPressed);
     }
 }

@@ -13,6 +13,7 @@ import main.KeyHandler;
 import object.Bed;
 import object.Item;
 import object.Soil;
+import object.Stove;
 import object.SuperObj;
 import tile.TileManager;
 
@@ -21,7 +22,7 @@ public class Player extends Entity {
     // GamePanel gp;
     KeyHandler keyH;
 
-    public int screenX; // indicate where player draw at begin
+    public int screenX; 
     public int screenY;
     
     // Interaction box for player actions
@@ -54,7 +55,7 @@ public class Player extends Entity {
         solid.width = 32;
         solid.height = 32;
         
-        // Initialize interaction box
+
         interactionBox = new Rectangle();
         interactionBox.width = gp.tileSize;
         interactionBox.height = gp.tileSize;
@@ -341,6 +342,12 @@ public class Player extends Entity {
                 else {
                     System.out.println("gapake");
                 }
+            }
+            if (obj instanceof Stove){
+                System.out.println("DEBUG INTERACTABLE stove");
+                // Cast to Stove and start cooking
+                Stove stove = (Stove) obj;
+                stove.startCooking(gp);
             }
         }
     }

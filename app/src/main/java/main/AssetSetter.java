@@ -2,7 +2,7 @@ package main;
 import entity.NPC_mayortadi;
 import object.Bed;
 import object.ShippingBin;
-import object.Soil;
+import object.Stove;
 
 public class AssetSetter {
     
@@ -32,11 +32,6 @@ public class AssetSetter {
             gp.obj[0] = new ShippingBin();
             gp.obj[0].wX = 20 * gp.tileSize;
             gp.obj[0].wY = 20 * gp.tileSize;
-
-            gp.obj[0] = new Soil();
-            gp.obj[0].wX = 23 * gp.tileSize;
-            gp.obj[0].wY = 24 * gp.tileSize;
-
             // System.out.println("Objek ShippingBin diinisialisasi pada koordinat: " + gp.obj[0].wX + ", " + gp.obj[0].wY);
         }
         else if(gp.currMap.equals("/maps/river.txt")) {
@@ -50,7 +45,10 @@ public class AssetSetter {
             gp.obj[0] = new Bed();
             gp.obj[0].wX = 19 * gp.tileSize;
             gp.obj[0].wY = 16 * gp.tileSize;
-            System.out.println("Objek Bed diinisialisasi pada koordinat: " + gp.obj[0].wX + ", " + gp.obj[0].wY);
+            // System.out.println("Objek Bed diinisialisasi pada koordinat: " + gp.obj[0].wX + ", " + gp.obj[0].wY);
+            gp.obj[1] = new Stove();
+            gp.obj[1].wX = 35 * gp.tileSize;
+            gp.obj[1].wY = 16 * gp.tileSize;
             // Set objects for house map
             // Add your house-specific objects here
         }
