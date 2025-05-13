@@ -1,25 +1,31 @@
 package main;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class Main {
-    public static void main (String[] args){
+    public static void main(String[] args) {
+        // Create and set up the window
         JFrame window = new JFrame();
-
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.setTitle("test 2D");
+        window.setTitle("Your Game Title");
+        
 
-        GamePanel gamePanel = new GamePanel();
-        window.add(gamePanel);
-
+        final GamePanel gp = new GamePanel();
+        window.add(gp);
+        
         window.pack();
-
         window.setLocationRelativeTo(null);
         window.setVisible(true);
-
-        gamePanel.setup();
-
-        gamePanel.startGameThread();
-    }    
+        
+        // Start the game thread after everything is visible
+        // Using SwingUtilities.invokeLater ensures this happens after initial rendering
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                gp.startGameThread();
+            }
+        });
+    }
 }

@@ -4,29 +4,49 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import main.GamePanel;
+import main.InventoryController;
 import main.KeyHandler;
+import object.Bed;
+import object.Item;
+import object.Soil;
+import object.Stove;
+import object.SuperObj;
+import tile.TileManager;
 
 public class Player extends Entity {
     
-    GamePanel gp;
+    // GamePanel gp;
     KeyHandler keyH;
 
-    public int screenX; // indicate where player draw at begin
+    public int screenX; 
     public int screenY;
     public int hasKey=0;
+    
     // Interaction box for player actions
     private Rectangle interactionBox;
     private int interactionDistance;
     private int interactionTileRow;
     private int interactionTileCol;
 
+    public InventoryController inventory;
+    private final int maxInventorySize = 16;
+
+    private String name;
+    private String gender;
+    private int energy;
+    private String farmMap;
+    private int gold;
+    private Entity partner;
+
+
     public Player(GamePanel gp, KeyHandler keyH){
-        this.gp = gp;
+        super(gp);
+        // this.gp = gp;
         this.keyH = keyH;
         screenX = gp.screenWidth/2 - (gp.tileSize/2);
         screenY = gp.screenHeight/2- (gp.tileSize/2);
@@ -37,45 +57,96 @@ public class Player extends Entity {
         solid.width = 32;
         solid.height = 32;
         
-        // Initialize interaction box
+
         interactionBox = new Rectangle();
         interactionBox.width = gp.tileSize;
         interactionBox.height = gp.tileSize;
-        interactionDistance = gp.tileSize; // 1 tile distance
+        interactionDistance = gp.tileSize;
+
+        inventory = new InventoryController(gp);
         
         setDefaultValues();
         getPlayerImage();
-        updateInteractionBox(); // Initialize interaction box position
+        updateInteractionBox();
     }
+
+    public String getName(){
+        return name;
+    }
+
+    public String getGender(){
+        return gender;
+    }
+
+    public int getEnergy(){
+        return energy;
+    }
+
+    public int getGold(){
+        return gold;
+    }
+
+    public Entity getPartner(){
+        return partner;
+    }
+
+    public String getFarmMap(){
+        return farmMap;
+    }
+
 
     public void setDefaultValues(){
         wX = gp.tileSize * 23;
         wY = gp.tileSize * 21;
         speed = 4;
-        direction = "up";
+        direction = "down"; 
+
+        energy = 100;
+        gold = 0;
+        name = "bobi";
+        farmMap = "anjoy";
+        partner = null;
+
+    }
+
+    private Item activeItem = null;
+
+    public void setActiveItem(Item item) {
+        this.activeItem = item;
+        System.out.println("Active item set to: " + (activeItem != null ? activeItem.getName() : "none"));
+    }
+
+    public Item getActiveItem() {
+        return activeItem;
+    }
+
+    public void addGold(int amount) {
+        this.gold += amount;
+    }
+
+    public void addEnergy(int amount) {
+        this.energy += amount;
+        if (this.energy > 100) {
+            this.energy = 100;
+        }
     }
 
     public void getPlayerImage(){
-        try {
-            u1 = ImageIO.read(getClass().getResourceAsStream("/player/u1.png"));
-            u2 = ImageIO.read(getClass().getResourceAsStream("/player/u2.png"));
-            d1 = ImageIO.read(getClass().getResourceAsStream("/player/d1.png"));
-            d2 = ImageIO.read(getClass().getResourceAsStream("/player/d2.png"));
-            l1 = ImageIO.read(getClass().getResourceAsStream("/player/l1.png"));
-            l2 = ImageIO.read(getClass().getResourceAsStream("/player/l2.png"));
-            r1 = ImageIO.read(getClass().getResourceAsStream("/player/r1.png"));
-            r2 = ImageIO.read(getClass().getResourceAsStream("/player/r2.png"));
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+
+        u1 = setup("/player/u1");
+        u2 = setup("/player/u2");
+        r1 = setup("/player/r1");
+        r2 = setup("/player/r2");
+        l1 = setup("/player/l1");
+        l2 = setup("/player/l2");
+        d1 = setup("/player/d1");
+        d2 = setup("/player/d2");
     }
     
-    // Calculate player's current tile position
     private void calculatePlayerTilePosition() {
-        int playerCol = wX / gp.tileSize;
-        int playerRow = wY / gp.tileSize;
+        int playerCol = (wX + gp.tileSize/2) / gp.tileSize;
+        int playerRow = (wY + gp.tileSize/2) / gp.tileSize;
         
-        // Calculate interaction tile based on direction
         interactionTileCol = playerCol;
         interactionTileRow = playerRow;
         
@@ -95,33 +166,30 @@ public class Player extends Entity {
         }
     }
     
-    // Update interaction box position based on tile grid
+    
     public void updateInteractionBox() {
-        // First calculate which tile we're targeting
+        
         calculatePlayerTilePosition();
         
-        // Now set interaction box to align perfectly with that tile
+        
         interactionBox.x = interactionTileCol * gp.tileSize;
         interactionBox.y = interactionTileRow * gp.tileSize;
         interactionBox.width = gp.tileSize;
         interactionBox.height = gp.tileSize;
     }
     
-    // Check for interaction with objects
+
     public int checkInteraction(Entity[] objects) {
-        int index = 999; // Default value meaning no interaction
+        int index = 999; 
         
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] != null) {
-                // Make sure interaction box is updated
                 updateInteractionBox();
                 
-                // Get the object's solid area
                 Rectangle objectSolid = objects[i].solid;
                 int objectWorldX = objects[i].wX;
                 int objectWorldY = objects[i].wY;
                 
-                // Create temporary rectangle for the object's current position
                 Rectangle objectRect = new Rectangle(
                     objectWorldX + objectSolid.x,
                     objectWorldY + objectSolid.y,
@@ -129,9 +197,7 @@ public class Player extends Entity {
                     objectSolid.height
                 );
                 
-                // Check if the interaction box intersects with the object
                 if (interactionBox.intersects(objectRect)) {
-                    // If player is facing the object
                     index = i;
                 }
             }
@@ -139,25 +205,47 @@ public class Player extends Entity {
         
         return index;
     }
+
+    public int checkInteraction(SuperObj[] obj){
+        int idx = 999;
     
-    // Check which tile the player is interacting with
+        for (int i = 0; i < obj.length; i++) {
+            if (obj[i] == null) {
+                // System.out.println("Objek ke-" + i + " adalah null!");  // Log objek null untuk debugging
+                continue;
+            }
+            
+            updateInteractionBox();
+    
+            Rectangle objectSolid = new Rectangle(obj[i].wX, obj[i].wY, gp.tileSize, gp.tileSize);
+    
+            if (interactionBox.intersects(objectSolid)) {
+                idx = i;
+            }
+        }
+        return idx;
+    }
+    
+    
     public int[] getInteractionTile() {
         updateInteractionBox();
         return new int[] {interactionTileCol, interactionTileRow};
     }
     
-    // Method to check if a specific tile can be interacted with (e.g. for planting)
+
     public boolean canInteractWithTile(int tileType) {
         updateInteractionBox();
         
         int tileNum = gp.tileM.mapTileNum[interactionTileCol][interactionTileRow];
         
-        // Check if this tile is of the type we want to interact with
         return tileNum == tileType;
     }
 
+
+    // public 
+
     public void update(){
-        //update player coordinate
+
         if(keyH.upPressed == true || keyH.downPressed == true || 
            keyH.leftPressed == true || keyH.rightPressed == true){
             
@@ -201,11 +289,94 @@ public class Player extends Entity {
                 }
                 spriteCounter = 0;
             }
+
         }
+
         
-        // Update interaction box position after player moves
+        if (keyH.interactPressed){
+            // checkInteractionWithTile();
+            keyH.interactPressed = false;
+
+            int npcIndex = checkInteractionWithNPC();
+            int objIndex = checkInteractionWithOBJ();
+            if (npcIndex != 999) { 
+                interactNPC(npcIndex);
+            } else if (objIndex != 999){
+                interactOBJ(objIndex);}
+
+            // } else {
+            //     checkInteractionWithTile();
+            // }
+            keyH.interactPressed = false;
+            }
+        
         updateInteractionBox();
     }
+
+    public int checkInteractionWithNPC() {
+        return checkInteraction(gp.npc);
+    }
+
+    public int checkInteractionWithOBJ() {
+        return checkInteraction(gp.obj);
+    }
+
+
+    public void interactNPC(int i) {
+        if (i != 999) {
+            gp.currNPC = gp.npc[i];
+            gp.currNPC.speak();
+            gp.gameState = gp.dialogState;
+        }
+    }
+
+    public void interactOBJ(int i) {
+        SuperObj obj = gp.obj[i];
+
+        if (obj != null){
+            if (obj instanceof Bed){
+                System.out.println("DEBUG INTERACTABLE bed");
+                // gp.sc.sleep();
+            }
+            if (obj instanceof Soil){
+                if (activeItem != null && activeItem.getName().equals("Hoe")) {
+                System.out.println("DEBUG INTERACTABLE soil");}
+                else {
+                    System.out.println("gapake");
+                }
+            }
+            if (obj instanceof Stove){
+                System.out.println("DEBUG INTERACTABLE stove");
+                // Cast to Stove and start cooking
+                Stove stove = (Stove) obj;
+                stove.startCooking(gp);
+            }
+        }
+    }
+
+    // private void checkInteractionWithTile() {
+    //     int[] interactionTilePos = getInteractionTile();
+    //     int tileCol = interactionTilePos[0];
+    //     int tileRow = interactionTilePos[1];
+        
+    //     if(tileCol >= 0 && tileCol < gp.maxWorldCol && tileRow >= 0 && tileRow < gp.maxWorldRow) {
+
+    //         int tileNum = gp.tileM.mapTileNum[tileCol][tileRow];
+            
+
+    //         if(tileNum == TileManager.POND_TILE) {
+    //             System.out.println("pond"); // Output debugging
+    //             // Di sini nanti bisa panggil fishing controller
+    //         } 
+    //         if(tileNum == TileManager.BED_TILE) {
+    //             System.out.println("Interacting with bed");
+    //             // gp.sc.sleep();
+    //         } 
+
+    //     }
+    // }
+
+
 
     public void draw(Graphics2D g2){
         BufferedImage image = null;
@@ -240,25 +411,37 @@ public class Player extends Entity {
             }
         }
 
-        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        g2.drawImage(image, screenX, screenY, null);
         
-        // Draw interaction box (for debugging, can be commented out in production)
+        
         drawInteractionBox(g2);
     }
     
-    // Draw the interaction box for visualization/debugging
+
     public void drawInteractionBox(Graphics2D g2) {
-        // Calculate the screen position from world position
+
         int screenX = interactionBox.x - wX + this.screenX;
         int screenY = interactionBox.y - wY + this.screenY;
         
-        // Draw with a different color for visibility
-        g2.setColor(Color.GREEN);
+
+        g2.setColor(Color.WHITE);
         g2.drawRect(screenX, screenY, interactionBox.width, interactionBox.height);
+
+        // debug
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Arial", Font.BOLD, 10));
+        g2.drawString("Tile: " + interactionTileCol + "," + interactionTileRow, 
+                      screenX + 5, screenY + 15);
     }
     
-    // Getter for interaction box (if needed elsewhere)
+
     public Rectangle getInteractionBox() {
         return interactionBox;
     }
+    
+    public InventoryController getInventory() {
+        return inventory;
+    }
+
+
 }
