@@ -8,7 +8,7 @@ import java.awt.Font;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import main.GamePanel;
-import main.InventoryController;
+import controller.InventoryController;
 import main.KeyHandler;
 import object.Bed;
 import object.Item;

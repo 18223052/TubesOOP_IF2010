@@ -1,6 +1,9 @@
 package main;
 
+import java.awt.Rectangle;
+
 import entity.Entity;
+import object.SuperObj;
 
 public class Collision {
 
@@ -63,4 +66,25 @@ public class Collision {
             
         }
     }
+
+    // public boolean checkObject(Entity entity, SuperObj obj) {
+    //     if (obj == null) return false;
+        
+    //     // Get entity's solid area position
+    //     entity.solidAreaDefaultX = entity.wX + entity.solidAreaDefaultX;
+    //     entity.solidAreaDefaultY = entity.wY + entity.solidAreaDefaultY;
+        
+    //     // Get object's solid area position
+    //     Rectangle objArea = new Rectangle(
+    //         obj.wX + obj.solidArea.x,
+    //         obj.wY + obj.solidArea.y,
+    //         obj.solidArea.width,
+    //         obj.solidArea.height
+    //     );
+        
+    //     entity.solidAreaDefaultX = entity.solidAreaDefaultX;
+    //     entity.solidAreaDefaultY = entity.solidAreaDefaultY;
+        
+    //     return entity.solidArea.intersects(objArea);
+    // }
 }

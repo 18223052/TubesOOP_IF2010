@@ -1,6 +1,9 @@
 package main;
 
 import javax.swing.JPanel;
+
+import controller.InventoryController;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Color;

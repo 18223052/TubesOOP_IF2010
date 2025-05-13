@@ -1,9 +1,15 @@
-package main;
+package controller;
 
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import entity.Ingredient;
+import entity.Recipe;
+import main.GamePanel;
 import object.Item;
 
 public class InventoryController {
@@ -310,5 +316,146 @@ public class InventoryController {
     // Getter for inventory
     public ArrayList<Item> getInventory() {
         return inventory;
+    }
+
+
+    // cooking utils
+    public boolean hasIngredientsForRecipe(Recipe recipe){
+        for (Ingredient i : recipe.ingredients){
+            int reqAmount = i.amount;
+            int availableAmount = getItemCount(i.name);
+
+            if (i.name.toLowerCase().contains("any fish")) {
+                availableAmount = getItemCountByCategory("fish");
+            }
+            
+            if (availableAmount < reqAmount) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+        public boolean consumeIngredientsForRecipe(Recipe recipe) {
+        if (!hasIngredientsForRecipe(recipe)) {
+            return false;
+        }
+        
+
+        Map<String, Integer> toConsume = new HashMap<>();
+        
+        for (Ingredient ingredient : recipe.ingredients) {
+            String ingredientName = ingredient.name;
+            int amount = ingredient.amount;
+            
+            // kondisi ikan apa aja
+            if (ingredientName.toLowerCase().contains("any fish")) {
+
+                int consumed = 0;
+                for (int i = inventory.size() - 1; i >= 0 && consumed < amount; i--) {
+                    Item item = inventory.get(i);
+                    if (item.category.equals("fish")) {
+                        inventory.remove(i);
+                        consumed++;
+                        System.out.println("Consumed: " + item.getName() + " for recipe");
+                    }
+                }
+            } else {
+                
+                toConsume.put(ingredientName, amount);
+            }
+        }
+        
+
+        for (Map.Entry<String, Integer> entry : toConsume.entrySet()) {
+            String itemName = entry.getKey();
+            int amountToConsume = entry.getValue();
+            
+            for (int i = inventory.size() - 1; i >= 0 && amountToConsume > 0; i--) {
+                Item item = inventory.get(i);
+                if (item.getName().equalsIgnoreCase(itemName)) {
+                    inventory.remove(i);
+                    amountToConsume--;
+                    System.out.println("Consumed: " + item.getName() + " for recipe");
+                }
+            }
+        }
+        
+        if (selectedSlot >= inventory.size() && inventory.size() > 0) {
+            selectedSlot = inventory.size() - 1;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * masak dan langsung masukin ke inventory
+     */
+    public boolean cookRecipe(Recipe recipe, GamePanel gp) {
+        if (!consumeIngredientsForRecipe(recipe)) {
+            return false;
+        }
+        
+
+        String recipeName = recipe.title.toLowerCase().replace(" ", "_");
+        Item cookedItem = gp.itemFactory.createConsumable(recipeName);
+        if (cookedItem == null) {
+
+            cookedItem = new object.Item(recipe.title, 0, 50);
+            cookedItem.category = "consumables";
+        }
+        
+        addItem(cookedItem);
+        System.out.println("Successfully cooked: " + recipe.title);
+        return true;
+    }
+    
+    // === UTILITY METHODS ===
+    
+    /**
+     * Get the count of a specific item in inventory
+     */
+    public int getItemCount(String itemName) {
+        int count = 0;
+        for (Item item : inventory) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    /**
+     * Get the total count of items in a specific category
+     */
+    public int getItemCountByCategory(String category) {
+        int count = 0;
+        for (Item item : inventory) {
+            if (item.category.equals(category)) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    /**
+     * Get all items of a specific category
+     */
+    public ArrayList<Item> getItemsByCategory(String category) {
+        ArrayList<Item> categoryItems = new ArrayList<>();
+        for (Item item : inventory) {
+            if (item.category.equals(category)) {
+                categoryItems.add(item);
+            }
+        }
+        return categoryItems;
+    }
+    
+    /**
+     * Check if player has a specific tool equipped
+     */
+    public boolean hasToolEquipped(String toolName) {
+        Item activeItem = gp.player.getActiveItem();
+        return activeItem != null && activeItem.getName().equalsIgnoreCase(toolName);
     }
 }

@@ -29,7 +29,7 @@ public class AssetSetter {
         // First check which map is active
         if(gp.currMap.equals("/maps/farmmm.txt")) {
             // Set objects for farm map
-            gp.obj[0] = new ShippingBin();
+            gp.obj[0] = new ShippingBin(gp);
             gp.obj[0].wX = 20 * gp.tileSize;
             gp.obj[0].wY = 20 * gp.tileSize;
             // System.out.println("Objek ShippingBin diinisialisasi pada koordinat: " + gp.obj[0].wX + ", " + gp.obj[0].wY);
@@ -42,11 +42,11 @@ public class AssetSetter {
             // System.out.println("Objek ShippingBin diinisialisasi pada koordinat: " + gp.obj[0].wX + ", " + gp.obj[0].wY);
         }
         else if(gp.currMap.equals("/maps/rumah.txt")) {
-            gp.obj[0] = new Bed();
+            gp.obj[0] = new Bed(gp);
             gp.obj[0].wX = 19 * gp.tileSize;
             gp.obj[0].wY = 16 * gp.tileSize;
             // System.out.println("Objek Bed diinisialisasi pada koordinat: " + gp.obj[0].wX + ", " + gp.obj[0].wY);
-            gp.obj[1] = new Stove();
+            gp.obj[1] = new Stove(gp);
             gp.obj[1].wX = 35 * gp.tileSize;
             gp.obj[1].wY = 16 * gp.tileSize;
             // Set objects for house map
