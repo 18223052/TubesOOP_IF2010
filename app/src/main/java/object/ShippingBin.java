@@ -1,5 +1,6 @@
 package object;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -13,7 +14,8 @@ public class ShippingBin extends SuperObj {
         name = "ShippingBin";
 
         try{
-            img[0] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/035.png"));
+            tiles = new BufferedImage[1];
+            tiles[0] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/035.png"));
         }
         catch(IOException e){
             e.printStackTrace();

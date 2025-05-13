@@ -1,5 +1,6 @@
 package object;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -7,19 +8,28 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 
 public class Stove extends SuperObj {
+
+    private static final int STOVE_WIDTH = 2;
+    private static final int STOVE_HEIGHT = 4;
+
     public Stove(GamePanel gp){
-        super(gp,2,3);
+        super(gp,STOVE_WIDTH, STOVE_HEIGHT);
         name = "stove";
+        collision = true;
 
         try{
-            img[0] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/117.png"));
-            img[1] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/118.png"));
-            img[2] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/121.png"));
-            img[3] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/122.png"));
-            img[4] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/125.png"));
-            img[5] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/126.png"));
-            img[6] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/129.png"));
-            img[7] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/130.png"));
+
+            tiles = new BufferedImage[STOVE_WIDTH * STOVE_HEIGHT];
+            tiles[0] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/117.png"));
+            tiles[1] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/118.png"));
+            tiles[2] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/121.png"));
+            tiles[3] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/122.png"));
+            tiles[4] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/125.png"));
+            tiles[5] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/126.png"));
+            tiles[6] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/129.png"));
+            tiles[7] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/130.png"));
+
+            img = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/117.png"));
         }
         catch(IOException e){
             e.printStackTrace();

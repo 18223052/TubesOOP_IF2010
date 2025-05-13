@@ -67,10 +67,10 @@ public class GamePanel extends JPanel implements Runnable {
     private Thread gameThread;
     private int fps = 60;
     
-    // Player starting position
-    private int pX = 100;
-    private int pY = 100;
-    private int pSpeed = 4;
+    // // Player starting position
+    // private int pX = 100;
+    // private int pY = 100;
+    // private int pSpeed = 4;
 
 
     private boolean isComplete = false;
