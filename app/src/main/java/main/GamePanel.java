@@ -228,14 +228,15 @@ public class GamePanel extends JPanel implements Runnable {
                 if (gameState == inventoryState && inventoryController != null) {
                     inventoryController.draw(g2);
                 }
+
+                if (eManager != null) {
+                    eManager.draw(g2);
+                }
                 
                 if (ui != null) {
                     ui.draw(g2);
                 }
                 
-                if (eManager != null) {
-                    eManager.draw(g2);
-                }
             } catch (Exception e) {
 
                 g2.setColor(Color.WHITE);

@@ -67,21 +67,21 @@ public class Lighting {
         screenArea.subtract(lightArea);
 
         // Membuat efek gradasi
-        Color color[] = new Color[12];
-        float fraction[] = new float[12];
+        Color color[] = new Color[8];
+        float fraction[] = new float[8];
 
-        color[0] = new Color(0,0,0,0f);
-        color[1] = new Color(0,0,0,0.42f);
-        color[2] = new Color(0,0,0,0.52f);
-        color[3] = new Color(0,0,0,0.61f);
-        color[4] = new Color(0,0,0,0.69f);
-        color[5] = new Color(0,0,0,0.76f);
-        color[6] = new Color(0,0,0,0.82f);
-        color[7] = new Color(0,0,0,0.87f);
-        color[8] = new Color(0,0,0,0.91f);
-        color[9] = new Color(0,0,0,0.94f);
-        color[10] = new Color(0,0,0,0.96f);
-        color[11] = new Color(0,0,0,0.98f);
+        color[0] = new Color(0,0,0.1f,0f);
+        color[1] = new Color(0,0,0.1f,0.42f);
+        color[2] = new Color(0,0,0.1f,0.52f);
+        color[3] = new Color(0,0,0.1f,0.61f);
+        color[4] = new Color(0,0,0.1f,0.69f);
+        color[5] = new Color(0,0,0.1f,0.76f);
+        color[6] = new Color(0,0,0.1f,0.82f);
+        color[7] = new Color(0,0,0.1f,0.87f);
+        // color[8] = new Color(0,0,0,0.91f);
+        // color[9] = new Color(0,0,0,0.94f);
+        // color[10] = new Color(0,0,0,0.96f);
+        // color[11] = new Color(0,0,0,0.98f);
 
         fraction[0] = 0f;
         fraction[1] = 0.4f;
@@ -91,10 +91,10 @@ public class Lighting {
         fraction[5] = 0.7f;
         fraction[6] = 0.75f;
         fraction[7] = 0.8f;
-        fraction[8] = 0.85f;
-        fraction[9] = 0.9f;
-        fraction[10] = 0.95f;
-        fraction[11] = 1f;
+        // fraction[8] = 0.85f;
+        // fraction[9] = 0.9f;
+        // fraction[10] = 0.95f;
+        // fraction[11] = 1f;
 
         // Menerapkan gradient paint
         RadialGradientPaint gPaint = new RadialGradientPaint(centerX, centerY, (circleSize/2), fraction, color);
