@@ -5,8 +5,8 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Font;
-
-
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import main.GamePanel;
 import main.InventoryController;
 import main.KeyHandler;
@@ -23,6 +23,7 @@ public class Player extends Entity {
 
     public int screenX; 
     public int screenY;
+    public int hasKey=0;
     
     // Interaction box for player actions
     private Rectangle interactionBox;
