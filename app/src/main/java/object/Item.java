@@ -30,6 +30,13 @@ public class Item {
         this.sellPrice = sellPrice;
     }
 
+    public Item(String name, int buyPrice, int sellPrice, int addEnergy){
+        this.name = name;
+        this.buyPrice = buyPrice;
+        this.sellPrice = sellPrice;
+        this.addEnergy = addEnergy;
+    }
+
     public BufferedImage getImage(GamePanel gp) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
