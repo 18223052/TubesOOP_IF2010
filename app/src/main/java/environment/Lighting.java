@@ -105,6 +105,11 @@ public class Lighting {
     }
     
     public void updateEnvironment() {
+        // Hentikan update environment jika game tidak dalam playState
+        if (gp.gameState != gp.playState) {
+            return;
+        }
+        
         long currentTime = System.nanoTime();
         
         // Jika sedang dalam transisi
@@ -197,8 +202,34 @@ public class Lighting {
         }
     }
 
+
+    public void skipDay() {
+
+    dayState = DAY;
+    previousDayState = DAWN;
+    filterAlpha = 0f;
+    targetAlpha = 0f;
+    startAlpha = 0f;
+    inTransition = false;
+    
+
+    transitionStartTime = System.nanoTime();
+    
+    System.out.println("Day skipped! Current state: " + getDayStateName(dayState));
+}
+
+
+    public boolean isNight() {
+        return dayState == NIGHT;
+    }
+
+
+    public int getCurrentDayState() {
+        return dayState;
+    }
+
     public void draw(Graphics2D g2) {
-        // Gambar filter kegelapan dengan alpha yang sesuai
+
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, filterAlpha));
         g2.drawImage(darknessFilter, 0, 0, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));

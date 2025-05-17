@@ -33,4 +33,8 @@ public class EnvironmentManager {
     public boolean isLightingSetup() {
         return isSetup && lighting != null;
     }
+
+    public Lighting getLighting() {
+        return lighting;
+    }
 }
