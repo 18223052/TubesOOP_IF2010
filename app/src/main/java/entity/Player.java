@@ -343,7 +343,7 @@ public class Player extends Entity {
         if (obj != null){
             if (obj instanceof Bed){
                 System.out.println("DEBUG INTERACTABLE bed");
-                // gp.sc.sleep();
+                gp.sleepController.startSleep();
             }
             if (obj instanceof Soil){
                 if (activeItem != null && activeItem.getName().equals("Hoe")) {

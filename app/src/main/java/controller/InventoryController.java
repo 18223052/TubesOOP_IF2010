@@ -226,9 +226,9 @@ public class InventoryController {
             }
     
 
-            g2.setFont(new Font("Arial", Font.PLAIN, 10));
-            g2.setColor(Color.white);
-            g2.drawString(item.getName(), slotX, slotY + gp.tileSize + 12);
+            // g2.setFont(new Font("Arial", Font.PLAIN, 10));
+            // g2.setColor(Color.white);
+            // g2.drawString(item.getName(), slotX, slotY + gp.tileSize + 12);
             
             // Draw category indicator
             g2.setFont(new Font("Arial", Font.ITALIC, 8));

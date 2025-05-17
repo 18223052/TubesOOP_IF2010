@@ -3,6 +3,7 @@ package main;
 import javax.swing.JPanel;
 
 import controller.InventoryController;
+import controller.SleepController;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -54,6 +55,7 @@ public class GamePanel extends JPanel implements Runnable {
     public InventoryController inventoryController;
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
+    public SleepController sleepController;
     
     // Arrays for game objects and NPCs
     public SuperObj obj[] = new SuperObj[100];
@@ -66,6 +68,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Game thread
     private Thread gameThread;
     private int fps = 60;
+    
     
     // // Player starting position
     // private int pX = 100;
@@ -108,6 +111,7 @@ public class GamePanel extends JPanel implements Runnable {
         eManager = new EnvironmentManager(this);
         inventoryController = new InventoryController(this);
         itemFactory = new ItemFactory(this);
+        sleepController = new SleepController(this);
         
 
         player.inventory = inventoryController;
@@ -139,6 +143,8 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("hoe"));
         inventoryController.addItem(itemFactory.createTool("wateringcan"));
         inventoryController.addItem(itemFactory.createTool("fishingpole"));
+        inventoryController.addItem(itemFactory.createTool("pickaxe"));
+        inventoryController.addItem(itemFactory.createConsumable("salmon"));
     }
 
 
@@ -189,6 +195,8 @@ public class GamePanel extends JPanel implements Runnable {
             eManager.update();
         } else if (gameState == inventoryState) {
             inventoryController.update();
+        } else if (gameState == sleepState){
+            sleepController.update();
         }
         // nambah gamestate lain kali
     }
@@ -235,6 +243,10 @@ public class GamePanel extends JPanel implements Runnable {
                 
                 if (ui != null) {
                     ui.draw(g2);
+                }
+
+                if (gameState == sleepState && sleepController != null){
+                    sleepController.draw(g2);
                 }
                 
             } catch (Exception e) {
