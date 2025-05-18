@@ -3,6 +3,7 @@ package main;
 import javax.swing.JPanel;
 
 import controller.InventoryController;
+import controller.SleepController;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int sleepState = 6;
     public final int cookingState = 7;
     public int gameState;
+    private final Object pauseLock = new Object();
 
 
     public KeyHandler keyH;
@@ -54,6 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
     public InventoryController inventoryController;
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
+    public SleepController sleepController;
     
     // Arrays for game objects and NPCs
     public SuperObj obj[] = new SuperObj[100];
@@ -66,6 +69,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Game thread
     private Thread gameThread;
     private int fps = 60;
+    
     
     // // Player starting position
     // private int pX = 100;
@@ -80,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         
+        inventoryController = new InventoryController(this);
 
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
@@ -106,8 +111,9 @@ public class GamePanel extends JPanel implements Runnable {
         
  
         eManager = new EnvironmentManager(this);
-        inventoryController = new InventoryController(this);
+        // inventoryController = new InventoryController(this);
         itemFactory = new ItemFactory(this);
+        sleepController = new SleepController(this, player);
         
 
         player.inventory = inventoryController;
@@ -139,6 +145,9 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("hoe"));
         inventoryController.addItem(itemFactory.createTool("wateringcan"));
         inventoryController.addItem(itemFactory.createTool("fishingpole"));
+        inventoryController.addItem(itemFactory.createTool("pickaxe"));
+        inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createFood("veggiesoup"));
     }
 
 
@@ -159,7 +168,7 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currTime;
         long timer = 0;
-        int drawCnt = 0;
+        
 
         while (gameThread != null) {
             currTime = System.nanoTime();
@@ -167,18 +176,47 @@ public class GamePanel extends JPanel implements Runnable {
             timer += (currTime - lastTime);
             lastTime = currTime;
 
+            if (gameState != playState && gameState !=sleepState){
+                pauseGameThread();
+                repaint();
+                synchronized(pauseLock){
+                    try{
+                        pauseLock.wait();
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+                resumeGameThread();
+                continue;
+            }
+
             if (delta >= 1) {
                 update();
                 repaint();
                 delta--;
-                drawCnt++;
             }
 
             if (timer >= 1000000000) {
                 // System.out.println("FPS: " + drawCnt);
-                drawCnt = 0;
                 timer = 0;
             }
+        }
+    }
+
+    public void pauseGameThread(){
+        if (eManager.isLightingSetup()){
+            eManager.getLighting().onPause();
+        }
+        synchronized (pauseLock){}
+    }
+
+    public void resumeGameThread(){
+        synchronized(pauseLock){
+            pauseLock.notifyAll();
+        }
+
+        if (eManager.isLightingSetup()){
+            eManager.getLighting().onResume();
         }
     }
 
@@ -189,6 +227,8 @@ public class GamePanel extends JPanel implements Runnable {
             eManager.update();
         } else if (gameState == inventoryState) {
             inventoryController.update();
+        } else if (gameState == sleepState){
+            sleepController.update();
         }
         // nambah gamestate lain kali
     }
@@ -225,9 +265,7 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 
                 // Draw UI elements
-                if (gameState == inventoryState && inventoryController != null) {
-                    inventoryController.draw(g2);
-                }
+
 
                 if (eManager != null) {
                     eManager.draw(g2);
@@ -235,6 +273,10 @@ public class GamePanel extends JPanel implements Runnable {
                 
                 if (ui != null) {
                     ui.draw(g2);
+                }
+
+                if (gameState == sleepState && sleepController != null){
+                    sleepController.draw(g2);
                 }
                 
             } catch (Exception e) {

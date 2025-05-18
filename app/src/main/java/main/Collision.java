@@ -1,9 +1,6 @@
 package main;
 
-import java.awt.Rectangle;
-
 import entity.Entity;
-import object.SuperObj;
 
 public class Collision {
 

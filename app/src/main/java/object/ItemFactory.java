@@ -2,21 +2,28 @@ package object;
 
 import main.GamePanel;
 
+/**
+ * Factory for creating different types of items
+ * Following the Factory pattern to create appropriate item subclasses
+ */
 public class ItemFactory {
-    GamePanel gp;
+    private GamePanel gp;
     
     public ItemFactory(GamePanel gp) {
         this.gp = gp;
     }
     
-    public Item createSeed(String seedType) {
-        Item seed = new Item(seedType + " Seed", 10, 5);
-        seed.category = "seeds";
-        seed.img = seed.getImage(gp);
-        return seed;
+    /**
+     * Creates a seed item
+     */
+    public SeedItem createSeed(String seedType) {
+        return new SeedItem(seedType, 10, 5, gp);
     }
     
-    public Item createTool(String toolType) {
+    /**
+     * Creates a tool item
+     */
+    public ToolItem createTool(String toolType) {
         int buyPrice = 0;
         int sellPrice = 0;
         
@@ -33,22 +40,23 @@ public class ItemFactory {
                 buyPrice = 150;
                 sellPrice = 75;
                 break;
-            case "Pickaxe":
+            case "pickaxe":
                 buyPrice = 150;
                 sellPrice = 75;
                 break;
-
+            default:
+                buyPrice = 100;
+                sellPrice = 50;
+                break;
         }
         
-        Item tool = new Item(toolType, buyPrice, sellPrice);
-        tool.stackable = false;  
-        tool.category = "tools";
-        tool.img = tool.getImage(gp);
-        return tool;
+        return new ToolItem(toolType, buyPrice, sellPrice, gp);
     }
     
-
-    public Item createCrop(String cropName) {
+    /**
+     * Creates a crop item
+     */
+    public CropItem createCrop(String cropName) {
         int buyPrice = 0;
         int sellPrice = 0;
         
@@ -97,85 +105,104 @@ public class ItemFactory {
                 buyPrice = 100;
                 sellPrice = 10;
                 break;
-
+            default:
+                buyPrice = 50;
+                sellPrice = 25;
+                break;
         }
         
-        Item crop = new Item(cropName, buyPrice, sellPrice);
-        crop.category = "crops";
-        crop.img = crop.getImage(gp);
-        return crop;
+        return new CropItem(cropName, buyPrice, sellPrice, gp);
     }
     
-
-    public Item createConsumable(String consumableName) {
+    /**
+     * Creates a Food item
+     */
+    public FoodItem createFood(String foodName) {
         int buyPrice = 0;
         int sellPrice = 0;
+        int energyValue = 0;
         
-        switch (consumableName.toLowerCase()) {
+        switch (foodName.toLowerCase()) {
             case "fishnchips":
                 buyPrice = 150;
                 sellPrice = 135;
+                energyValue = 50;
                 break;
             case "baguette":
                 buyPrice = 100;
                 sellPrice = 80;
+                energyValue = 30;
                 break;
             case "sashimi":
                 buyPrice = 300;
                 sellPrice = 275;
+                energyValue = 75;
                 break;
             case "fugu":
                 buyPrice = 0;
                 sellPrice = 135;
+                energyValue = 40;
                 break;
             case "wine":
                 buyPrice = 100;
                 sellPrice = 90;
+                energyValue = 25;
                 break;
             case "pumpkinpie":
                 buyPrice = 120;
                 sellPrice = 100;
+                energyValue = 45;
                 break;
             case "veggiesoup":
                 buyPrice = 140;
                 sellPrice = 120;
+                energyValue = 40;
                 break;
             case "fishstew":
                 buyPrice = 280;
                 sellPrice = 260;
+                energyValue = 70;
                 break;
             case "spakborsalad":
                 buyPrice = 0;
                 sellPrice = 250;
+                energyValue = 60;
                 break;
             case "fishsandwich":
                 buyPrice = 200;
                 sellPrice = 180;
+                energyValue = 55;
                 break;
             case "thelegendofspakbor":
                 buyPrice = 0;
                 sellPrice = 2000;
+                energyValue = 100;
                 break;
             case "cookedpigshead":
                 buyPrice = 1000;
                 sellPrice = 0;
+                energyValue = 85;
+                break;
+            default:
+                buyPrice = 50;
+                sellPrice = 30;
+                energyValue = 20;
                 break;
         }
         
-        Item consumable = new Item(consumableName, buyPrice, sellPrice);
-        consumable.category = "consumables";
-        consumable.img = consumable.getImage(gp);
-        return consumable;
+        return new FoodItem(foodName, buyPrice, sellPrice, energyValue, gp);
     }
-
-    public Item createFish(String fishType, String season, String weather, String timeOfDay, int rarity) {
-        Item fish = new Item(fishType, 50, 25);
-        fish.category = "fish";
-        fish.season = season;
-        fish.weather = weather;
-        fish.time = timeOfDay;
-        fish.rarity = rarity;
-        fish.img = fish.getImage(gp);
-        return fish;
+    
+    /**
+     * Creates a fish item
+     */
+    public FishItem createFish(String fishType, String season, String weather, String timeOfDay, int rarity) {
+        int baseBuyPrice = 50;
+        int baseSellPrice = 25;
+        
+        // Adjust price based on rarity
+        int finalSellPrice = baseSellPrice + (rarity * 15);
+        
+        return new FishItem(fishType, baseBuyPrice, finalSellPrice, season, weather, timeOfDay, rarity, gp);
     }
 }

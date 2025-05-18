@@ -32,6 +32,8 @@ public class Lighting {
     final int DAWN = 3;
     private int dayState = DAY;
     private int previousDayState = DAY;
+    private long pauseStartTime;
+    private boolean isPaused = false;
 
     // Waktu untuk pelacakan transisi dan state
     private long transitionStartTime;
@@ -105,6 +107,11 @@ public class Lighting {
     }
     
     public void updateEnvironment() {
+        // Hentikan update environment jika game tidak dalam playState
+        if (gp.gameState != gp.playState) {
+            return;
+        }
+        
         long currentTime = System.nanoTime();
         
         // Jika sedang dalam transisi
@@ -197,8 +204,49 @@ public class Lighting {
         }
     }
 
+
+    public void skipDay() {
+
+    dayState = DAY;
+    previousDayState = DAWN;
+    filterAlpha = 0f;
+    targetAlpha = 0f;
+    startAlpha = 0f;
+    inTransition = false;
+    
+
+    transitionStartTime = System.nanoTime();
+    
+    System.out.println("Day skipped! Current state: " + getDayStateName(dayState));
+}
+
+
+    public boolean isNight() {
+        return dayState == NIGHT;
+    }
+
+
+    public int getCurrentDayState() {
+        return dayState;
+    }
+    
+    public void onPause(){
+        if (!isPaused){
+            pauseStartTime = System.nanoTime();
+            isPaused = true;
+        }
+    }
+
+    public void onResume(){
+        if (isPaused){
+            long pausedDuration = System.nanoTime() - pauseStartTime;
+            transitionStartTime += pausedDuration;
+            isPaused = false;
+        }
+    }
+
     public void draw(Graphics2D g2) {
-        // Gambar filter kegelapan dengan alpha yang sesuai
+
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, filterAlpha));
         g2.drawImage(darknessFilter, 0, 0, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
