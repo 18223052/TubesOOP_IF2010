@@ -4,19 +4,19 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import main.GamePanel;
-import object.Item;
+import object.BaseItem;
 
 public class NPC_caroline extends Entity {
 
     private String name = "Caroline";
     private int heartPoints;
-    private ArrayList<Item> lovedItems;
-    private ArrayList<Item> likedItems;
-    private ArrayList<Item> hatedItems;
+    private ArrayList<BaseItem> lovedItems;
+    private ArrayList<BaseItem> likedItems;
+    private ArrayList<BaseItem> hatedItems;
     private String relationshipStatus;
     private final int MAX_HEART_POINTS = 150;
 
-    public NPC_caroline(GamePanel gp, ArrayList<Item> lovedItems, ArrayList<Item> likedItems, ArrayList<Item> hatedItems) {
+    public NPC_caroline(GamePanel gp, ArrayList<BaseItem> lovedItems, ArrayList<BaseItem> likedItems, ArrayList<BaseItem> hatedItems) {
         super(gp);
         direction = "down";
         this.lovedItems = lovedItems;
@@ -33,20 +33,20 @@ public class NPC_caroline extends Entity {
     }
 
     public void getImage() {
-        u1 = setup("/player/police_diem");
-        u2 = setup("/player/police_diem");
-        r1 = setup("/player/police_diem");
-        r2 = setup("/player/police_diem");
-        l1 = setup("/player/police_diem");
-        l2 = setup("/player/police_diem");
-        d1 = setup("/player/police_diem");
-        d2 = setup("/player/police_diem");
+        u1 = setup("/player/caroline_diem");
+        u2 = setup("/player/caroline_diem");
+        r1 = setup("/player/caroline_diem");
+        r2 = setup("/player/caroline_diem");
+        l1 = setup("/player/caroline_diem");
+        l2 = setup("/player/caroline_diem");
+        d1 = setup("/player/caroline_diem");
+        d2 = setup("/player/caroline_diem");
     }
     
 
     @Override
     public void setDialogue() {
-        dialogues[0] = "Hello there! I'm Mayor Tadi. Welcome to our town!";
+        dialogues[0] = "Hello there! I'm Caroline. Welcome to our town!";
         dialogues[1] = "I hope you're enjoying your time on the farm.";
         dialogues[2] = "If you need any help, just ask around town.";
         dialogues[3] = "We have a shipping bin near the center of town where you can sell your produce.";
@@ -62,15 +62,15 @@ public class NPC_caroline extends Entity {
         return heartPoints;
     }
 
-    public ArrayList<Item> getLovedItems (){
+    public ArrayList<BaseItem> getLovedItems (){
         return lovedItems;
     }
 
-    public ArrayList<Item> getHatedItems (){
+    public ArrayList<BaseItem> getHatedItems (){
         return hatedItems;
     }
 
-    public ArrayList<Item> getLikedItems (){
+    public ArrayList<BaseItem> getLikedItems (){
         return likedItems;
     }
 }

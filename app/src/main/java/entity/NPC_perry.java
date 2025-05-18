@@ -4,15 +4,15 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import main.GamePanel;
-import object.Item;
+import object.BaseItem;
 
 public class NPC_perry extends Entity {
 
     private String name = "Perry";
     private int heartPoints;
-    private ArrayList<Item> lovedItems;
-    private ArrayList<Item> likedItems;
-    private ArrayList<Item> hatedItems;
+    private ArrayList<BaseItem> lovedItems;
+    private ArrayList<BaseItem> likedItems;
+    private ArrayList<BaseItem> hatedItems;
     private String relationshipStatus;
     private final int MAX_HEART_POINTS = 150;
 
@@ -59,15 +59,15 @@ public class NPC_perry extends Entity {
         return heartPoints;
     }
 
-    public ArrayList<Item> getLovedItems (){
+    public ArrayList<BaseItem> getLovedItems (){
         return lovedItems;
     }
 
-    public ArrayList<Item> getHatedItems (){
+    public ArrayList<BaseItem> getHatedItems (){
         return hatedItems;
     }
 
-    public ArrayList<Item> getLikedItems (){
+    public ArrayList<BaseItem> getLikedItems (){
         return likedItems;
     }
 }
