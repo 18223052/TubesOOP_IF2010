@@ -84,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         
+        inventoryController = new InventoryController(this);
 
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
@@ -110,7 +111,7 @@ public class GamePanel extends JPanel implements Runnable {
         
  
         eManager = new EnvironmentManager(this);
-        inventoryController = new InventoryController(this);
+        // inventoryController = new InventoryController(this);
         itemFactory = new ItemFactory(this);
         sleepController = new SleepController(this, player);
         
@@ -167,7 +168,7 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currTime;
         long timer = 0;
-        int drawCnt = 0;
+        
 
         while (gameThread != null) {
             currTime = System.nanoTime();
@@ -193,12 +194,10 @@ public class GamePanel extends JPanel implements Runnable {
                 update();
                 repaint();
                 delta--;
-                drawCnt++;
             }
 
             if (timer >= 1000000000) {
                 // System.out.println("FPS: " + drawCnt);
-                drawCnt = 0;
                 timer = 0;
             }
         }
@@ -266,9 +265,6 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 
                 // Draw UI elements
-                if (gameState == inventoryState && inventoryController != null) {
-                    inventoryController.draw(g2);
-                }
 
                 if (eManager != null) {
                     eManager.draw(g2);
