@@ -266,6 +266,7 @@ public class GamePanel extends JPanel implements Runnable {
                 
                 // Draw UI elements
 
+
                 if (eManager != null) {
                     eManager.draw(g2);
                 }
