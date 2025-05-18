@@ -11,12 +11,18 @@ import java.io.InputStream;
 import java.util.List;
 
 import java.util.Objects;
+
+import controller.InventoryController;
+
 import java.util.List;
 
 import entity.Ingredient;
 import entity.NPC_mayortadi;
 import entity.Ingredient;
 import entity.Recipe;
+import object.IConsumable;
+import object.IFishAttributes;
+import object.IItem;
 import entity.Recipe;
 
 public class UI {
@@ -27,6 +33,7 @@ public class UI {
     Font retroFont, arial_20;
     Recipe recipe;
     private Font maruMonica;
+    private InventoryController inventory;
 
     int selectRecipe = 0;
     boolean hasIngradients, doneCooking, hasHotPapper;
@@ -35,6 +42,7 @@ public class UI {
 
     public UI(GamePanel gp) {
         this.gp = gp;
+        this.inventory = gp.inventoryController;
         arial_40 = new Font("Arial", Font.PLAIN, 40);
 
         try {
@@ -75,7 +83,7 @@ public class UI {
         }
         if (gp.gameState == gp.inventoryState) {
 
-            drawInventoryScreen(g2);
+            drawInventory();
         }
         if (gp.gameState == gp.statsState){
             drawCharacterScreen();
@@ -85,10 +93,6 @@ public class UI {
         }
     }
 
-    public void drawInventoryScreen(Graphics2D g2) {
-
-        gp.inventoryController.draw(g2);  
-    }
 
     public void drawCharacterScreen(){
       
@@ -140,12 +144,12 @@ public class UI {
         g2.drawString(value, textX, textY);
         textY += lineHeight;
 
-        value = String.valueOf(gp.player.getGold());
+        value = String.valueOf(gp.player.getEnergy());
         textX = getXforAllignToRight(value, tailX);
         g2.drawString(value, textX, textY);
         textY += lineHeight;
 
-        value = String.valueOf(gp.player.getEnergy());
+        value = String.valueOf(gp.player.getGold());
         textX = getXforAllignToRight(value, tailX);
         g2.drawString(value, textX, textY);
         textY += lineHeight;
@@ -416,8 +420,158 @@ public class UI {
             }
 
         }
+        
 
         // System.out.println(gp.keyH.enterPressed);
         // System.out.println(gp.keyH.keyPressed);
     }
+
+    public void drawInventory(){
+        int frameX = gp.tileSize * 9;
+        int frameY = gp.tileSize;
+        int frameWidth = gp.tileSize * 6;
+        int frameHeight = gp.tileSize * 5;
+    
+        // Draw main window
+        drawSubWindow(g2, frameX, frameY, frameWidth, frameHeight);
+        
+        // Draw category filters
+        drawCategoryFilters(g2, frameX, frameY - 30, frameWidth);
+    
+        // Draw inventory info
+        g2.setFont(new Font("Arial", Font.BOLD, 12));
+        g2.setColor(Color.white);
+        g2.drawString("Items: " + inventory.getInventory().size() + "/" + inventory.getInventoryMaxSize(), frameX + 10, frameY + 20);
+        
+        // Draw inventory slots
+        int slotX = frameX + 10;
+        int slotY = frameY + 35;
+        int itemCount = 0;
+        
+        for (int i = 0; i < Math.min(inventory.getInventory().size(), inventory.getInventoryMaxSize()); i++) {
+            IItem item = inventory.getInventory().get(i);
+            
+            // Apply filter
+            if (!inventory.getInventoryFilter().equals("all") && !item.getCategory().equals(inventory.getInventoryFilter())) {
+                continue;
+            }
+            
+            if (i == inventory.getSelectedSlot()) {
+                g2.setColor(new Color(255, 255, 0, 128)); 
+                g2.fillRect(slotX - 5, slotY - 5, gp.tileSize + 10, gp.tileSize + 10);
+            }
+            g2.setColor(Color.white);
+            g2.drawRect(slotX, slotY, gp.tileSize, gp.tileSize); 
+    
+            // Draw item image
+            if (item.getImage() != null) {
+                g2.drawImage(item.getImage(), slotX + 5, slotY + 5, gp.tileSize - 10, gp.tileSize - 10, null);
+            } else {
+                // Draw placeholder if no image available
+                g2.setColor(Color.gray);
+                g2.fillRect(slotX + 5, slotY + 5, gp.tileSize - 10, gp.tileSize - 10);
+            }
+    
+            // Draw category indicator
+            g2.setFont(new Font("Arial", Font.ITALIC, 8));
+            g2.setColor(getCategoryColor(item.getCategory()));
+            g2.drawString(item.getCategory(), slotX, slotY + gp.tileSize + 22);
+    
+            itemCount++;
+            slotX += gp.tileSize + 5;
+            if (itemCount % 4 == 0) { 
+                slotX = frameX + 10;
+                slotY += gp.tileSize + 25;  
+            }
+        }
+        
+        // Draw selected item details
+        if (!inventory.getInventory().isEmpty() && inventory.getSelectedSlot() < inventory.getInventory().size()) {
+            drawItemDetails(g2, inventory.getInventory().get(inventory.getSelectedSlot()), frameX, frameY + frameHeight + 10);
+        }
+    }
+    private void drawCategoryFilters(Graphics2D g2, int x, int y, int width) {
+        String[] categories = {"all", "tools", "consumables", "crops", "fish", "seeds"};
+        int buttonWidth = width / categories.length;
+        
+        for (int i = 0; i < categories.length; i++) {
+            int buttonX = x + (i * buttonWidth);
+            
+            // Highlight active filter
+            if (categories[i].equals(inventory.getInventoryFilter())) {
+                g2.setColor(new Color(255, 255, 100, 200));
+            } else {
+                g2.setColor(new Color(100, 100, 100, 200));
+            }
+            g2.fillRect(buttonX, y, buttonWidth, 25);
+            
+            g2.setColor(Color.white);
+            g2.drawRect(buttonX, y, buttonWidth, 25);
+            
+            g2.setFont(new Font("Arial", Font.BOLD, 10));
+            int textX = buttonX + (buttonWidth/2) - (g2.getFontMetrics().stringWidth(categories[i])/2);
+            g2.drawString(categories[i], textX, y + 15);
+        }
+    }
+    
+    /**
+     * Draws the details of the selected item
+     */
+    private void drawItemDetails(Graphics2D g2, IItem item, int x, int y) {
+        int detailWidth = gp.tileSize * 6;
+        int detailHeight = gp.tileSize * 2;
+        
+        drawSubWindow(g2, x, y, detailWidth, detailHeight);
+        
+        g2.setFont(new Font("Arial", Font.BOLD, 14));
+        g2.setColor(Color.yellow);
+        g2.drawString(item.getName(), x + 10, y + 20);
+        
+        g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2.setColor(Color.white);
+        g2.drawString("Category: " + item.getCategory(), x + 10, y + 40);
+        g2.drawString("Buy: " + item.getBuyPrice() + "g | Sell: " + item.getSellPrice() + "g", x + 10, y + 60);
+
+        // Show energy value for consumables
+        if (item instanceof IConsumable) {
+            g2.drawString("Energy: +" + ((IConsumable)item).getEnergyRestoration(), x + 10, y + 80);
+        }
+        
+        // Show additional attributes for fish
+        if (item instanceof IFishAttributes) {
+            IFishAttributes fishItem = (IFishAttributes) item;
+            g2.setFont(new Font("Arial", Font.ITALIC, 10));
+            g2.drawString("Season: " + fishItem.getSeason() + " | Weather: " + fishItem.getWeather(), x + 10, y + 80);
+        }
+        
+        g2.setFont(new Font("Arial", Font.ITALIC, 11));
+        g2.drawString("E: Use/Equip", x + 10, y + 100);
+    }
+    
+    /**
+     * Returns color associated with item category
+     */
+    private Color getCategoryColor(String category) {
+        switch (category) {
+            case "tools": return new Color(150, 150, 255);
+            case "consumables": return new Color(255, 150, 150);
+            case "crops": return new Color(150, 255, 150);
+            case "fish": return new Color(150, 200, 255);
+            case "seeds": return new Color(255, 255, 150);
+            default: return Color.gray;
+        }
+    }
+    
+
+    private void drawSubWindow(Graphics2D g2, int x, int y, int width, int height) {
+        Color c = new Color(0, 0, 0, 210);
+        g2.setColor(c);
+        g2.fillRoundRect(x, y, width, height, 35, 35);
+    
+        c = new Color(255, 255, 255);
+        g2.setColor(c);
+        g2.setStroke(new java.awt.BasicStroke(5));  // Border thickness
+        g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
+    }
+
 }

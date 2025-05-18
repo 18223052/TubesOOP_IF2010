@@ -5,18 +5,16 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Font;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import main.GamePanel;
 import controller.InventoryController;
 import main.KeyHandler;
 import object.Bed;
-import object.Item;
+import object.IItem;
 import object.Soil;
 import object.TV;
 import object.Stove;
 import object.SuperObj;
-import tile.TileManager;
+
 
 public class Player extends Entity {
     
@@ -34,7 +32,8 @@ public class Player extends Entity {
     private int interactionTileCol;
 
     public InventoryController inventory;
-    private final int maxInventorySize = 16;
+    // private final int maxInventorySize = 16;
+    public final int maxEnergy = 100;
 
     private String name;
     private String gender;
@@ -101,7 +100,7 @@ public class Player extends Entity {
         speed = 4;
         direction = "down"; 
 
-        energy = 100;
+        energy = 50;
         gold = 0;
         name = "bobi";
         farmMap = "anjoy";
@@ -109,14 +108,14 @@ public class Player extends Entity {
 
     }
 
-    private Item activeItem = null;
+    private IItem activeItem = null;
 
-    public void setActiveItem(Item item) {
+    public void setActiveItem(IItem item) {
         this.activeItem = item;
         System.out.println("Active item set to: " + (activeItem != null ? activeItem.getName() : "none"));
     }
 
-    public Item getActiveItem() {
+    public IItem getActiveItem() {
         return activeItem;
     }
 
@@ -344,6 +343,7 @@ public class Player extends Entity {
             if (obj instanceof Bed){
                 System.out.println("DEBUG INTERACTABLE bed");
                 gp.sleepController.startSleep();
+                // addEnergy(maxEnergy);
             }
             if (obj instanceof Soil){
                 if (activeItem != null && activeItem.getName().equals("Hoe")) {
@@ -363,28 +363,6 @@ public class Player extends Entity {
             }
         }
     }
-
-    // private void checkInteractionWithTile() {
-    //     int[] interactionTilePos = getInteractionTile();
-    //     int tileCol = interactionTilePos[0];
-    //     int tileRow = interactionTilePos[1];
-        
-    //     if(tileCol >= 0 && tileCol < gp.maxWorldCol && tileRow >= 0 && tileRow < gp.maxWorldRow) {
-
-    //         int tileNum = gp.tileM.mapTileNum[tileCol][tileRow];
-            
-
-    //         if(tileNum == TileManager.POND_TILE) {
-    //             System.out.println("pond"); // Output debugging
-    //             // Di sini nanti bisa panggil fishing controller
-    //         } 
-    //         if(tileNum == TileManager.BED_TILE) {
-    //             System.out.println("Interacting with bed");
-    //             // gp.sc.sleep();
-    //         } 
-
-    //     }
-    // }
 
     public void draw(Graphics2D g2){
         BufferedImage image = null;
