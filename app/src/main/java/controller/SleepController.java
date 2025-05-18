@@ -2,12 +2,16 @@ package controller;
 
 import main.GamePanel;
 import java.awt.Graphics2D;
+
+import entity.Player;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.AlphaComposite;
 
 public class SleepController {
     GamePanel gp;
+    Player player;
     
 
     final long SLEEP_TRANSITION_DURATION = 3_000_000_000L;
@@ -21,8 +25,9 @@ public class SleepController {
     private float transitionAlpha = 0f;
     private boolean fadingIn = true; 
     
-    public SleepController(GamePanel gp) {
+    public SleepController(GamePanel gp, Player player) {
         this.gp = gp;
+        this.player = player;
     }
     
     public void startSleep() {
@@ -34,8 +39,15 @@ public class SleepController {
                 fadingIn = true;
                 transitionStartTime = System.nanoTime();
                 transitionAlpha = 0f;
-                
-
+                int currEnergy = player.getEnergy();
+                if (currEnergy < 0.1*player.maxEnergy){
+                    player.addEnergy(50);
+                } else if (currEnergy ==0){
+                    player.addEnergy(10);
+                } else {
+                    player.addEnergy(player.maxEnergy);
+                }
+    
                 gp.gameState = gp.sleepState;
             } else {
 

@@ -32,6 +32,8 @@ public class Lighting {
     final int DAWN = 3;
     private int dayState = DAY;
     private int previousDayState = DAY;
+    private long pauseStartTime;
+    private boolean isPaused = false;
 
     // Waktu untuk pelacakan transisi dan state
     private long transitionStartTime;
@@ -226,6 +228,21 @@ public class Lighting {
 
     public int getCurrentDayState() {
         return dayState;
+    }
+    
+    public void onPause(){
+        if (!isPaused){
+            pauseStartTime = System.nanoTime();
+            isPaused = true;
+        }
+    }
+
+    public void onResume(){
+        if (isPaused){
+            long pausedDuration = System.nanoTime() - pauseStartTime;
+            transitionStartTime += pausedDuration;
+            isPaused = false;
+        }
     }
 
     public void draw(Graphics2D g2) {

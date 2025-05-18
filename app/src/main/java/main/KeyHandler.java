@@ -99,12 +99,14 @@ public class KeyHandler implements KeyListener {
     public void pauseState (int code){
         if (code == KeyEvent.VK_P) {
             gp.gameState = gp.playState;
+            gp.resumeGameThread();
         }
     }
 
     public void dialogueState(int code){
         if (code == KeyEvent.VK_E) {
             gp.gameState = gp.playState;
+            gp.resumeGameThread();
         }
     }
 
@@ -112,6 +114,7 @@ public class KeyHandler implements KeyListener {
         // Exit cooking with E key
         if (code == KeyEvent.VK_E) {
             gp.gameState = gp.playState;
+            gp.resumeGameThread();
         }
         
         // Handle number keys (0-9)
@@ -141,6 +144,7 @@ public class KeyHandler implements KeyListener {
     public void statsState (int code){
         if (code == KeyEvent.VK_C){
             gp.gameState = gp.playState;
+            gp.resumeGameThread();
         }
     }
 
@@ -150,6 +154,7 @@ public class KeyHandler implements KeyListener {
                 gp.gameState = gp.inventoryState;
             } else if (gp.gameState == gp.inventoryState) {
                 gp.gameState = gp.playState;
+                gp.resumeGameThread();
             }
             inventoryPressed = true;
         }

@@ -44,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int sleepState = 6;
     public final int cookingState = 7;
     public int gameState;
+    private final Object pauseLock = new Object();
 
 
     public KeyHandler keyH;
@@ -111,7 +112,7 @@ public class GamePanel extends JPanel implements Runnable {
         eManager = new EnvironmentManager(this);
         inventoryController = new InventoryController(this);
         itemFactory = new ItemFactory(this);
-        sleepController = new SleepController(this);
+        sleepController = new SleepController(this, player);
         
 
         player.inventory = inventoryController;
@@ -144,7 +145,8 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("wateringcan"));
         inventoryController.addItem(itemFactory.createTool("fishingpole"));
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
-        inventoryController.addItem(itemFactory.createConsumable("salmon"));
+        inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createFood("veggiesoup"));
     }
 
 
@@ -173,6 +175,20 @@ public class GamePanel extends JPanel implements Runnable {
             timer += (currTime - lastTime);
             lastTime = currTime;
 
+            if (gameState != playState && gameState !=sleepState){
+                pauseGameThread();
+                repaint();
+                synchronized(pauseLock){
+                    try{
+                        pauseLock.wait();
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+                resumeGameThread();
+                continue;
+            }
+
             if (delta >= 1) {
                 update();
                 repaint();
@@ -185,6 +201,23 @@ public class GamePanel extends JPanel implements Runnable {
                 drawCnt = 0;
                 timer = 0;
             }
+        }
+    }
+
+    public void pauseGameThread(){
+        if (eManager.isLightingSetup()){
+            eManager.getLighting().onPause();
+        }
+        synchronized (pauseLock){}
+    }
+
+    public void resumeGameThread(){
+        synchronized(pauseLock){
+            pauseLock.notifyAll();
+        }
+
+        if (eManager.isLightingSetup()){
+            eManager.getLighting().onResume();
         }
     }
 
