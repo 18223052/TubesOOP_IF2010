@@ -575,12 +575,15 @@ public class UI {
     }
 
     public void drawTimeHUD() {
+        String season = gp.gameTime.getSeasonName();
         g2.setFont(arial_20);
         g2.setColor(Color.white);
         String time = String.format("Day %d - %02d:%02d", gp.currentDay, gp.currentHour, gp.currentMinute);
+        String seasonText = "Season: " + season;
         int x = gp.tileSize / 2;
         int y = gp.tileSize / 2;
         g2.drawString(time, x, y);
+        g2.drawString(seasonText, x, y + 30);   
     }
 
 

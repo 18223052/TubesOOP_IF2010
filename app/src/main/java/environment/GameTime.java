@@ -5,6 +5,11 @@ public class GameTime implements Runnable {
     private int gameHour = 6;
     private int gameDay = 1;
 
+    // Season
+    private final int totalDaysPerSeason = 10;
+    private Season currentSeason = Season.SPRING;
+    private Season lastSeason = Season.SPRING;
+
     private boolean paused = false;
     private final Object pauseLock = new Object();
 
@@ -73,5 +78,26 @@ public class GameTime implements Runnable {
             paused = false;
             pauseLock.notifyAll();
         }
+    }
+
+    public void setTime(int hour, int minute) {
+        this.gameHour = hour;
+        this.gameMinute = minute;
+    }
+
+    public void setGameDay(int day) {
+        if (day > 0) {
+            this.gameDay = day;
+        }
+    }
+
+
+    public Season getCurrentSeason() {
+        int seasonIndex = (gameDay - 1) / 10;
+        return Season.values()[seasonIndex % 4];
+    }
+
+    public String getSeasonName() {
+        return getCurrentSeason().name();
     }
 }

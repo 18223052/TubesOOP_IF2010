@@ -255,16 +255,16 @@ public class GamePanel extends JPanel implements Runnable {
             if (eManager != null && eManager.isLightingSetup()) {
                 Lighting lighting = eManager.getLighting();
 
-                if (currentHour == 5 && currentMinute == 0) {
+                if (currentHour >= 5 && currentMinute >= 0) {
                     lighting.triggerTransition(Lighting.DAWN); // Transisi terang
                 }
-                else if (currentHour == 6 && currentMinute == 0) {
+                else if (currentHour >= 6 && currentMinute >= 0) {
                     lighting.triggerTransition(Lighting.DAY); // Langsung terang penuh
                 }
-                else if (currentHour == 17 && currentMinute == 0) {
+                else if (currentHour >= 17 && currentMinute >= 0) {
                     lighting.triggerTransition(Lighting.DUSK); // Transisi gelap
                 }
-                else if (currentHour == 18 && currentMinute == 0) {
+                else if (currentHour >= 18 && currentMinute >= 0) {
                     lighting.triggerTransition(Lighting.NIGHT); // Langsung gelap penuh
                 }
             }
@@ -346,8 +346,90 @@ public class GamePanel extends JPanel implements Runnable {
         g2.drawString(loadingText, (screenWidth - textWidth) / 2, screenHeight / 2);
     }
     
+    public void openTimeCheatDialog() {
+        isTimePaused = true;
+        if (gameTime != null) gameTime.pause();
+
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            // Input hari (boleh kosong)
+            String dayInput = javax.swing.JOptionPane.showInputDialog(
+                this,
+                "Masukkan hari baru (kosongkan jika tidak ingin mengubah):",
+                "Cheat Day",
+                javax.swing.JOptionPane.PLAIN_MESSAGE
+            );
+
+            // Input waktu (boleh kosong)
+            String timeInput = javax.swing.JOptionPane.showInputDialog(
+                this,
+                "Masukkan waktu baru (format: HH:MM, kosongkan jika tidak ingin mengubah):",
+                "Cheat Time",
+                javax.swing.JOptionPane.PLAIN_MESSAGE
+            );
+
+            boolean valid = true;
+
+            // Proses input hari
+            if (dayInput != null && !dayInput.trim().isEmpty()) {
+                try {
+                    int day = Integer.parseInt(dayInput.trim());
+                    if (day > 0) {
+                        gameTime.setGameDay(day);
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(
+                            this, "Hari harus angka positif.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        valid = false;
+                    }
+                } catch (NumberFormatException e) {
+                    javax.swing.JOptionPane.showMessageDialog(
+                        this, "Input hari bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                    );
+                    valid = false;
+                }
+            }
+
+            // Proses input waktu
+            if (timeInput != null && !timeInput.trim().isEmpty()) {
+                if (timeInput.matches("\\d{1,2}:\\d{2}")) {
+                    String[] parts = timeInput.split(":");
+                    try {
+                        int hour = Integer.parseInt(parts[0]);
+                        int minute = Integer.parseInt(parts[1]);
+                        if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+                            gameTime.setTime(hour, minute);
+                        } else {
+                            javax.swing.JOptionPane.showMessageDialog(
+                                this, "Format waktu tidak valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                            );
+                            valid = false;
+                        }
+                    } catch (NumberFormatException e) {
+                        javax.swing.JOptionPane.showMessageDialog(
+                            this, "Input waktu bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        valid = false;
+                    }
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(
+                        this, "Format waktu harus HH:MM.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                    );
+                    valid = false;
+                }
+            }
+
+            if (valid) {
+                System.out.println("Cheat berhasil diterapkan.");
+            }
+
+            isTimePaused = false;
+            if (gameTime != null) gameTime.resume();
+        });
+    }
+
 
     private class EmptyTileManager extends TileManager {
+
         public EmptyTileManager(GamePanel gp) {
             super(gp);
         }
@@ -366,5 +448,6 @@ public class GamePanel extends JPanel implements Runnable {
         public void loadMap(String filePath) {
             // Do nothing
         }
+
     }
 }
