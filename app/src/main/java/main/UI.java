@@ -577,7 +577,7 @@ public class UI {
     public void drawTimeHUD() {
         g2.setFont(arial_20);
         g2.setColor(Color.white);
-        String time = String.format("Day %d - %02d:%02d", gp.gameDay, gp.gameHour, gp.gameMinute);
+        String time = String.format("Day %d - %02d:%02d", gp.currentDay, gp.currentHour, gp.currentMinute);
         int x = gp.tileSize / 2;
         int y = gp.tileSize / 2;
         g2.drawString(time, x, y);

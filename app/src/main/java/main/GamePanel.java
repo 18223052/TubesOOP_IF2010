@@ -14,6 +14,7 @@ import java.awt.Graphics2D;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
+import environment.GameTime;
 import environment.Lighting;
 import object.ItemFactory;
 import object.SuperObj;
@@ -34,11 +35,12 @@ public class GamePanel extends JPanel implements Runnable {
     public final int worldHeight = tileSize * maxScreenRow;
 
     // Game Time
-    public int gameMinute = 0;
-    public int gameHour = 6;
-    public int gameDay = 1;
-    private int timeCounter = 0;
+    public GameTime gameTime = new GameTime();
+    public int currentMinute = gameTime.getGameMinute();
+    public int currentHour = gameTime.getGameHour();
+    public int currentDay = gameTime.getGameDay();
     public boolean isTimePaused = false;
+
 
 
     // Current map
@@ -217,6 +219,10 @@ public class GamePanel extends JPanel implements Runnable {
         if (eManager.isLightingSetup()){
             eManager.getLighting().onPause();
         }
+
+        if (gameTime != null) {
+            gameTime.pause();
+        }
         synchronized (pauseLock){}
     }
 
@@ -229,6 +235,10 @@ public class GamePanel extends JPanel implements Runnable {
         if (eManager.isLightingSetup()){
             eManager.getLighting().onResume();
         }
+
+        if (gameTime != null) {
+            gameTime.resume();
+        }
     }
 
     public void update() {
@@ -238,35 +248,23 @@ public class GamePanel extends JPanel implements Runnable {
             eManager.update();
 
             // Game time update every n frames
-            if (gameState != pauseState){
-                timeCounter++;
-                if (timeCounter >= fps) {
-                    gameMinute += 5; // tambah 5 menit per 1 detik
-                    if (gameMinute >= 60) {
-                        gameMinute = 0;
-                        gameHour++;
-                    }
-                    if (gameHour >= 24) {
-                        gameHour = 0;
-                        gameDay++;
-                    }
-                    timeCounter = 0;
-                }
-            }
+            currentMinute = gameTime.getGameMinute();
+            currentHour = gameTime.getGameHour();
+            currentDay = gameTime.getGameDay();
 
             if (eManager != null && eManager.isLightingSetup()) {
                 Lighting lighting = eManager.getLighting();
 
-                if (gameHour == 5 && gameMinute == 0) {
+                if (currentHour == 5 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DAWN); // Transisi terang
                 }
-                else if (gameHour == 6 && gameMinute == 0) {
+                else if (currentHour == 6 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DAY); // Langsung terang penuh
                 }
-                else if (gameHour == 17 && gameMinute == 0) {
+                else if (currentHour == 17 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DUSK); // Transisi gelap
                 }
-                else if (gameHour == 18 && gameMinute == 0) {
+                else if (currentHour == 18 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.NIGHT); // Langsung gelap penuh
                 }
             }
