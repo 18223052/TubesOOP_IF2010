@@ -10,10 +10,12 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.Shape;
 import java.awt.AlphaComposite;
+import environment.GameTime;
 
 public class Lighting {
     GamePanel gp;
     BufferedImage darknessFilter;
+    GameTime gameTime;
     
     // Konstanta waktu dalam nanodetik (10 detik per transisi)
     final long TRANSITION_DURATION = 10_000_000_000L;
@@ -26,10 +28,10 @@ public class Lighting {
     private float startAlpha = 0f;
 
     // Day State
-    final int DAY = 0;
-    final int DUSK = 1;
-    final int NIGHT = 2;
-    final int DAWN = 3;
+    public static final int DAY = 0;
+    public static final int DUSK = 1;
+    public static final int NIGHT = 2;
+    public static final int DAWN = 3;
     private int dayState = DAY;
     private int previousDayState = DAY;
     private long pauseStartTime;
@@ -119,13 +121,13 @@ public class Lighting {
             updateTransition(currentTime);
         } 
         // Jika tidak dalam transisi, cek apakah sudah waktunya untuk memulai transisi berikutnya
-        else {
-            long elapsedSinceLastTransition = currentTime - transitionStartTime;
+        // else {
+        //     long elapsedSinceLastTransition = currentTime - transitionStartTime;
             
-            if (elapsedSinceLastTransition >= TRANSITION_DURATION) {
-                startNextTransition(currentTime);
-            }
-        }
+        //     if (elapsedSinceLastTransition >= TRANSITION_DURATION) {
+        //         startNextTransition(currentTime);
+        //     }
+        // }
     }
     
     private void updateTransition(long currentTime) {
@@ -203,6 +205,43 @@ public class Lighting {
             default: return "UNKNOWN";
         }
     }
+
+    public void triggerTransition(int targetState) {
+        if (dayState == targetState || inTransition) return;
+
+        previousDayState = dayState;
+        dayState = targetState;
+
+        switch (targetState) {
+            case DUSK:  // Fade to dark
+                startAlpha = filterAlpha;
+                targetAlpha = 1f;
+                inTransition = true;
+                transitionStartTime = System.nanoTime();
+                break;
+            case DAWN:  // Fade to light
+                startAlpha = filterAlpha;
+                targetAlpha = 0f;
+                inTransition = true;
+                transitionStartTime = System.nanoTime();
+                break;
+            case NIGHT: // Langsung gelap
+                filterAlpha = 1f;
+                startAlpha = 1f;
+                targetAlpha = 1f;
+                inTransition = false;
+                break;
+            case DAY:   // Langsung terang
+                filterAlpha = 0f;
+                startAlpha = 0f;
+                targetAlpha = 0f;
+                inTransition = false;
+                break;
+        }
+
+        System.out.println("Triggered transition: " + getDayStateName(previousDayState) + " -> " + getDayStateName(dayState));
+    }
+
 
 
     public void skipDay() {

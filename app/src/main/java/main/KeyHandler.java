@@ -39,8 +39,10 @@ public class KeyHandler implements KeyListener {
 
         // State transitions based on game state
         if (gp.gameState == gp.playState) {
+            gp.isTimePaused = false;
             handlePlayState(code);
         } else if (gp.gameState == gp.pauseState) {
+            gp.isTimePaused = true;
             handlePauseState(code);
         } else if (gp.gameState == gp.dialogState) {
             handleDialogState(code);

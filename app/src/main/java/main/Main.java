@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 public class Main {
+    private static boolean isTrue = true;
     public static void main(String[] args) {
         // Create and set up the window
         JFrame window = new JFrame();
@@ -27,5 +28,10 @@ public class Main {
                 gp.startGameThread();
             }
         });
+
+        while(isTrue){
+            System.out.println(gp.gameState);
+            System.out.println(gp.isTimePaused);
+        }
     }
 }

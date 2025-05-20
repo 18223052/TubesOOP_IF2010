@@ -14,6 +14,7 @@ import java.awt.Graphics2D;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
+import environment.Lighting;
 import object.ItemFactory;
 import object.SuperObj;
 import tile.TileManager;
@@ -31,6 +32,14 @@ public class GamePanel extends JPanel implements Runnable {
     public final int maxWorldRow = 50;
     public final int worldWidth = tileSize * maxWorldCol;
     public final int worldHeight = tileSize * maxScreenRow;
+
+    // Game Time
+    public int gameMinute = 0;
+    public int gameHour = 6;
+    public int gameDay = 1;
+    private int timeCounter = 0;
+    public boolean isTimePaused = false;
+
 
     // Current map
     public String currMap = "/maps/farmmm.txt";
@@ -204,6 +213,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void pauseGameThread(){
+        isTimePaused = true;
         if (eManager.isLightingSetup()){
             eManager.getLighting().onPause();
         }
@@ -211,6 +221,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void resumeGameThread(){
+        isTimePaused = false;
         synchronized(pauseLock){
             pauseLock.notifyAll();
         }
@@ -225,6 +236,41 @@ public class GamePanel extends JPanel implements Runnable {
             player.update();
             tileM.checkTeleport();
             eManager.update();
+
+            // Game time update every n frames
+            if (gameState != pauseState){
+                timeCounter++;
+                if (timeCounter >= fps) {
+                    gameMinute += 5; // tambah 5 menit per 1 detik
+                    if (gameMinute >= 60) {
+                        gameMinute = 0;
+                        gameHour++;
+                    }
+                    if (gameHour >= 24) {
+                        gameHour = 0;
+                        gameDay++;
+                    }
+                    timeCounter = 0;
+                }
+            }
+
+            if (eManager != null && eManager.isLightingSetup()) {
+                Lighting lighting = eManager.getLighting();
+
+                if (gameHour == 5 && gameMinute == 0) {
+                    lighting.triggerTransition(Lighting.DAWN); // Transisi terang
+                }
+                else if (gameHour == 6 && gameMinute == 0) {
+                    lighting.triggerTransition(Lighting.DAY); // Langsung terang penuh
+                }
+                else if (gameHour == 17 && gameMinute == 0) {
+                    lighting.triggerTransition(Lighting.DUSK); // Transisi gelap
+                }
+                else if (gameHour == 18 && gameMinute == 0) {
+                    lighting.triggerTransition(Lighting.NIGHT); // Langsung gelap penuh
+                }
+            }
+
         } else if (gameState == inventoryState) {
             inventoryController.update();
         } else if (gameState == sleepState){
