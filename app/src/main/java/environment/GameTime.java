@@ -43,7 +43,7 @@ public class GameTime implements Runnable {
         }
     }
 
-    private void addTime(int minutes) {
+    private synchronized void addTime(int minutes) {
         gameMinute += minutes;
         if (gameMinute >= 60) {
             gameMinute = 0;
@@ -80,15 +80,31 @@ public class GameTime implements Runnable {
         }
     }
 
-    public void setTime(int hour, int minute) {
+    public synchronized void setTime(int hour, int minute) {
         this.gameHour = hour;
         this.gameMinute = minute;
     }
 
-    public void setGameDay(int day) {
+    public synchronized void setGameDay(int day) {
         if (day > 0) {
             this.gameDay = day;
         }
+    }
+
+    public void add1Day(){
+        this.gameDay += 1;
+    }
+
+    public void nextDay() {
+        gameDay++;
+        gameHour = 0;   
+        gameMinute = 0;
+    }
+
+    public void nextDaySleep() {
+        gameDay++;
+        gameHour = 6;      // Mulai pagi
+        gameMinute = 0;
     }
 
 

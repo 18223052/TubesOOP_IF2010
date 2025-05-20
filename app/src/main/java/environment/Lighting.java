@@ -15,7 +15,7 @@ import environment.GameTime;
 public class Lighting {
     GamePanel gp;
     BufferedImage darknessFilter;
-    GameTime gameTime;
+    GameTime gameTime = new GameTime();
     
     // Konstanta waktu dalam nanodetik (10 detik per transisi)
     final long TRANSITION_DURATION = 10_000_000_000L;
@@ -252,6 +252,8 @@ public class Lighting {
     targetAlpha = 0f;
     startAlpha = 0f;
     inTransition = false;
+    gameTime.nextDaySleep();
+    System.out.println(gameTime.getGameDay());
     
 
     transitionStartTime = System.nanoTime();

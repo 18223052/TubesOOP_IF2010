@@ -24,6 +24,7 @@ import object.IConsumable;
 import object.IFishAttributes;
 import object.IItem;
 import entity.Recipe;
+import environment.GameTime;
 
 public class UI {
 
@@ -74,6 +75,7 @@ public class UI {
 
         if (gp.gameState == gp.playState) {
             drawTimeHUD();
+            gp.repaint();
         }
         if (gp.gameState == gp.pauseState) {
             drawPause();
@@ -578,7 +580,7 @@ public class UI {
         String season = gp.gameTime.getSeasonName();
         g2.setFont(arial_20);
         g2.setColor(Color.white);
-        String time = String.format("Day %d - %02d:%02d", gp.currentDay, gp.currentHour, gp.currentMinute);
+        String time = String.format("Day %d - %02d:%02d", gp.gameTime.getGameDay(), gp.gameTime.getGameHour(), gp.gameTime.getGameMinute());
         String seasonText = "Season: " + season;
         int x = gp.tileSize / 2;
         int y = gp.tileSize / 2;

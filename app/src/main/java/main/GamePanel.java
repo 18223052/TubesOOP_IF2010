@@ -16,6 +16,8 @@ import entity.Player;
 import environment.EnvironmentManager;
 import environment.GameTime;
 import environment.Lighting;
+import environment.WeatherManager;
+import environment.WeatherType;
 import object.ItemFactory;
 import object.SuperObj;
 import tile.TileManager;
@@ -41,7 +43,9 @@ public class GamePanel extends JPanel implements Runnable {
     public int currentDay = gameTime.getGameDay();
     public boolean isTimePaused = false;
 
-
+    // Weather
+    public WeatherManager weatherManager;
+    public WeatherType currentWeather;
 
     // Current map
     public String currMap = "/maps/farmmm.txt";
@@ -125,6 +129,11 @@ public class GamePanel extends JPanel implements Runnable {
         // inventoryController = new InventoryController(this);
         itemFactory = new ItemFactory(this);
         sleepController = new SleepController(this, player);
+
+        // Weather
+        weatherManager = new WeatherManager();
+        currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
+
         
 
         player.inventory = inventoryController;
@@ -255,16 +264,16 @@ public class GamePanel extends JPanel implements Runnable {
             if (eManager != null && eManager.isLightingSetup()) {
                 Lighting lighting = eManager.getLighting();
 
-                if (currentHour >= 5 && currentMinute >= 0) {
+                if (currentHour == 5 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DAWN); // Transisi terang
                 }
-                else if (currentHour >= 6 && currentMinute >= 0) {
+                else if (currentHour == 6 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DAY); // Langsung terang penuh
                 }
-                else if (currentHour >= 17 && currentMinute >= 0) {
+                else if (currentHour == 17 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DUSK); // Transisi gelap
                 }
-                else if (currentHour >= 18 && currentMinute >= 0) {
+                else if (currentHour == 18 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.NIGHT); // Langsung gelap penuh
                 }
             }
@@ -334,6 +343,19 @@ public class GamePanel extends JPanel implements Runnable {
         
         g2.dispose();
     }
+
+    public void nextDay() {
+        gameTime.nextDay(); // kamu harus buat method ini di GameTime.java
+        currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
+
+        if (currentWeather == WeatherType.RAINY) {
+            // tileManager.waterAllSoilTiles(); // kamu juga buat ini di TileManager.java
+        }
+
+        // Tambahkan hal lain yang perlu dilakukan setiap hari
+        // Misalnya: update tanaman, reset status karakter, dsb.
+    }
+
 
     private void drawLoadingScreen(Graphics2D g2) {
         g2.setColor(Color.BLACK);
