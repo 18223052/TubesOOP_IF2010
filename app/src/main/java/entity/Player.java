@@ -26,7 +26,7 @@ public class Player extends Entity {
     public int hasKey=0;
     
     // Interaction box for player actions
-    private Rectangle interactionBox;
+    public Rectangle interactionBox;
     private int interactionDistance;
     private int interactionTileRow;
     private int interactionTileCol;

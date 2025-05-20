@@ -57,6 +57,8 @@ public class GamePanel extends JPanel implements Runnable {
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
     public SleepController sleepController;
+    public int interactionTileCol;
+    public int interactionTileRow;
     
     // Arrays for game objects and NPCs
     public SuperObj obj[] = new SuperObj[100];
@@ -223,7 +225,9 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         if (gameState == playState) {
             player.update();
-            tileM.checkTeleport();
+            interactionTileCol = player.interactionBox.x / tileSize;
+            interactionTileRow = player.interactionBox.y / tileSize;
+            tileM.checkTeleport(interactionTileCol, interactionTileRow);
             eManager.update();
         } else if (gameState == inventoryState) {
             inventoryController.update();
