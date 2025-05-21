@@ -3,6 +3,8 @@ package main;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import entity.Recipe;
+
 public class KeyHandler implements KeyListener {
 
     GamePanel gp;
@@ -22,15 +24,6 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        char ch = e.getKeyChar();
-        if (Character.isDigit(ch)) {
-            inputBuffer.append(ch);
-            singleNumPress = ch - '0';
-        } else {
-            singleNumPress = -1;
-            multiNumPress = inputBuffer.toString();
-            inputBuffer.setLength(0);
-        }
     }
 
     @Override
@@ -143,30 +136,65 @@ public void handleInventoryState(int code) {
         gp.inventoryController.setFilter(filters[currentFilterIndex]);
     }
 
-    public void handleCookingState(int code) {
-        if (code == KeyEvent.VK_E) {
-            gp.gameState = gp.playState;
-            gp.resumeGameThread();
+        public void handleCookingState(int code) {
+        boolean stateChanged = false; // Flag untuk menandai jika ada perubahan yang butuh repaint
+
+        switch (code) {
+            case KeyEvent.VK_K:
+            case KeyEvent.VK_ESCAPE: // Keduanya untuk keluar
+                gp.gameState = gp.playState;
+                gp.resumeGameThread();       // PENTING: Bangunkan thread game utama!
+                // Reset UI state saat keluar (sudah ada di kode Anda, itu bagus)
+                gp.ui.selectRecipe = 0;
+                gp.ui.cookingMenuSelection = 0;
+                gp.ui.doneCooking = false;
+                // gp.ui.hasIngradients = true; // Tidak perlu direset di sini, akan dicek ulang saat masuk menu
+                // stateChanged = true; // Tidak perlu repaint di sini, run loop akan ambil alih
+                return; // Langsung keluar dari handleCookingState karena state sudah playState
+
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_W: // Konsistensi dengan play state
+                if (gp.ui.selectRecipe == 0) {
+                    gp.ui.moveCookingSelectionUp();
+                    stateChanged = true;
+                }
+                break;
+
+            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S: // Konsistensi dengan play state
+                if (gp.ui.selectRecipe == 0) {
+                    gp.ui.moveCookingSelectionDown();
+                    stateChanged = true;
+                }
+                break;
+
+            case KeyEvent.VK_ENTER:
+                // enterPressed = true; // Mungkin tidak dibutuhkan flag ini
+
+                if (gp.ui.doneCooking || gp.ui.selectRecipe == -1) {
+                    gp.ui.selectRecipe = 0;
+                    gp.ui.doneCooking = false;
+                } else if (gp.ui.selectRecipe == 0) {
+                    gp.ui.selectChosenRecipe();
+                } else if (gp.ui.selectRecipe > 0) {
+                    gp.ui.attemptToCookSelectedRecipe();
+                }
+                stateChanged = true;
+                break;
+
+            case KeyEvent.VK_0:
+            case KeyEvent.VK_BACK_SPACE:
+                if (gp.ui.selectRecipe != 0) {
+                    gp.ui.selectRecipe = 0;
+                    gp.ui.doneCooking = false;
+                    stateChanged = true;
+                }
+                break;
         }
 
-        if (code >= KeyEvent.VK_0 && code <= KeyEvent.VK_9) {
-            int digit = code - KeyEvent.VK_0;
-            singleNumPress = digit;
-
-            // Build multi-digit number input
-            if (digit != 0 || !multiNumPress.isEmpty()) {
-                multiNumPress += digit;
-            }
-        }
-
-        if (code == KeyEvent.VK_ENTER) {
-            enterPressed = true;
-        }
-
-        if (code == KeyEvent.VK_BACK_SPACE) {
-            if (!multiNumPress.isEmpty()) {
-                multiNumPress = multiNumPress.substring(0, multiNumPress.length() - 1);
-            }
+        // Jika ada perubahan UI dalam cookingState, panggil repaint
+        if (stateChanged && gp.gameState == gp.cookingState) {
+            gp.repaint();
         }
     }
 
@@ -179,6 +207,10 @@ public void handleInventoryState(int code) {
             case KeyEvent.VK_S -> downPressed = false;
             case KeyEvent.VK_A -> leftPressed = false;
             case KeyEvent.VK_D -> rightPressed = false;
+            case KeyEvent.VK_E -> rightPressed = false;
+            
+            // Reset enterPressed flag after it's released, if it's a "one-shot" action.
+            // This prevents multiple triggers if the game loop processes it quickly.
         }
     }
 }

@@ -26,7 +26,7 @@ public class Player extends Entity {
     public int hasKey=0;
     
     // Interaction box for player actions
-    private Rectangle interactionBox;
+    public Rectangle interactionBox;
     private int interactionDistance;
     private int interactionTileRow;
     private int interactionTileCol;
@@ -340,6 +340,7 @@ public class Player extends Entity {
         SuperObj obj = gp.obj[i];
 
         if (obj != null){
+            gp.currObj = obj;
             if (obj instanceof Bed){
                 System.out.println("DEBUG INTERACTABLE bed");
                 gp.sleepController.startSleep();
@@ -356,7 +357,11 @@ public class Player extends Entity {
                 System.out.println("DEBUG INTERACTABLE stove");
                 // Cast to Stove and start cooking
                 Stove stove = (Stove) obj;
-                stove.startCooking(gp);
+                gp.gameState = gp.cookingState;
+                gp.ui.selectRecipe = 0;
+                gp.ui.doneCooking = false;
+                gp.ui.hasIngradients = true;
+                gp.ui.cookingMenuSelection = 0;
             }
             if (obj instanceof TV){
                 System.out.println("DEBUG INTERACTABLE TV");

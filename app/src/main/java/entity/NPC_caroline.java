@@ -16,12 +16,12 @@ public class NPC_caroline extends Entity {
     private String relationshipStatus;
     private final int MAX_HEART_POINTS = 150;
 
-    public NPC_caroline(GamePanel gp, ArrayList<BaseItem> lovedItems, ArrayList<BaseItem> likedItems, ArrayList<BaseItem> hatedItems) {
+    public NPC_caroline(GamePanel gp) {
         super(gp);
         direction = "down";
-        this.lovedItems = lovedItems;
-        this.likedItems = likedItems;
-        this.hatedItems = hatedItems;
+        // this.lovedItems = lovedItems;
+        // this.likedItems = likedItems;
+        // this.hatedItems = hatedItems;
         
         // Set up dialogues
         setDialogue();
