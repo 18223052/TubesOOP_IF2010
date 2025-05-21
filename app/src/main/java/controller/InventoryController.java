@@ -3,12 +3,10 @@ package controller;
 
 import java.util.ArrayList;
 
-import entity.Ingredient;
-import entity.Recipe;
+import java.util.Iterator;
+
 import main.GamePanel;
-import object.FoodItem;
 import object.IConsumable;
-import object.IFishAttributes;
 import object.IItem;
 
 public class InventoryController {
@@ -39,23 +37,28 @@ public class InventoryController {
 
 
     public void addItem(IItem item) {
-        if (inventory.size() < maxInventorySize) {
+        if (inventory.size() < maxInventorySize || item.isStackable()) {
 
             if (item.isStackable()) {
-                boolean itemExists = false;
-                for (IItem i : inventory) {
-                    if (i.getName().equals(item.getName())) {
-
-                        itemExists = true;
-                        break;
-                    }
-                }
-                if (!itemExists) {
-                    inventory.add(item);
-                }
-            } else {
-
+                boolean itemStacked = false;
                 inventory.add(item);
+                System.out.println("Added stackable item: " + item.getName() + " to inventory. Total: " + getItemCount(item.getName()));
+                itemStacked = true;
+
+                // boolean itemExists = false;
+                // for (IItem i : inventory) {
+                //     if (i.getName().equals(item.getName())) {
+
+                //         itemExists = true;
+                //         break;
+                //     }
+                // }
+                // if (!itemExists) {
+                //     inventory.add(item);
+                // }
+            } else {
+                inventory.add(item);
+                System.out.println("Added non-stackable item: " + item.getName() + " to inventory");
             }
             System.out.println("Added item: " + item.getName() + " to inventory");
         } else {
@@ -71,11 +74,85 @@ public class InventoryController {
 
             if (selectedSlot >= inventory.size() && inventory.size() > 0) {
                 selectedSlot = inventory.size() - 1;
+            } else if (inventory.isEmpty()){
+                selectedSlot = 0;
             }
         }
     }
 
-    // Get the currently selected item
+    public void removeItems(String itemName, int quantity) {
+        int removedCount = 0;
+        // pake iterator
+        Iterator<IItem> iterator = inventory.iterator();
+        while (iterator.hasNext() && removedCount < quantity) {
+            IItem item = iterator.next();
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                iterator.remove(); // Hapus item saat ini
+                removedCount++;
+                System.out.println("Removed " + item.getName() + " (count: " + removedCount + "/" + quantity + ")");
+            }
+        }
+        if (removedCount < quantity) {
+            System.out.println("Warning: Could not remove " + quantity + " of " + itemName + ". Only " + removedCount + " found.");
+        }
+        // ni kondisi kalo dah kehapus, selected slot nya harus dipastiin masi jalan
+        if (selectedSlot >= inventory.size() && inventory.size() > 0) {
+            selectedSlot = inventory.size() - 1;
+        } else if (inventory.isEmpty()) {
+            selectedSlot = 0;
+        }
+    }
+
+    public void removeCategoryItems(String category, int quantity) {
+    int removedCount = 0;
+    Iterator<IItem> iterator = inventory.iterator();
+    while (iterator.hasNext() && removedCount < quantity) {
+        IItem item = iterator.next();
+        if (item.getCategory().equalsIgnoreCase(category)) {
+            iterator.remove();
+            removedCount++;
+            System.out.println("Removed " + item.getName() + " from category " + category);
+        }
+    }
+    if (removedCount < quantity) {
+        System.out.println("Warning: Could not remove " + quantity + " items from category " + category + ". Only " + removedCount + " found.");
+    }
+    // Update selected slot
+    if (selectedSlot >= inventory.size() && inventory.size() > 0) {
+        selectedSlot = inventory.size() - 1;
+    } else if (inventory.isEmpty()) {
+        selectedSlot = 0;
+    }
+}
+
+    /**
+     * Mendapatkan jumlah item tertentu di inventaris.
+     */
+    public int getItemCount(String itemName) {
+        int count = 0;
+        for (IItem item : inventory) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Mendapatkan jumlah total item dalam kategori tertentu.
+     * Berguna untuk "Any Fish".
+     */
+    public int getItemCountByCategory(String category) {
+        int count = 0;
+        for (IItem item : inventory) {
+            if (item.getCategory().equalsIgnoreCase(category)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+
     public IItem getSelectedItem() {
         if (inventory.isEmpty()) {
             return null;
@@ -179,145 +256,7 @@ public class InventoryController {
         return inventory;
     }
 
-    // // === COOKING RELATED METHODS ===
-    
-    // /**
-    //  * Checks if player has the ingredients for a recipe
-    //  */
-    // public boolean hasIngredientsForRecipe(Recipe recipe) {
-    //     for (Ingredient i : recipe.ingredients) {
-    //         int reqAmount = i.amount;
-    //         int availableAmount = getItemCount(i.name);
 
-    //         if (i.name.toLowerCase().contains("any fish")) {
-    //             availableAmount = getItemCountByCategory("fish");
-    //         }
-            
-    //         if (availableAmount < reqAmount) {
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // }
-
-    // /**
-    //  * Consumes ingredients for a recipe
-    //  */
-    // public boolean consumeIngredientsForRecipe(Recipe recipe) {
-    //     if (!hasIngredientsForRecipe(recipe)) {
-    //         return false;
-    //     }
-        
-    //     Map<String, Integer> toConsume = new HashMap<>();
-        
-    //     for (Ingredient ingredient : recipe.ingredients) {
-    //         String ingredientName = ingredient.name;
-    //         int amount = ingredient.amount;
-            
-    //         // Special case for "any fish"
-    //         if (ingredientName.toLowerCase().contains("any fish")) {
-    //             int consumed = 0;
-    //             for (int i = inventory.size() - 1; i >= 0 && consumed < amount; i--) {
-    //                 IItem item = inventory.get(i);
-    //                 if (item.getCategory().equals("fish")) {
-    //                     inventory.remove(i);
-    //                     consumed++;
-    //                     System.out.println("Consumed: " + item.getName() + " for recipe");
-    //                 }
-    //             }
-    //         } else {
-    //             toConsume.put(ingredientName, amount);
-    //         }
-    //     }
-        
-    //     // Consume specific ingredients
-    //     for (Map.Entry<String, Integer> entry : toConsume.entrySet()) {
-    //         String itemName = entry.getKey();
-    //         int amountToConsume = entry.getValue();
-            
-    //         for (int i = inventory.size() - 1; i >= 0 && amountToConsume > 0; i--) {
-    //             IItem item = inventory.get(i);
-    //             if (item.getName().equalsIgnoreCase(itemName)) {
-    //                 inventory.remove(i);
-    //                 amountToConsume--;
-    //                 System.out.println("Consumed: " + item.getName() + " for recipe");
-    //             }
-    //         }
-    //     }
-        
-    //     // Update selected slot if needed
-    //     if (selectedSlot >= inventory.size() && inventory.size() > 0) {
-    //         selectedSlot = inventory.size() - 1;
-    //     }
-        
-    //     return true;
-    // }
-    
-    // /**
-    //  * Cooks a recipe and adds the result to inventory
-    //  */
-    // public boolean cookRecipe(Recipe recipe) {
-    //     if (!consumeIngredientsForRecipe(recipe)) {
-    //         return false;
-    //     }
-        
-    //     String recipeName = recipe.title.toLowerCase().replace(" ", "");
-    //     FoodItem cookedItem = gp.itemFactory.createFood(recipeName);
-        
-    //     if (cookedItem == null) {
-    //         // Create generic consumable if specific recipe not found in factory
-    //         cookedItem = new FoodItem(recipe.title, 0, 50, 30, gp);
-    //     }
-        
-    //     addItem(cookedItem);
-    //     System.out.println("Successfully cooked: " + recipe.title);
-    //     return true;
-    // }
-    
-    // // === UTILITY METHODS ===
-    
-    // /**
-    //  * Gets the count of a specific item in inventory
-    //  */
-    // public int getItemCount(String itemName) {
-    //     int count = 0;
-    //     for (IItem item : inventory) {
-    //         if (item.getName().equalsIgnoreCase(itemName)) {
-    //             count++;
-    //         }
-    //     }
-    //     return count;
-    // }
-    
-    // /**
-    //  * Gets the total count of items in a specific category
-    //  */
-    // public int getItemCountByCategory(String category) {
-    //     int count = 0;
-    //     for (IItem item : inventory) {
-    //         if (item.getCategory().equals(category)) {
-    //             count++;
-    //         }
-    //     }
-    //     return count;
-    // }
-    
-    // /**
-    //  * Gets all items of a specific category
-    //  */
-    // public ArrayList<IItem> getItemsByCategory(String category) {
-    //     ArrayList<IItem> categoryItems = new ArrayList<>();
-    //     for (IItem item : inventory) {
-    //         if (item.getCategory().equals(category)) {
-    //             categoryItems.add(item);
-    //         }
-    //     }
-    //     return categoryItems;
-    // }
-    
-    // /**
-    //  * Checks if player has a specific tool equipped
-    //  */
     public boolean hasToolEquipped(String toolName) {
         IItem activeItem = gp.player.getActiveItem();
         return activeItem != null && activeItem.getName().equalsIgnoreCase(toolName);

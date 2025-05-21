@@ -2,6 +2,7 @@ package main;
 
 import javax.swing.JPanel;
 
+import controller.CookingController;
 import controller.InventoryController;
 import controller.SleepController;
 
@@ -53,10 +54,14 @@ public class GamePanel extends JPanel implements Runnable {
     public Collision colCheck;
     public AssetSetter aSetter;
     public Player player;
+
+    // controller
     public InventoryController inventoryController;
+    public SleepController sleepController;
+    public CookingController cookingController;
+
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
-    public SleepController sleepController;
     public int interactionTileCol;
     public int interactionTileRow;
     
@@ -87,6 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         
         inventoryController = new InventoryController(this);
+        cookingController = new CookingController(this);
 
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
@@ -104,23 +110,14 @@ public class GamePanel extends JPanel implements Runnable {
         colCheck = new Collision(this);
         aSetter = new AssetSetter(this);
         ui = new UI(this);
-        
-
         player = new Player(this, keyH);
-        
-
         tileM = new TileManager(this);
-        
- 
         eManager = new EnvironmentManager(this);
-        // inventoryController = new InventoryController(this);
         itemFactory = new ItemFactory(this);
         sleepController = new SleepController(this, player);
         
-
         player.inventory = inventoryController;
-        
-
+    
         tileM.setup();  
         setupMap();     
         addStartingItems();
@@ -150,6 +147,9 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
         inventoryController.addItem(itemFactory.createFood("veggiesoup"));
+        inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createFood("salmon"));
+
     }
 
 
