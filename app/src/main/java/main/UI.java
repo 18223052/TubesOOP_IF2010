@@ -25,6 +25,7 @@ import object.IConsumable;
 import object.IFishAttributes;
 import object.IItem;
 import entity.Recipe;
+import environment.GameTime;
 
 public class UI {
 
@@ -82,7 +83,8 @@ public class UI {
         setupDefaultGraphics(g2);
 
         if (gp.gameState == gp.playState) {
-   
+            drawTimeHUD();
+            gp.repaint();
         }
         if (gp.gameState == gp.pauseState) {
             drawPause();
@@ -714,5 +716,18 @@ public class UI {
         int textWidth = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         g2.drawString(text, frameX + (frameWidth - textWidth) / 2, y);
     }
+
+    public void drawTimeHUD() {
+        String season = gp.gameTime.getSeasonName();
+        g2.setFont(arial_20);
+        g2.setColor(Color.white);
+        String time = String.format("Day %d - %02d:%02d", gp.gameTime.getGameDay(), gp.gameTime.getGameHour(), gp.gameTime.getGameMinute());
+        String seasonText = "Season: " + season;
+        int x = gp.tileSize / 2;
+        int y = gp.tileSize / 2;
+        g2.drawString(time, x, y);
+        g2.drawString(seasonText, x, y + 30);   
+    }
+
 
 }

@@ -29,11 +29,14 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
+        // System.out.println("Pressed: " + code); // Debug
 
         // State transitions based on game state
         if (gp.gameState == gp.playState) {
+            gp.isTimePaused = false;
             handlePlayState(code);
         } else if (gp.gameState == gp.pauseState) {
+            gp.isTimePaused = true;
             handlePauseState(code);
         } else if (gp.gameState == gp.dialogState) {
             handleDialogState(code);
@@ -57,6 +60,10 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_I -> gp.gameState = gp.inventoryState;
             case KeyEvent.VK_C -> gp.gameState = gp.statsState;
             case KeyEvent.VK_ENTER -> enterPressed = true;
+            case KeyEvent.VK_SLASH -> {
+                gp.openTimeCheatDialog();
+                break;
+            }
         }
     }
 
@@ -109,7 +116,7 @@ public void handleInventoryState(int code) {
             toggleFilter();
             filterPressed = true;
             gp.repaint(); // Trigger a screen update after changing the filter
-        }
+        }    
     }
 }
 
