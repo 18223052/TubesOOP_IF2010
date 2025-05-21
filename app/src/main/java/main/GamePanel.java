@@ -1,17 +1,17 @@
 package main;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
 import javax.swing.JPanel;
 
 import controller.CookingController;
 import controller.InventoryController;
+import controller.ShippingBinController;
 import controller.SleepController;
-
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
@@ -59,6 +59,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int statsState = 5;
     public final int sleepState = 6;
     public final int cookingState = 7;
+    public final int shippingBinState = 8;
+    public final int storeState = 9;
     public int gameState;
     private final Object pauseLock = new Object();
 
@@ -74,6 +76,7 @@ public class GamePanel extends JPanel implements Runnable {
     public InventoryController inventoryController;
     public SleepController sleepController;
     public CookingController cookingController;
+    public ShippingBinController shippingBinController;
 
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
@@ -108,6 +111,7 @@ public class GamePanel extends JPanel implements Runnable {
         
         inventoryController = new InventoryController(this);
         cookingController = new CookingController(this);
+        shippingBinController = new ShippingBinController(this);
 
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
