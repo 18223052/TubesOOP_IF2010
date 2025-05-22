@@ -12,6 +12,7 @@ import controller.CookingController;
 import controller.InventoryController;
 import controller.ShippingBinController;
 import controller.SleepController;
+import controller.StoreController;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
@@ -77,6 +78,7 @@ public class GamePanel extends JPanel implements Runnable {
     public SleepController sleepController;
     public CookingController cookingController;
     public ShippingBinController shippingBinController;
+    public StoreController storeController;
 
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
@@ -112,6 +114,7 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController = new InventoryController(this);
         cookingController = new CookingController(this);
         shippingBinController = new ShippingBinController(this);
+        storeController = new StoreController(this);
 
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
@@ -145,6 +148,7 @@ public class GamePanel extends JPanel implements Runnable {
         tileM.setup();  
         setupMap();     
         addStartingItems();
+        addStoreItems();
         eManager.setup();
 
         isComplete = true;
@@ -175,7 +179,23 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createFood("salmon"));
 
     }
+  
+    // starting item buat item awal
+    private void addStoreItems() {
+        storeController.addItem(itemFactory.createTool("hoe"));
+        storeController.addItem(itemFactory.createTool("hoe"));
+        storeController.addItem(itemFactory.createTool("wateringcan"));
+        storeController.addItem(itemFactory.createTool("wateringcan"));
+        storeController.addItem(itemFactory.createTool("fishingpole"));
+        storeController.addItem(itemFactory.createTool("fishingpole"));
+        storeController.addItem(itemFactory.createTool("pickaxe"));
+        storeController.addItem(itemFactory.createTool("pickaxe"));
+        storeController.addItem(itemFactory.createFood("veggiesoup"));
+        storeController.addItem(itemFactory.createFood("veggiesoup"));
+        storeController.addItem(itemFactory.createFood("salmon"));
+        storeController.addItem(itemFactory.createFood("salmon"));
 
+    }
 
     public void startGameThread() {
 

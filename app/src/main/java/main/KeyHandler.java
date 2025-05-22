@@ -46,6 +46,8 @@ public class KeyHandler implements KeyListener {
             handleCookingState(code);
         } else if (gp.gameState == gp.shippingBinState) {
             handleShippingBinState(code);
+        } else if (gp.gameState == gp.storeState) {
+            handleStoreState(code);
         }
     }
 
@@ -87,6 +89,10 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_E) {
             gp.gameState = gp.playState;
             gp.resumeGameThread();
+        }
+        if (code == KeyEvent.VK_S) {
+            gp.gameState = gp.storeState;
+            gp.repaint();
         }
     }
 
@@ -194,6 +200,69 @@ public class KeyHandler implements KeyListener {
         if (gp.gameState == gp.playState) {
             gp.gameState = gp.shippingBinState;
         } else if (gp.gameState == gp.shippingBinState) {
+            gp.gameState = gp.playState;
+            gp.resumeGameThread();
+        }
+        inventoryPressed = true;
+    }
+
+    public void handleStoreState(int code) {
+        switch (code) {
+            case KeyEvent.VK_E ->
+                toggleStoreState();
+            case KeyEvent.VK_W -> {
+                gp.storeController.moveSelectionUp();
+                gp.repaint();
+            }
+            case KeyEvent.VK_S -> {
+                if (gp.gameState == gp.storeState) {
+                    gp.storeController.moveSelectionDown();
+                    gp.repaint();
+                } else {
+                    gp.gameState = gp.storeState;
+                }
+
+            }
+            case KeyEvent.VK_A -> {
+                gp.storeController.moveSelectionLeft();
+                gp.repaint();
+            }
+            case KeyEvent.VK_D -> {
+                gp.storeController.moveSelectionRight();
+                gp.repaint();
+            }
+            case KeyEvent.VK_UP -> {
+                gp.inventoryController.moveSelectionUp();
+                gp.repaint();
+            }
+            case KeyEvent.VK_DOWN -> {
+                gp.inventoryController.moveSelectionDown();
+                gp.repaint();
+            }
+            case KeyEvent.VK_LEFT -> {
+                gp.inventoryController.moveSelectionLeft();
+                gp.repaint();
+            }
+            case KeyEvent.VK_RIGHT -> {
+                gp.inventoryController.moveSelectionRight();
+                gp.repaint();
+            }
+            case KeyEvent.VK_F -> {
+                toggleFilter();
+                filterPressed = true;
+                gp.repaint(); // Trigger a screen update after changing the filter
+            }
+            case KeyEvent.VK_ENTER -> {
+                gp.storeController.sellItem(gp.storeController.getSelectedSlot());
+                sellItemPressed = true;
+                gp.repaint();
+            }
+
+        }
+    }
+
+    private void toggleStoreState() {
+        if (gp.gameState == gp.storeState) {
             gp.gameState = gp.playState;
             gp.resumeGameThread();
         }

@@ -13,6 +13,7 @@ import java.util.Objects;
 import controller.CookingController;
 import controller.InventoryController;
 import controller.ShippingBinController;
+import controller.StoreController;
 import entity.Ingredient;
 import entity.NPC_mayortadi;
 import entity.Recipe;
@@ -31,6 +32,7 @@ public class UI {
     private InventoryController inventory;
     private CookingController cookingController;
     private ShippingBinController shippingBin;
+    private StoreController store;
 
     public int cookingMenuSelection = 0; // 0-indexed: represents the index in getCookableRecipe() list
 
@@ -46,6 +48,7 @@ public class UI {
         this.inventory = gp.inventoryController;
         this.cookingController = gp.cookingController;
         this.shippingBin = gp.shippingBinController;
+        this.store = gp.storeController;
         arial_40 = new Font("Arial", Font.PLAIN, 40);
 
         try {
@@ -96,6 +99,10 @@ public class UI {
         if (gp.gameState == gp.shippingBinState) {
             drawInventory();
             drawShippingBin();
+        }
+        if (gp.gameState == gp.storeState) {
+            drawInventory();
+            drawStore();
         }
     }
 
@@ -250,6 +257,7 @@ public class UI {
 
             g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
             g2.drawString("Press [E] to continue", x + width - 180, y + height - 20);
+            g2.drawString("Press [S] to Shop", textX, y + height - 20);
         } else {
 
             g2.drawString("No one to talk to...", textX, textY);
@@ -632,6 +640,7 @@ public class UI {
 
         g2.setFont(new Font("Arial", Font.BOLD, 14));
         g2.setColor(Color.yellow);
+       
         g2.drawString(item.getName(), x + 10, y + 20);
 
         g2.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -654,7 +663,9 @@ public class UI {
         }
 
         g2.setFont(new Font("Arial", Font.ITALIC, 11));
-        g2.drawString("E: Use/Equip", x + 10, y + 100);
+        if (gp.gameState == gp.inventoryState) {
+            g2.drawString("E: Use/Equip", x + 10, y + 100);
+        }
     }
 
     /**
@@ -712,7 +723,7 @@ public class UI {
         int frameX = gp.tileSize;
         int frameY = gp.tileSize;
         int frameWidth = gp.tileSize * 6;
-        int frameHeight = gp.tileSize * 5;
+        int frameHeight = gp.tileSize * 7;
 
         drawSubWindow(g2, frameX, frameY - 40, frameWidth, 35);
         g2.setFont(new Font("Arial", Font.BOLD, 16));
@@ -721,10 +732,10 @@ public class UI {
         g2.setFont(new Font("Arial", Font.BOLD, 12));
         g2.setColor(Color.white);
         g2.drawString("Selling Items : " + shippingBin.sellingItems().size() + "/" + shippingBin.sellingItemsMaxSize(), frameX + 12, frameY + 22);
-        g2.drawString("Total Price : " + shippingBin.goldEarned + " Gold", frameX + 12, frameY + frameHeight - 12);
+        g2.drawString("Total Price : " + shippingBin.goldEarned + "g", (frameWidth - frameX) - 20, frameY + 22);
 
         int itemCount = 0;
-        for (int i = 0; i < shippingBin.sellingItems().size(); i++) { 
+        for (int i = 0; i < shippingBin.sellingItems().size(); i++) {
             IItem item = shippingBin.sellingItems().get(i);
             int col = itemCount % 4;
             int row = itemCount / 4;
@@ -749,6 +760,59 @@ public class UI {
         }
         if (shippingBin.getSelectedItem() != null) {
             drawItemDetails(g2, shippingBin.getSelectedItem(), frameX, frameY + frameHeight + 10);
+        }
+    }
+
+    public void drawStore() {
+        int frameX = gp.tileSize;
+        int frameY = gp.tileSize;
+        int frameWidth = gp.tileSize * 6;
+        int frameHeight = gp.tileSize * 5;
+
+        drawSubWindow(g2, frameX, frameY - 40, frameWidth, 35);
+        g2.setFont(new Font("Arial", Font.BOLD, 16));
+        g2.drawString("Store", frameX + (frameWidth / 3) + 20, frameY - 17);
+        drawSubWindow(g2, frameX, frameY, frameWidth, frameHeight);
+        g2.setFont(new Font("Arial", Font.BOLD, 12));
+        g2.setColor(Color.white);
+        g2.drawString("Available Items : " + store.storeItems().size() + "/" + store.storeItemsMaxSize(), frameX + 12, frameY + 22);
+        g2.drawString("Your Gold : " + gp.player.getGold() + "g", (frameWidth - frameX) - 10, frameY + 22);
+
+        int itemCount = 0;
+        for (int i = 0; i < store.storeItems().size(); i++) {
+            IItem item = store.storeItems().get(i);
+            int col = itemCount % 4;
+            int row = itemCount / 4;
+            int currentSlotX = frameX + 10 + (col * (gp.tileSize + 5));
+            int currentSlotY = frameY + 35 + (row * (gp.tileSize + 25));
+            if (i == store.getSelectedSlot()) {
+                if (item.getBuyPrice() <= gp.player.getGold()) {
+                    g2.setColor(new Color(0, 213, 190, 128));
+                } else {
+                    g2.setColor(new Color(255, 100, 103, 128));
+                }
+                g2.fillRect(currentSlotX - 5, currentSlotY - 5, gp.tileSize + 10, gp.tileSize + 10);
+            } else {
+                if (item.getBuyPrice() <= gp.player.getGold()) {
+                    g2.setColor(new Color(0, 213, 190, 128));
+                } else {
+                    g2.setColor(new Color(255, 100, 103, 128));
+                }
+            }
+            g2.drawRect(currentSlotX, currentSlotY, gp.tileSize, gp.tileSize);
+            if (item.getImage() != null) {
+                g2.drawImage(item.getImage(), currentSlotX + 5, currentSlotY + 5, gp.tileSize - 10, gp.tileSize - 10, null);
+            } else {
+                g2.setColor(Color.gray);
+                g2.fillRect(currentSlotX + 5, currentSlotY + 5, gp.tileSize - 10, gp.tileSize - 10);
+            }
+            g2.setFont(new Font("Arial", Font.ITALIC, 8));
+            g2.setColor(getCategoryColor(item.getCategory()));
+            g2.drawString(item.getCategory(), currentSlotX, currentSlotY + gp.tileSize + 22);
+            itemCount++;
+        }
+        if (store.getSelectedItem() != null) {
+            drawItemDetails(g2, store.getSelectedItem(), frameX, frameY + frameHeight + 10);
         }
     }
 
