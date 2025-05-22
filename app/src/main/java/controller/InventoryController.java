@@ -1,8 +1,6 @@
 package controller;
 
-
 import java.util.ArrayList;
-
 import java.util.Iterator;
 
 import main.GamePanel;
@@ -15,8 +13,8 @@ public class InventoryController {
     private ArrayList<IItem> inventory;
     private EatingController eatingController;
     private int selectedSlot;
-    private final int maxInventorySize = 20; 
-    
+    private final int maxInventorySize = 20;
+
     // Add category filtering
     private String currentFilter = "all"; // "all", "tools", "consumables", "crops", etc.
 
@@ -27,14 +25,13 @@ public class InventoryController {
         this.eatingController = new EatingController(gp);
     }
 
-    public String getInventoryFilter(){
+    public String getInventoryFilter() {
         return currentFilter;
     }
 
-    public int getInventoryMaxSize(){
+    public int getInventoryMaxSize() {
         return maxInventorySize;
     }
-
 
     public void addItem(IItem item) {
         if (inventory.size() < maxInventorySize || item.isStackable()) {
@@ -48,7 +45,6 @@ public class InventoryController {
                 // boolean itemExists = false;
                 // for (IItem i : inventory) {
                 //     if (i.getName().equals(item.getName())) {
-
                 //         itemExists = true;
                 //         break;
                 //     }
@@ -66,7 +62,6 @@ public class InventoryController {
         }
     }
 
-
     public void removeItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             IItem removed = inventory.remove(index);
@@ -74,7 +69,7 @@ public class InventoryController {
 
             if (selectedSlot >= inventory.size() && inventory.size() > 0) {
                 selectedSlot = inventory.size() - 1;
-            } else if (inventory.isEmpty()){
+            } else if (inventory.isEmpty()) {
                 selectedSlot = 0;
             }
         }
@@ -104,26 +99,26 @@ public class InventoryController {
     }
 
     public void removeCategoryItems(String category, int quantity) {
-    int removedCount = 0;
-    Iterator<IItem> iterator = inventory.iterator();
-    while (iterator.hasNext() && removedCount < quantity) {
-        IItem item = iterator.next();
-        if (item.getCategory().equalsIgnoreCase(category)) {
-            iterator.remove();
-            removedCount++;
-            System.out.println("Removed " + item.getName() + " from category " + category);
+        int removedCount = 0;
+        Iterator<IItem> iterator = inventory.iterator();
+        while (iterator.hasNext() && removedCount < quantity) {
+            IItem item = iterator.next();
+            if (item.getCategory().equalsIgnoreCase(category)) {
+                iterator.remove();
+                removedCount++;
+                System.out.println("Removed " + item.getName() + " from category " + category);
+            }
+        }
+        if (removedCount < quantity) {
+            System.out.println("Warning: Could not remove " + quantity + " items from category " + category + ". Only " + removedCount + " found.");
+        }
+        // Update selected slot
+        if (selectedSlot >= inventory.size() && inventory.size() > 0) {
+            selectedSlot = inventory.size() - 1;
+        } else if (inventory.isEmpty()) {
+            selectedSlot = 0;
         }
     }
-    if (removedCount < quantity) {
-        System.out.println("Warning: Could not remove " + quantity + " items from category " + category + ". Only " + removedCount + " found.");
-    }
-    // Update selected slot
-    if (selectedSlot >= inventory.size() && inventory.size() > 0) {
-        selectedSlot = inventory.size() - 1;
-    } else if (inventory.isEmpty()) {
-        selectedSlot = 0;
-    }
-}
 
     /**
      * Mendapatkan jumlah item tertentu di inventaris.
@@ -139,8 +134,8 @@ public class InventoryController {
     }
 
     /**
-     * Mendapatkan jumlah total item dalam kategori tertentu.
-     * Berguna untuk "Any Fish".
+     * Mendapatkan jumlah total item dalam kategori tertentu. Berguna untuk "Any
+     * Fish".
      */
     public int getItemCountByCategory(String category) {
         int count = 0;
@@ -152,14 +147,12 @@ public class InventoryController {
         return count;
     }
 
-
     public IItem getSelectedItem() {
         if (inventory.isEmpty()) {
             return null;
         }
         return inventory.get(selectedSlot);
     }
-
 
     public void moveSelectionUp() {
         if (selectedSlot - 4 >= 0) {
@@ -185,20 +178,18 @@ public class InventoryController {
         }
     }
 
-    public int getSelectedSlot(){
+    public int getSelectedSlot() {
         return selectedSlot;
     }
-    
 
     public void setFilter(String category) {
         this.currentFilter = category;
     }
 
-
     public void useItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             IItem item = inventory.get(index);
-            
+
             if (item.getCategory().equals("tools")) {
                 System.out.println("Equipped: " + item.getName());
                 gp.player.setActiveItem(item);
@@ -211,21 +202,19 @@ public class InventoryController {
             }
         }
     }
-    
 
     public void sellItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             IItem item = inventory.get(index);
             int goldGained = item.getSellPrice();
-            
+            gp.shippingBinController.addItem(item);
             // Add gold to player
             // gp.player.addGold(goldGained);
-            System.out.println("Sold " + item.getName() + " for " + goldGained + " gold");
+            System.out.println("Selling " + item.getName() + " for " + goldGained + " gold");
 
             removeItem(index);
         }
     }
-
 
     public boolean hasItem(String itemName) {
         for (IItem item : inventory) {
@@ -250,12 +239,11 @@ public class InventoryController {
     // Update the inventory state (you can use this to refresh the UI or item actions)
     public void update() {
         // Updated controls logic in KeyHandler will call the movement methods
-    }    
+    }
 
     public ArrayList<IItem> getInventory() {
         return inventory;
     }
-
 
     public boolean hasToolEquipped(String toolName) {
         IItem activeItem = gp.player.getActiveItem();
