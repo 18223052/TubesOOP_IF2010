@@ -99,7 +99,7 @@ public class Player extends Entity {
         direction = "down";
 
         energy = 50;
-        gold = 0;
+        gold = 100;
         name = "bobi";
         farmMap = "anjoy";
         partner = null;
