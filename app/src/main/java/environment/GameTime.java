@@ -116,4 +116,9 @@ public class GameTime implements Runnable {
     public String getSeasonName() {
         return getCurrentSeason().name();
     }
+
+
+    public int getDayInCurrentSeason() {
+        return (this.gameDay - 1) % this.totalDaysPerSeason + 1; 
+}
 }

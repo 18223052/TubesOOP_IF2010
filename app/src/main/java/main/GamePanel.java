@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import controller.CookingController;
 import controller.InventoryController;
 import controller.SleepController;
+import controller.WatchingController;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -74,6 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
     public InventoryController inventoryController;
     public SleepController sleepController;
     public CookingController cookingController;
+    public WatchingController watchingController;
 
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
@@ -130,6 +132,7 @@ public class GamePanel extends JPanel implements Runnable {
         eManager = new EnvironmentManager(this);
         itemFactory = new ItemFactory(this);
         sleepController = new SleepController(this, player);
+        watchingController = new WatchingController(this);
 
         // Weather
         weatherManager = new WeatherManager();

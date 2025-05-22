@@ -356,7 +356,6 @@ public class Player extends Entity {
             if (obj instanceof Stove){
                 System.out.println("DEBUG INTERACTABLE stove");
                 // Cast to Stove and start cooking
-                Stove stove = (Stove) obj;
                 gp.gameState = gp.cookingState;
                 gp.ui.selectRecipe = 0;
                 gp.ui.doneCooking = false;
@@ -365,6 +364,7 @@ public class Player extends Entity {
             }
             if (obj instanceof TV){
                 System.out.println("DEBUG INTERACTABLE TV");
+                gp.watchingController.watchTV();
             }
         }
     }

@@ -53,7 +53,7 @@ public class CookingController {
         return true; // Semua bahan cukup
     }
 
-        public boolean cookRecipe(Recipe recipe) {
+    public boolean cookRecipe(Recipe recipe) {
         if (recipe == null) {
             System.out.println("Recipe is null, cannot cook.");
             return false;

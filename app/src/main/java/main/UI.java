@@ -189,86 +189,92 @@ public class UI {
 
     public void drawDialogScreen() {
         int x = gp.tileSize * 2;
-        int y = gp.tileSize * 8; 
+        int y = gp.tileSize * 8;
         int width = gp.screenWidth - (gp.tileSize * 4);
         int height = gp.tileSize * 3;
-    
-        drawSubWindow(x, y, width, height);
-        
-        g2.setFont(maruMonica.deriveFont(20f));
-        g2.setColor(Color.WHITE);
-        
-        int textX = x + 20;
-        int textY = y + 30;
-        int lineHeight = 30;
-        
 
+        drawSubWindow(x, y, width, height); // Your existing method to draw the box
+
+        g2.setFont(maruMonica.deriveFont(20f)); // Use your loaded font
+        g2.setColor(Color.WHITE);
+
+        int textX = x + 20;
+        int textY = y + 30; // Initial Y position for text
+        int lineHeight = 30; // Or g2.getFontMetrics().getHeight() + 5;
+
+        // Display NPC name if an NPC is active
         if (gp.currNPC != null) {
             String npcName = "";
+            // Example: Get name based on NPC type or a common getName() method
             if (gp.currNPC instanceof NPC_mayortadi) {
-                npcName = ((NPC_mayortadi)gp.currNPC).getName();
-                
-
-                g2.setColor(new Color(255, 255, 150));
-                g2.drawString(npcName, textX, textY);
-                g2.setColor(Color.WHITE); 
-                
-
-                textY += lineHeight;
+                npcName = ((NPC_mayortadi) gp.currNPC).getName();
             }
-            
+            // else if (gp.currNPC instanceof SomeOtherNPC) {
+            // npcName = ((SomeOtherNPC) gp.currNPC).getName();
+            // }
+            // Or if your base Entity class has a name:
+            // npcName = gp.currNPC.name;
 
-            if (currentDialog != null && !currentDialog.isEmpty()) {
 
-                String[] paragraphs = currentDialog.split("\n");
-                
-                for (String paragraph : paragraphs) {
+            if (npcName != null && !npcName.isEmpty()) {
+                g2.setColor(new Color(255, 255, 150)); // Yellow for NPC name
+                g2.drawString(npcName, textX, textY);
+                g2.setColor(Color.WHITE);
+                textY += lineHeight; // Move Y down for the dialog content
+            }
+        }
 
-                    String[] words = paragraph.split(" ");
-                    StringBuilder line = new StringBuilder();
-                    
-                    for (String word : words) {
+        // Display the current dialog text (works for both NPC and TV/object messages)
+        if (currentDialog != null && !currentDialog.isEmpty()) {
+            String[] paragraphs = currentDialog.split("\n");
 
-                        if (g2.getFontMetrics().stringWidth(line + " " + word) < width - 40) {
-                            if (line.length() > 0) {
-                                line.append(" ");
-                            }
-                            line.append(word);
-                        } else {
+            for (String paragraph : paragraphs) {
+                String[] words = paragraph.split(" ");
+                StringBuilder line = new StringBuilder();
 
-                            g2.drawString(line.toString(), textX, textY);
-                            textY += lineHeight;
-                            line = new StringBuilder(word);
-                            
-                          
-                            if (textY > y + height - 30) {
-                                
-                                g2.drawString("...", width - 50, textY);
-                                break;
-                            }
+                for (String word : words) {
+                    if (g2.getFontMetrics().stringWidth(line + " " + word) < width - 40) { // 40 for padding
+                        if (line.length() > 0) {
+                            line.append(" ");
                         }
-                    }
-                    
-                    
-                    if (line.length() > 0) {
+                        line.append(word);
+                    } else {
                         g2.drawString(line.toString(), textX, textY);
                         textY += lineHeight;
+                        line = new StringBuilder(word);
+
+                        if (textY > y + height - 30 - lineHeight) { // Check if next line will overflow (30 for bottom padding)
+                            g2.drawString("...", textX + width - 50, textY); // Indicate more text
+                            break; // Break word loop
+                        }
                     }
-                    
-                    
-                    textY += 5;
                 }
-            } else {
-                
-                g2.drawString("...", textX, textY);
+
+                if (line.length() > 0) { // Draw the last line of the paragraph
+                    if (textY <= y + height - 30) { // Check if it fits
+                        g2.drawString(line.toString(), textX, textY);
+                        textY += lineHeight;
+                    } else if (!line.toString().equals("...")) { // if it didn't fit, but wasn't already ellipsis
+                        // This case means the very first line of a paragraph already overflows,
+                        // or the last part of a word-wrapped line overflows.
+                        // Consider if "..." should be drawn here too.
+                        // For simplicity, we might just let it clip or be partially drawn.
+                    }
+                }
+                if (textY > y + height - 30 - lineHeight && paragraphs.length > 1 && !paragraph.equals(paragraphs[paragraphs.length-1])) {
+                    break; // Break paragraph loop if overflowed
+                }
+                textY += 5; // Small gap between paragraphs
             }
-            
-           
+            // Prompt to continue
             g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
             g2.drawString("Press [E] to continue", x + width - 180, y + height - 20);
+
         } else {
- 
-            g2.drawString("No one to talk to...", textX, textY);
+            // Fallback if currentDialog is null or empty for some reason
+            g2.drawString("...", textX, textY);
+            g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
+            g2.drawString("Press [E] to exit", x + width - 180, y + height - 20);
         }
     }
 
