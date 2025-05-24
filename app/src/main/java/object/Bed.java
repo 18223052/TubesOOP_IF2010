@@ -1,12 +1,13 @@
 package object;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import entity.Player;
 import main.GamePanel;
+
 
 public class Bed extends SuperObj {
     private static final int BED_WIDTH = 2;
@@ -14,7 +15,6 @@ public class Bed extends SuperObj {
     
     public Bed(GamePanel gp){
         super(gp, BED_WIDTH, BED_HEIGHT);
-        name = "bed";
         collision = true;
 
         try{
@@ -24,10 +24,17 @@ public class Bed extends SuperObj {
             tiles[2] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/085.png"));
             tiles[3] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/086.png"));
 
-            img = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/081.png"));
+            img = setup("/tutor_tiles/081");
         }
         catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onInteract(GamePanel gp, Player player){
+        System.out.println("DEBUG INTERACTABLE BED");
+        gp.currNPC = null;
+        gp.sleepController.startSleep();
     }
 }

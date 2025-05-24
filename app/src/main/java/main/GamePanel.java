@@ -12,8 +12,11 @@ import controller.CookingController;
 import controller.InventoryController;
 import controller.ShippingBinController;
 import controller.SleepController;
+import controller.WatchingController;
+
+
 import controller.StoreController;
-import entity.Entity;
+import entity.NPC;
 import entity.Player;
 import environment.EnvironmentManager;
 import environment.GameTime;
@@ -77,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
     public InventoryController inventoryController;
     public SleepController sleepController;
     public CookingController cookingController;
+    public WatchingController watchingController;
     public ShippingBinController shippingBinController;
     public StoreController storeController;
 
@@ -87,22 +91,16 @@ public class GamePanel extends JPanel implements Runnable {
     
     // Arrays for game objects and NPCs
     public SuperObj obj[] = new SuperObj[100];
-    public Entity npc[] = new Entity[6];
+    public NPC npc[] = new NPC[6];
     
     // Current interactive objects
     public SuperObj currObj;
-    public Entity currNPC;
+    public NPC currNPC;
     
     // Game thread
     private Thread gameThread;
     private int fps = 60;
     
-    
-    // // Player starting position
-    // private int pX = 100;
-    // private int pY = 100;
-    // private int pSpeed = 4;
-
 
     private boolean isComplete = false;
     public GamePanel() {
@@ -137,6 +135,7 @@ public class GamePanel extends JPanel implements Runnable {
         eManager = new EnvironmentManager(this);
         itemFactory = new ItemFactory(this);
         sleepController = new SleepController(this, player);
+        watchingController = new WatchingController(this);
 
         // Weather
         weatherManager = new WeatherManager();
@@ -177,6 +176,7 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createFood("veggiesoup"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createMiscItem("coal"));
 
     }
   
@@ -283,6 +283,7 @@ public class GamePanel extends JPanel implements Runnable {
             interactionTileRow = player.interactionBox.y / tileSize;
             tileM.checkTeleport(interactionTileCol, interactionTileRow);
             eManager.update();
+            cookingController.update();
 
             // Game time update every n frames
             currentMinute = gameTime.getGameMinute();

@@ -1,5 +1,8 @@
 package object;
 
+import environment.GameTime;
+import environment.Season;
+import environment.WeatherType;
 import main.GamePanel;
 
 /**
@@ -196,7 +199,7 @@ public class ItemFactory {
     /**
      * Creates a fish item
      */
-    public FishItem createFish(String fishType, String season, String weather, String timeOfDay, int rarity) {
+    public FishItem createFish(String fishType, Season season, WeatherType weather, GameTime timeOfDay, int rarity) {
         int baseBuyPrice = 50;
         int baseSellPrice = 25;
         
@@ -204,5 +207,30 @@ public class ItemFactory {
         int finalSellPrice = baseSellPrice + (rarity * 15);
         
         return new FishItem(fishType, baseBuyPrice, finalSellPrice, season, weather, timeOfDay, rarity, gp);
+    }
+
+    public MiscItem createMiscItem(String itemName) {
+        int buyPrice = 0;
+        int sellPrice =0 ;
+        String category = "misc";
+
+        switch (itemName.toLowerCase()){
+            case "firewood":
+                buyPrice = 10;
+                sellPrice = 5;
+                category = "fuel";
+                break;
+            case "coal" :
+                buyPrice = 20;
+                sellPrice = 10;
+                category = "fuel";
+                break;
+            default:
+                System.err.println("Warning: Attempted to create unknown miscellaneous item: " + itemName);
+                buyPrice = 1; 
+                sellPrice = 1;
+                break;
+        }
+        return new MiscItem(itemName, buyPrice, sellPrice, gp, category);
     }
 }
