@@ -33,26 +33,28 @@ public class SleepController {
     public void startSleep() {
         if (!isSleeping) {
             if (canSleep()) {
-                System.out.println("Player is going to sleep...");
+                System.out.println("Player akan tidur...");
                 isSleeping = true;
                 inTransition = true;
                 fadingIn = true;
                 transitionStartTime = System.nanoTime();
                 transitionAlpha = 0f;
-                int currEnergy = player.getEnergy();
-                if (currEnergy < 0.1*player.maxEnergy){
-                    player.addEnergy(50);
-                } else if (currEnergy ==0){
-                    player.addEnergy(10);
-                } else {
-                    player.addEnergy(player.maxEnergy);
-                }
-    
                 gp.gameState = gp.sleepState;
             } else {
-
                 showCannotSleepMessage();
             }
+        }
+    }
+
+    public void forceSleep() {
+        if (!isSleeping) {
+            System.out.println("Player akan tidur...");
+            isSleeping = true;
+            inTransition = true;
+            fadingIn = true;
+            transitionStartTime = System.nanoTime();
+            transitionAlpha = 0f;
+            gp.gameState = gp.sleepState;
         }
     }
     
@@ -64,7 +66,7 @@ public class SleepController {
     }
     
     private void showCannotSleepMessage() {
-        System.out.println("You can only sleep at night!");
+        System.out.println("Kamu hanya bisa tidur di malam hari!");
 
         // if (gp.ui != null) {
         //     gp.ui.setDialog("You can only sleep at night!");
@@ -106,11 +108,19 @@ public class SleepController {
         if (gp.eManager.isLightingSetup()) {
             gp.eManager.getLighting().skipDay();
         }
+        int currEnergy = gp.player.getEnergy();
+        if (currEnergy <= 0) {
+            gp.player.addEnergy(30); 
+            System.out.println("Energi sangat rendah, ditambahkan 10. Energi sekarang: " + gp.player.getEnergy());
+        } else if (currEnergy < 0.1 * Player.MAX_ENERGY) { 
+            gp.player.addEnergy(50); 
+            System.out.println("Energi rendah, ditambahkan 50. Energi sekarang: " + gp.player.getEnergy());
+        } else { 
+            gp.player.addEnergy(Player.MAX_ENERGY); 
+            System.out.println("Energi diisi penuh. Energi sekarang: " + gp.player.getEnergy());
+        }
         
-
-        gp.player.addEnergy(100);
-        
-        System.out.println("Skipped to next day!");
+        System.out.println("TimeSkip 1 hari!");
     }
     
     private void finishSleep() {
@@ -118,29 +128,29 @@ public class SleepController {
         inTransition = false;
         transitionAlpha = 0f;
         
-        // Kembali ke play state
+
         gp.gameState = gp.playState;
         
-        System.out.println("Player woke up!");
+        System.out.println("Player bangun!");
     }
     
     public void draw(Graphics2D g2) {
         if (isSleeping && inTransition) {
-            // Draw blackout screen
+
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transitionAlpha));
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
             
-            // Draw sleeping text
+
             if (transitionAlpha > 0.5f) {
                 g2.setColor(Color.WHITE);
                 g2.setFont(new Font("Arial", Font.BOLD, 30));
-                String sleepText = "Sleeping...";
+                String sleepText = "Tidur...";
                 int textWidth = g2.getFontMetrics().stringWidth(sleepText);
                 g2.drawString(sleepText, (gp.screenWidth - textWidth) / 2, gp.screenHeight / 2);
             }
             
-            // Reset composite
+
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
     }

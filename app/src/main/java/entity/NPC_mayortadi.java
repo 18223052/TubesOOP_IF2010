@@ -31,4 +31,10 @@ public class NPC_mayortadi extends NPC {
         dialogues[3] = "We have a shipping bin near the center of town where you can sell your produce.";
         dialogues[4] = "Good luck with your farming!";
     }
+
+    @Override
+    // contoh
+    public boolean hasStore(){
+        return true;
+    }
 }

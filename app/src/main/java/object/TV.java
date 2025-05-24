@@ -32,6 +32,7 @@ public class TV extends SuperObj {
 
     @Override
     public void onInteract(GamePanel gp, Player player){
+        gp.currNPC = null;
         System.out.println("DEBUG INTERACTABLE TV");
         gp.watchingController.watchTV();
     }

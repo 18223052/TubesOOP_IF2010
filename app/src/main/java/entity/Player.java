@@ -26,7 +26,8 @@ public class Player extends Character {
     private int interactionTileCol;
 
     public InventoryController inventory;
-    public final int maxEnergy = 100;
+    public static final int MAX_ENERGY = 100;
+    public static final int MIN_ENERGY_BEFORE_SLEEP  = -20;
 
     private String name;
     private String gender;
@@ -116,6 +117,21 @@ public class Player extends Character {
         if (this.energy > 100) {
             this.energy = 100;
         }
+    }
+
+    public void setEnergy(int energy){
+        this.energy = energy;
+    }
+
+    public boolean deductEnergy(int amount){
+        this.energy -= amount;
+
+        if (this.energy <= MIN_ENERGY_BEFORE_SLEEP){
+            System.out.println("Energy mencapai " + MIN_ENERGY_BEFORE_SLEEP + "! Player harus tidur.");
+            gp.sleepController.forceSleep();
+        }
+        System.out.println("Energi player berkurang " + amount + ". Energi tersisa: " + this.energy);
+        return true;
     }
 
     public void getPlayerImage() {
@@ -228,8 +244,8 @@ public class Player extends Character {
             keyH.interactPressed = false; // Reset immediately
 
 
-            int npcIndex = checkInteraction(gp.npc); // Assuming gp.npc is now Interactable[]
-            int objIndex = checkInteraction(gp.obj); // Assuming gp.obj is now Interactable[]
+            int npcIndex = checkInteraction(gp.npc);
+            int objIndex = checkInteraction(gp.obj); 
 
             if (npcIndex != 999) {
                 gp.npc[npcIndex].onInteract(gp,this); // Let the NPC handle its interaction

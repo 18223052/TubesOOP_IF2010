@@ -91,13 +91,13 @@ public class ShippingBinController {
         return false;
     }
 
-    // Update the sellingItems state (you can use this to refresh the UI or item actions)
+ 
     public void update() {
         this.sellingItems = new ArrayList<>();
         this.selectedSlot = 0;
         gp.player.addGold(goldEarned);
         goldEarned = 0;
-        // Updated controls logic in KeyHandler will call the movement methods
+
     }
 
     public ArrayList<IItem> sellingItems() {

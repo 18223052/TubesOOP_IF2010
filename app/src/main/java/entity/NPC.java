@@ -67,5 +67,9 @@ public abstract class NPC extends Character implements Interactable {
     public ArrayList<BaseItem> getHatedItems(){
         return hatedItems;
     }
+
+    public boolean hasStore(){
+        return false;
+    }
     
 }

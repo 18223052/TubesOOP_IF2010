@@ -14,7 +14,7 @@ import main.UtilityTool;
 public abstract class SuperObj implements Interactable {
     protected GamePanel gp;
     public BufferedImage img;
-    public BufferedImage[] tiles; // Array for storing multiple tiles for larger objects
+    public BufferedImage[] tiles;
     public String name;
     public boolean collision = false;
     public int wX, wY;
@@ -68,7 +68,6 @@ public abstract class SuperObj implements Interactable {
         }
     }
 
-    // Check if object is visible on screen
     private boolean isOnScreen(GamePanel gp) {
         return wX + (width * gp.tileSize) > gp.player.wX - gp.player.screenX && 
                wX < gp.player.wX + gp.player.screenX &&
@@ -78,7 +77,7 @@ public abstract class SuperObj implements Interactable {
 
     @Override
     public boolean isInteractable(Rectangle interactionBox) {
-        // Calculate the object's bounds based on its position and size
+
         Rectangle objectBounds = new Rectangle(
             wX,
             wY,
@@ -86,7 +85,7 @@ public abstract class SuperObj implements Interactable {
             height * gp.tileSize
         );
         
-        // Check if the player's interaction box intersects with any part of this object
+       
         return objectBounds.intersects(interactionBox);
     }
 
@@ -96,8 +95,8 @@ public abstract class SuperObj implements Interactable {
     protected BufferedImage setup(String imagePath) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
-        String fullPath = imagePath + ".png"; // Get the full path string
-        System.out.println("Attempting to load image: " + fullPath); // Print it out
+        String fullPath = imagePath + ".png"; 
+        System.out.println("Attempting to load image: " + fullPath); 
         try {
             InputStream is = getClass().getResourceAsStream(fullPath);
             if (is == null) {

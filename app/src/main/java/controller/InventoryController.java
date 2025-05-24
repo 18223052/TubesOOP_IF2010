@@ -16,7 +16,7 @@ public class InventoryController {
     private final int maxInventorySize = 20;
 
     // Add category filtering
-    private String currentFilter = "all"; // "all", "tools", "consumables", "crops", etc.
+    private String currentFilter = "all"; // "all", "tools", "consumables", "crops", "fuel"
 
     public InventoryController(GamePanel gp) {
         this.gp = gp;
@@ -39,33 +39,22 @@ public class InventoryController {
             if (item.isStackable()) {
                 boolean itemStacked = false;
                 inventory.add(item);
-                System.out.println("Added stackable item: " + item.getName() + " to inventory. Total: " + getItemCount(item.getName()));
+                System.out.println("Menambah stackable item: " + item.getName() + " ke inventory. Total: " + getItemCount(item.getName()));
                 itemStacked = true;
-
-                // boolean itemExists = false;
-                // for (IItem i : inventory) {
-                //     if (i.getName().equals(item.getName())) {
-                //         itemExists = true;
-                //         break;
-                //     }
-                // }
-                // if (!itemExists) {
-                //     inventory.add(item);
-                // }
             } else {
                 inventory.add(item);
-                System.out.println("Added non-stackable item: " + item.getName() + " to inventory");
+                System.out.println("Menambah non-stackable item: " + item.getName() + " ke inventory");
             }
-            System.out.println("Added item: " + item.getName() + " to inventory");
+            System.out.println("Menambah item: " + item.getName() + " ke inventory");
         } else {
-            System.out.println("Inventory is full!");
+            System.out.println("Inventory penuh!");
         }
     }
 
     public void removeItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             IItem removed = inventory.remove(index);
-            System.out.println("Removed item: " + removed.getName() + " from inventory");
+            System.out.println("Menghapus item: " + removed.getName() + " dari inventory");
 
             if (selectedSlot >= inventory.size() && inventory.size() > 0) {
                 selectedSlot = inventory.size() - 1;
@@ -84,11 +73,11 @@ public class InventoryController {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 iterator.remove(); // Hapus item saat ini
                 removedCount++;
-                System.out.println("Removed " + item.getName() + " (count: " + removedCount + "/" + quantity + ")");
+                System.out.println("Menghapus " + item.getName() + " (counter: " + removedCount + "/" + quantity + ")");
             }
         }
         if (removedCount < quantity) {
-            System.out.println("Warning: Could not remove " + quantity + " of " + itemName + ". Only " + removedCount + " found.");
+            System.out.println("Warning: Tidak bisa menhapus " + quantity + " dari " + itemName + ". Only " + removedCount + " found.");
         }
         // ni kondisi kalo dah kehapus, selected slot nya harus dipastiin masi jalan
         if (selectedSlot >= inventory.size() && inventory.size() > 0) {
@@ -106,11 +95,11 @@ public class InventoryController {
             if (item.getCategory().equalsIgnoreCase(category)) {
                 iterator.remove();
                 removedCount++;
-                System.out.println("Removed " + item.getName() + " from category " + category);
+                System.out.println("Menghapus " + item.getName() + " dari kategori " + category);
             }
         }
         if (removedCount < quantity) {
-            System.out.println("Warning: Could not remove " + quantity + " items from category " + category + ". Only " + removedCount + " found.");
+            System.out.println("Warning: Tidak bisa menghapus " + quantity + " items dari kategori " + category + ". Only " + removedCount + " found.");
         }
         // Update selected slot
         if (selectedSlot >= inventory.size() && inventory.size() > 0) {
@@ -191,14 +180,14 @@ public class InventoryController {
             IItem item = inventory.get(index);
 
             if (item.getCategory().equals("tools")) {
-                System.out.println("Equipped: " + item.getName());
+                System.out.println("Menggunakan: " + item.getName());
                 gp.player.setActiveItem(item);
             } else if (item instanceof IConsumable) {
-                System.out.println("Consumed: " + item.getName());
+                System.out.println("Mengonsumsi: " + item.getName());
                 eatingController.consume((IConsumable) item);
                 removeItem(index);
             } else {
-                System.out.println("This item can be sold: " + item.getName());
+                System.out.println("Item ini bisa dijual: " + item.getName());
             }
         }
     }
@@ -210,7 +199,7 @@ public class InventoryController {
             gp.shippingBinController.addItem(item);
             // Add gold to player
             // gp.player.addGold(goldGained);
-            System.out.println("Selling " + item.getName() + " for " + goldGained + " gold");
+            System.out.println("Menjual " + item.getName() + " untuk " + goldGained + " gold");
 
             removeItem(index);
         }

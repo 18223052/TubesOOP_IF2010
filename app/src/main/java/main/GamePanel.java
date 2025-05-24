@@ -176,6 +176,7 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createFood("veggiesoup"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createMiscItem("coal"));
 
     }
   
@@ -282,6 +283,7 @@ public class GamePanel extends JPanel implements Runnable {
             interactionTileRow = player.interactionBox.y / tileSize;
             tileM.checkTeleport(interactionTileCol, interactionTileRow);
             eManager.update();
+            cookingController.update();
 
             // Game time update every n frames
             currentMinute = gameTime.getGameMinute();

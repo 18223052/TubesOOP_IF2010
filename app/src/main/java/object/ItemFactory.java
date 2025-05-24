@@ -205,4 +205,29 @@ public class ItemFactory {
         
         return new FishItem(fishType, baseBuyPrice, finalSellPrice, season, weather, timeOfDay, rarity, gp);
     }
+
+    public MiscItem createMiscItem(String itemName) {
+        int buyPrice = 0;
+        int sellPrice =0 ;
+        String category = "misc";
+
+        switch (itemName.toLowerCase()){
+            case "firewood":
+                buyPrice = 10;
+                sellPrice = 5;
+                category = "fuel";
+                break;
+            case "coal" :
+                buyPrice = 20;
+                sellPrice = 10;
+                category = "fuel";
+                break;
+            default:
+                System.err.println("Warning: Attempted to create unknown miscellaneous item: " + itemName);
+                buyPrice = 1; 
+                sellPrice = 1;
+                break;
+        }
+        return new MiscItem(itemName, buyPrice, sellPrice, gp, category);
+    }
 }

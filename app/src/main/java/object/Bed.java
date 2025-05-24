@@ -34,6 +34,7 @@ public class Bed extends SuperObj {
     @Override
     public void onInteract(GamePanel gp, Player player){
         System.out.println("DEBUG INTERACTABLE BED");
+        gp.currNPC = null;
         gp.sleepController.startSleep();
     }
 }

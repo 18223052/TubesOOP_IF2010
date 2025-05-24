@@ -20,6 +20,9 @@ public class WatchingController {
         gp.gameState = gp.dialogState;
         gp.currNPC = null;
         gp.keyH.enterPressed = false;
+
+        gp.gameTime.addTime(15);
+        gp.player.deductEnergy(5);
         
     }
 }

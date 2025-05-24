@@ -21,7 +21,7 @@ public class FishItem extends BaseItem implements IFishAttributes, IConsumable {
     }
     
     private int calculateEnergyValue() {
-        // Base energy + bonus for rarity
+
         return 10 + (rarity * 5);
     }
     

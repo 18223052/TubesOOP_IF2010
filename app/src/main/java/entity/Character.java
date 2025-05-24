@@ -51,4 +51,6 @@ public abstract class Character extends Entity implements MovableEntity {
     public BufferedImage getDisplayImage() {
         return getAnimationImage(); 
     }
+
+
 }

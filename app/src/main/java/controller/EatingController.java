@@ -16,6 +16,8 @@ public class EatingController{
         int energyRestoration = item.getEnergyRestoration();
 
         gp.player.addEnergy(energyRestoration);
+        gp.gameTime.addTime(5);
+        
 
         System.out.println("Consumed item and restored " + energyRestoration + " energy.");
     }

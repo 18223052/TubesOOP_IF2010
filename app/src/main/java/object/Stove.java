@@ -37,7 +37,7 @@ public class Stove extends SuperObj {
 
     @Override
     public void onInteract(GamePanel gp, Player player){
-        System.out.println("DEBUG INTERACTABLE STOVE");
+        gp.currNPC = null;
         gp.gameState = gp.cookingState;
         gp.ui.selectRecipe = 0;
         gp.ui.doneCooking = false;

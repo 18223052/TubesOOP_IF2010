@@ -28,6 +28,6 @@ public class ShippingBin extends SuperObj {
     public void onInteract(GamePanel gp, Player player){
         System.out.println("DEBUG INTERACTABLE SHIPPING BIN");
         gp.gameState = gp.shippingBinState;
-        player.getInventory();
+        gp.player.getInventory();
     }
 }
