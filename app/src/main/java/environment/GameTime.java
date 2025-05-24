@@ -43,7 +43,7 @@ public class GameTime implements Runnable {
         }
     }
 
-    private synchronized void addTime(int minutes) {
+    public synchronized void addTime(int minutes) {
         gameMinute += minutes;
         if (gameMinute >= 60) {
             gameMinute = 0;
@@ -115,5 +115,14 @@ public class GameTime implements Runnable {
 
     public String getSeasonName() {
         return getCurrentSeason().name();
+    }
+
+
+    public int getDayInCurrentSeason() {
+        return (this.gameDay - 1) % this.totalDaysPerSeason + 1; 
+    }
+
+    public synchronized long getTotalGameMinutes(){
+        return (long)(gameDay -1) *24*60 + (long)gameHour *60 +gameMinute;
     }
 }

@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import entity.Player;
 import main.GamePanel;
-
 public class Stove extends SuperObj {
 
     private static final int STOVE_WIDTH = 2;
@@ -14,7 +14,6 @@ public class Stove extends SuperObj {
 
     public Stove(GamePanel gp){
         super(gp,STOVE_WIDTH, STOVE_HEIGHT);
-        name = "stove";
         collision = true;
 
         try{
@@ -29,16 +28,21 @@ public class Stove extends SuperObj {
             tiles[6] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/129.png"));
             tiles[7] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/130.png"));
 
-            img = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/117.png"));
+            img = setup("/tutor_tiles/117");
         }
         catch(IOException e){
             e.printStackTrace();
         }
     }
 
-    public void startCooking(GamePanel gp) {
-        System.out.println("Starting cooking!");
+    @Override
+    public void onInteract(GamePanel gp, Player player){
+        gp.currNPC = null;
         gp.gameState = gp.cookingState;
+        gp.ui.selectRecipe = 0;
+        gp.ui.doneCooking = false;
+        gp.ui.hasIngradients = true;
+        gp.ui.cookingMenuSelection = 0;
     }
 
 }

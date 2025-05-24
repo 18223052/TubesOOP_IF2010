@@ -1,7 +1,6 @@
 package environment;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 public class WeatherManager {
@@ -31,8 +30,13 @@ public class WeatherManager {
         }
     }
 
-    public WeatherType getWeatherForDay(int day) {
-        if (day < 1 || day > daysPerSeason) return WeatherType.SUNNY; // Default fallback
-        return weatherPerDay[day - 1];
+    // In WeatherManager.java
+    public WeatherType getWeatherForDay(int dayInSeason) { // dayInSeason should be 1-10
+        if (dayInSeason < 1 || dayInSeason > daysPerSeason) {
+            System.err.println("WeatherManager: Invalid dayInSeason requested: " + dayInSeason + ". Defaulting to SUNNY.");
+            return WeatherType.SUNNY; // Default fallback
+        }
+        return weatherPerDay[dayInSeason - 1]; // Access array with 0-9 index
     }
+
 }

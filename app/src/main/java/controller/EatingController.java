@@ -12,11 +12,12 @@ public class EatingController{
     }
 
     public void consume(IConsumable item){
+
+        System.out.println("Mulai proses konsumsi..");
+
+        item.consume(gp);
         
-        int energyRestoration = item.getEnergyRestoration();
 
-        gp.player.addEnergy(energyRestoration);
-
-        System.out.println("Consumed item and restored " + energyRestoration + " energy.");
+        System.out.println("Consumed item and restored " + item.getEnergyRestoration() + " energy.");
     }
 }

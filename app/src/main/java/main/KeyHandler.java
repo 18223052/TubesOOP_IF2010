@@ -278,20 +278,19 @@ public class KeyHandler implements KeyListener {
         boolean stateChanged = false; // Flag untuk menandai jika ada perubahan yang butuh repaint
 
         switch (code) {
-            case KeyEvent.VK_K:
-            case KeyEvent.VK_ESCAPE: // Keduanya untuk keluar
+            case KeyEvent.VK_E:
+
                 gp.gameState = gp.playState;
-                gp.resumeGameThread();       // PENTING: Bangunkan thread game utama!
-                // Reset UI state saat keluar (sudah ada di kode Anda, itu bagus)
+                gp.resumeGameThread();       
+
                 gp.ui.selectRecipe = 0;
                 gp.ui.cookingMenuSelection = 0;
                 gp.ui.doneCooking = false;
-                // gp.ui.hasIngradients = true; // Tidak perlu direset di sini, akan dicek ulang saat masuk menu
-                // stateChanged = true; // Tidak perlu repaint di sini, run loop akan ambil alih
-                return; // Langsung keluar dari handleCookingState karena state sudah playState
+
+                return; 
 
             case KeyEvent.VK_UP:
-            case KeyEvent.VK_W: // Konsistensi dengan play state
+            case KeyEvent.VK_W: 
                 if (gp.ui.selectRecipe == 0) {
                     gp.ui.moveCookingSelectionUp();
                     stateChanged = true;
@@ -299,7 +298,7 @@ public class KeyHandler implements KeyListener {
                 break;
 
             case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S: // Konsistensi dengan play state
+            case KeyEvent.VK_S: 
                 if (gp.ui.selectRecipe == 0) {
                     gp.ui.moveCookingSelectionDown();
                     stateChanged = true;
@@ -352,8 +351,6 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_E ->
                 rightPressed = false;
 
-            // Reset enterPressed flag after it's released, if it's a "one-shot" action.
-            // This prevents multiple triggers if the game loop processes it quickly.
         }
     }
 }

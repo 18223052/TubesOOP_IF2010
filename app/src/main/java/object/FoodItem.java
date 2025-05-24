@@ -18,10 +18,10 @@ public class FoodItem extends BaseItem implements IConsumable {
         return energyValue;
     }
     
-    // @Override
-    // public void consume(GamePanel gp) {
-    //     System.out.println("Consumed " + getName() + " and restored " + energyValue + " energy");
-    //     // Implement energy restoration logic
-    //     // gp.player.addEnergy(energyValue);
-    // }
+    @Override
+    public void consume(GamePanel gp){
+        System.out.println("Mengonsumsi " + getName() + " dan menambah " + energyValue + " energi.");
+        gp.player.addEnergy(energyValue);
+        gp.gameTime.addTime(5);
+    }
 }
