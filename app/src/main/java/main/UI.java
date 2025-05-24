@@ -34,10 +34,9 @@ public class UI {
     private ShippingBinController shippingBin;
     private StoreController store;
 
-    public int cookingMenuSelection = 0; // 0-indexed: represents the index in getCookableRecipe() list
+    public int cookingMenuSelection = 0; 
 
-    // Your existing variables for cooking state feedback
-    public int selectRecipe = 0; // 0: showing list, >0: specific recipe selected, -1: not enough ingredients
+    public int selectRecipe = 0; 
     public boolean doneCooking = false;
     public boolean hasIngradients = true;
 
@@ -84,7 +83,11 @@ public class UI {
             drawPause();
         }
         if (gp.gameState == gp.dialogState) {
-            drawDialogScreen();
+            if (gp.currNPC != null){
+                drawNPCDialog();
+            } else {
+                drawObjectDialog();
+            }
         }
         if (gp.gameState == gp.inventoryState) {
 
@@ -186,7 +189,89 @@ public class UI {
         return x;
     }
 
-    public void drawDialogScreen() {
+    public void drawNPCDialog(){
+        int x = gp.tileSize*2;
+        int y = gp.tileSize*8;
+        int width = gp.screenWidth - (gp.tileSize*4);
+        int height = gp.tileSize *3;
+
+        drawSubWindow(x, y, width, height);
+
+        g2.setFont(maruMonica.deriveFont(20f));
+        g2.setColor(Color.WHITE);
+
+        int textX = x + 20;
+        int textY = y + 30;
+        int lineHeight = 30;
+
+        // Tampilkan nama NPC
+        if (gp.currNPC != null) {
+            String npcName = "";
+            if (gp.currNPC instanceof NPC_mayortadi) {
+                npcName = ((NPC_mayortadi) gp.currNPC).getName();
+            }
+            if (npcName != null && !npcName.isEmpty()) {
+                g2.setColor(new Color(255, 255, 150));
+                g2.drawString(npcName, textX, textY);
+                g2.setColor(Color.WHITE);
+                textY += lineHeight;
+            }
+        }
+
+        // Tampilkan dialog text
+        if (currentDialog != null && !currentDialog.isEmpty()) {
+            String[] paragraphs = currentDialog.split("\n");
+
+            for (String paragraph : paragraphs) {
+                String[] words = paragraph.split(" ");
+                StringBuilder line = new StringBuilder();
+
+                for (String word : words) {
+                    if (g2.getFontMetrics().stringWidth(line + " " + word) < width - 40) {
+                        if (line.length() > 0) {
+                            line.append(" ");
+                        }
+                        line.append(word);
+                    } else {
+                        g2.drawString(line.toString(), textX, textY);
+                        textY += lineHeight;
+                        line = new StringBuilder(word);
+
+                        if (textY > y + height - 30 - lineHeight) { 
+                            g2.drawString("...", textX + width - 50, textY);
+                            break;
+                        }
+                    }
+                }
+
+                if (line.length() > 0) {
+                    if (textY <= y + height - 30) {
+                        g2.drawString(line.toString(), textX, textY);
+                        textY += lineHeight;
+                    } else if (!line.toString().equals("...")) {
+                        
+                    }
+                }
+                if (textY > y + height - 30 - lineHeight && paragraphs.length > 1 && !paragraph.equals(paragraphs[paragraphs.length-1])) {
+                    break; 
+                }
+                textY += 5; 
+            }
+            // Prompt to continue
+            g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
+            g2.drawString("Press [E] to continue", x + width - 180, y + height - 20);
+
+            if (gp.currNPC != null &&  gp.currNPC.hasStore()) { 
+                g2.drawString("Press [S] to Shop", textX, y + height - 20);
+            }
+        } else {
+            g2.drawString("...", textX, textY);
+            g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
+            g2.drawString("Press [E] to exit", x + width - 180, y + height - 20);
+        }
+    }
+
+    public void drawObjectDialog(){
         int x = gp.tileSize * 2;
         int y = gp.tileSize * 8;
         int width = gp.screenWidth - (gp.tileSize * 4);
@@ -197,33 +282,10 @@ public class UI {
         g2.setFont(maruMonica.deriveFont(20f));
         g2.setColor(Color.WHITE);
 
-
         int textX = x + 20;
         int textY = y + 30;
         int lineHeight = 30;
 
-        if (gp.currNPC != null) {
-            String npcName = "";
-            // Example: Get name based on NPC type or a common getName() method
-            if (gp.currNPC instanceof NPC_mayortadi) {
-                npcName = ((NPC_mayortadi) gp.currNPC).getName();
-            }
-            // else if (gp.currNPC instanceof SomeOtherNPC) {
-            // npcName = ((SomeOtherNPC) gp.currNPC).getName();
-            // }
-            // Or if your base Entity class has a name:
-            // npcName = gp.currNPC.name;
-
-
-            if (npcName != null && !npcName.isEmpty()) {
-                g2.setColor(new Color(255, 255, 150)); // Yellow for NPC name
-                g2.drawString(npcName, textX, textY);
-                g2.setColor(Color.WHITE);
-                textY += lineHeight; // Move Y down for the dialog content
-            }
-        }
-
-        // Display the current dialog text (works for both NPC and TV/object messages)
         if (currentDialog != null && !currentDialog.isEmpty()) {
             String[] paragraphs = currentDialog.split("\n");
 
@@ -232,7 +294,7 @@ public class UI {
                 StringBuilder line = new StringBuilder();
 
                 for (String word : words) {
-                    if (g2.getFontMetrics().stringWidth(line + " " + word) < width - 40) { // 40 for padding
+                    if (g2.getFontMetrics().stringWidth(line + " " + word) < width - 40) {
                         if (line.length() > 0) {
                             line.append(" ");
                         }
@@ -241,41 +303,32 @@ public class UI {
                         g2.drawString(line.toString(), textX, textY);
                         textY += lineHeight;
                         line = new StringBuilder(word);
-
-                        if (textY > y + height - 30 - lineHeight) { // Check if next line will overflow (30 for bottom padding)
-                            g2.drawString("...", textX + width - 50, textY); // Indicate more text
-                            break; // Break word loop
+                        if (textY > y + height - 30 - lineHeight) {
+                            g2.drawString("...", textX + width - 50, textY);
+                            break;
                         }
                     }
                 }
-
-                if (line.length() > 0) { // Draw the last line of the paragraph
-                    if (textY <= y + height - 30) { // Check if it fits
+                if (line.length() > 0) {
+                    if (textY <= y + height - 30) {
                         g2.drawString(line.toString(), textX, textY);
                         textY += lineHeight;
-                    } else if (!line.toString().equals("...")) { // if it didn't fit, but wasn't already ellipsis
-                        // This case means the very first line of a paragraph already overflows,
-                        // or the last part of a word-wrapped line overflows.
-                        // Consider if "..." should be drawn here too.
-                        // For simplicity, we might just let it clip or be partially drawn.
                     }
                 }
                 if (textY > y + height - 30 - lineHeight && paragraphs.length > 1 && !paragraph.equals(paragraphs[paragraphs.length-1])) {
-                    break; // Break paragraph loop if overflowed
+                    break;
                 }
-                textY += 5; // Small gap between paragraphs
+                textY += 5;
             }
-            // Prompt to continue
             g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
             g2.drawString("Press [E] to continue", x + width - 180, y + height - 20);
-            g2.drawString("Press [S] to Shop", textX, y + height - 20);
         } else {
-            // Fallback if currentDialog is null or empty for some reason
             g2.drawString("...", textX, textY);
             g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
             g2.drawString("Press [E] to exit", x + width - 180, y + height - 20);
         }
     }
+
 
     public void setDialog(String dialog) {
         this.currentDialog = dialog;
@@ -342,17 +395,18 @@ public class UI {
 
         if (selectRecipe <= 0 || selectRecipe > allRecipes.size()) {
             System.err.println("AttemptToCook: Invalid selectRecipe index: " + selectRecipe);
-            this.selectRecipe = 0; // Kembali ke list jika ada kesalahan
+            this.selectRecipe = 0; 
             return;
         }
-
+        
         Recipe recipeToCook = allRecipes.get(selectRecipe - 1);
 
-        if (gp.cookingController.cookRecipe(recipeToCook)) {
-            this.doneCooking = true; // Berhasil memasak
+        boolean cookingSuccessful = gp.cookingController.cookRecipe(recipeToCook);
+
+        if (cookingSuccessful) {
+            this.doneCooking = true; 
 
         } else {
-            // Gagal memasak (kemungkinan karena bahan tidak cukup, dicek lagi di controller)
             this.selectRecipe = -1; // state kalo masaknya amburadul
             this.doneCooking = false;
         }
@@ -378,10 +432,10 @@ public class UI {
         int textY = frameY + gp.tileSize;    // Padding dari atas window
         int lineHeight = g2.getFontMetrics().getHeight() + 5; // Spasi antar baris
 
-        if (doneCooking) { // State: Berhasil memasak
+        if (doneCooking) { 
             g2.setFont(arial_20.deriveFont(Font.BOLD, 24f));
             text = "Congratulations!";
-            drawCenteredString(text, frameX, textY, frameWidth); // Helper method untuk center text
+            drawCenteredString(text, frameX, textY, frameWidth); 
             textY += lineHeight * 2;
 
             g2.setFont(arial_20);
@@ -389,20 +443,20 @@ public class UI {
             g2.drawString(text, textX, textY);
             textY += lineHeight;
 
-            // Tampilkan nama resep yang berhasil dimasak
+
             if (selectRecipe > 0 && selectRecipe <= allRecipes.size()) {
-                g2.setColor(Color.CYAN); // Warna berbeda untuk hasil
+                g2.setColor(Color.CYAN); 
                 g2.drawString(allRecipes.get(selectRecipe - 1).title, textX + gp.tileSize, textY);
                 g2.setColor(Color.WHITE);
             } else {
-                // Ini seharusnya tidak terjadi jika doneCooking=true dan selectRecipe valid
+
                 g2.drawString("a delicious meal!", textX + gp.tileSize, textY);
             }
 
             textY += lineHeight * 2;
             g2.drawString("Press ENTER to return.", textX, textY);
 
-        } else if (selectRecipe == 0) { // State: Menampilkan Daftar Resep
+        } else if (selectRecipe == 0) { 
             g2.setFont(arial_20.deriveFont(Font.BOLD, 24f));
             text = "RECIPE LIST";
             drawCenteredString(text, frameX, textY, frameWidth);
@@ -416,13 +470,13 @@ public class UI {
                     Recipe currentListedRecipe = allRecipes.get(i);
                     String recipeTitleText = (i + 1) + ". " + currentListedRecipe.title;
 
-                    if (i == cookingMenuSelection) { // Resep yang sedang dipilih
+                    if (i == cookingMenuSelection) { 
                         g2.setColor(Color.YELLOW);
-                        g2.drawString(">" + recipeTitleText, textX - 10, textY); // Tambah panah
+                        g2.drawString(">" + recipeTitleText, textX - 10, textY); 
                     } else {
 
                         if (cookableRecipes.contains(currentListedRecipe)) {
-                            g2.setColor(Color.GREEN); // Bisa dimasak
+                            g2.setColor(Color.GREEN); 
                         } else {
                             g2.setColor(Color.LIGHT_GRAY); // nda bisa masak
                         }
