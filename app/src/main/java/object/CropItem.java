@@ -17,4 +17,11 @@ public class CropItem extends BaseItem implements IConsumable {
     public int getEnergyRestoration() {
         return energyValue;
     }
+
+    @Override
+    public void consume(GamePanel gp){
+        System.out.println("Mengonsumsi " + getName() + " dan menambah " + energyValue + " energi.");
+        gp.player.addEnergy(energyValue);
+        gp.gameTime.addTime(5);
+    }
 }
