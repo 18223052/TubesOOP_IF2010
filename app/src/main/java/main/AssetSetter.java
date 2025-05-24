@@ -1,9 +1,6 @@
 package main;
-import entity.NPC_abigail;
-import entity.NPC_caroline;
-import entity.NPC_dasco;
 import entity.NPC_mayortadi;
-import entity.NPC_perry;
+
 import object.Bed;
 import object.ShippingBin;
 import object.Stove;
@@ -73,21 +70,21 @@ public class AssetSetter {
         }
         else if(gp.currMap.equals("/maps/worldmap.txt")) {
             // Set NPCs for river map
-            gp.npc[0] = new NPC_caroline(gp);
-            gp.npc[0].wX = gp.tileSize*18;
-            gp.npc[0].wY = gp.tileSize*29;
+            // gp.npc[0] = new NPC_caroline(gp);
+            // gp.npc[0].wX = gp.tileSize*18;
+            // gp.npc[0].wY = gp.tileSize*29;
 
-            gp.npc[1] = new NPC_abigail(gp);
-            gp.npc[1].wX = gp.tileSize*19;
-            gp.npc[1].wY = gp.tileSize*29;
+            // gp.npc[1] = new NPC_abigail(gp);
+            // gp.npc[1].wX = gp.tileSize*19;
+            // gp.npc[1].wY = gp.tileSize*29;
 
-            gp.npc[2] = new NPC_perry(gp);
-            gp.npc[2].wX = gp.tileSize*20;
-            gp.npc[2].wY = gp.tileSize*29;
+            // gp.npc[2] = new NPC_perry(gp);
+            // gp.npc[2].wX = gp.tileSize*20;
+            // gp.npc[2].wY = gp.tileSize*29;
 
-            gp.npc[3] = new NPC_dasco(gp);
-            gp.npc[3].wX = gp.tileSize*21;
-            gp.npc[3].wY = gp.tileSize*29;
+            // gp.npc[3] = new NPC_dasco(gp);
+            // gp.npc[3].wX = gp.tileSize*21;
+            // gp.npc[3].wY = gp.tileSize*29;
         }
         // Add more map conditions as needed
     }

@@ -14,14 +14,9 @@ import controller.ShippingBinController;
 import controller.SleepController;
 import controller.WatchingController;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 
 import controller.StoreController;
-import entity.Entity;
+import entity.NPC;
 import entity.Player;
 import environment.EnvironmentManager;
 import environment.GameTime;
@@ -96,22 +91,16 @@ public class GamePanel extends JPanel implements Runnable {
     
     // Arrays for game objects and NPCs
     public SuperObj obj[] = new SuperObj[100];
-    public Entity npc[] = new Entity[6];
+    public NPC npc[] = new NPC[6];
     
     // Current interactive objects
     public SuperObj currObj;
-    public Entity currNPC;
+    public NPC currNPC;
     
     // Game thread
     private Thread gameThread;
     private int fps = 60;
     
-    
-    // // Player starting position
-    // private int pX = 100;
-    // private int pY = 100;
-    // private int pSpeed = 4;
-
 
     private boolean isComplete = false;
     public GamePanel() {

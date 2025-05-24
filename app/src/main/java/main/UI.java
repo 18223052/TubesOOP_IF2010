@@ -46,7 +46,7 @@ public class UI {
     public UI(GamePanel gp) {
         this.gp = gp;
         this.inventory = gp.inventoryController;
-        this.cookingController = gp.cookingController;
+        this.cookingController = gp.cookingController; 
         this.shippingBin = gp.shippingBinController;
         this.store = gp.storeController;
         arial_40 = new Font("Arial", Font.PLAIN, 40);
@@ -164,10 +164,10 @@ public class UI {
         g2.drawString(value, textX, textY);
         textY += lineHeight;
 
-        value = String.valueOf(gp.player.getPartner());
-        textX = getXforAllignToRight(value, tailX);
-        g2.drawString(value, textX, textY);
-        textY += lineHeight;
+        // value = String.valueOf(gp.player.getPartner());
+        // textX = getXforAllignToRight(value, tailX);
+        // g2.drawString(value, textX, textY);
+        // textY += lineHeight;
     }
 
     public void drawPause() {

@@ -3,10 +3,16 @@ package object;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
+import entity.Player;
+import interactable.Interactable;
 import main.GamePanel;
+import main.UtilityTool;
 
-public class SuperObj {
+public abstract class SuperObj implements Interactable {
+    protected GamePanel gp;
     public BufferedImage img;
     public BufferedImage[] tiles; // Array for storing multiple tiles for larger objects
     public String name;
@@ -15,7 +21,6 @@ public class SuperObj {
     public int width = 1; 
     public int height = 1; 
     public Rectangle solidArea;
-    public GamePanel gp;
 
 
     public SuperObj(GamePanel gp){
@@ -71,7 +76,7 @@ public class SuperObj {
                wY < gp.player.wY + gp.player.screenY;
     }
 
-    // Method to check if an interaction box intersects with this object
+    @Override
     public boolean isInteractable(Rectangle interactionBox) {
         // Calculate the object's bounds based on its position and size
         Rectangle objectBounds = new Rectangle(
@@ -84,4 +89,27 @@ public class SuperObj {
         // Check if the player's interaction box intersects with any part of this object
         return objectBounds.intersects(interactionBox);
     }
+
+    @Override
+    public abstract void onInteract(GamePanel gp, Player player);
+
+    protected BufferedImage setup(String imagePath) {
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+        String fullPath = imagePath + ".png"; // Get the full path string
+        System.out.println("Attempting to load image: " + fullPath); // Print it out
+        try {
+            InputStream is = getClass().getResourceAsStream(fullPath);
+            if (is == null) {
+                System.err.println("Error: InputStream for " + fullPath + " is null. File not found on classpath.");
+            }
+            image = javax.imageio.ImageIO.read(is);
+            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+
 }

@@ -236,9 +236,9 @@ public class InventoryController {
         }
     }
 
-    // Update the inventory state (you can use this to refresh the UI or item actions)
+
     public void update() {
-        // Updated controls logic in KeyHandler will call the movement methods
+
     }
 
     public ArrayList<IItem> getInventory() {

@@ -47,10 +47,10 @@ public class CookingController {
             }
 
             if (availableAmount < requiredAmount) {
-                return false; // Bahan tidak cukup
+                return false; 
             }
         }
-        return true; // Semua bahan cukup
+        return true;
     }
 
     public boolean cookRecipe(Recipe recipe) {

@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import entity.Player;
 import main.GamePanel;
 
 public class TV extends SuperObj {
@@ -13,7 +14,6 @@ public class TV extends SuperObj {
     
     public TV(GamePanel gp){
         super(gp, TV_WIDTH, TV_HEIGHT);
-        name = "TV";
         collision = true;
 
         try{
@@ -23,10 +23,16 @@ public class TV extends SuperObj {
             tiles[2] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/173.png"));
             tiles[3] = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/174.png"));
 
-            img = ImageIO.read(getClass().getResourceAsStream("/tutor_tiles/169.png"));
+            img = setup("/tutor_tiles/169");
         }
         catch(IOException e){
             e.printStackTrace();
         }
-    } 
+    }
+
+    @Override
+    public void onInteract(GamePanel gp, Player player){
+        System.out.println("DEBUG INTERACTABLE TV");
+        gp.watchingController.watchTV();
+    }
 }
