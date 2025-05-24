@@ -199,7 +199,7 @@ public class ItemFactory {
     /**
      * Creates a fish item
      */
-    public FishItem createFish(String fishType, Season season, WeatherType weather, GameTime timeOfDay, int rarity) {
+    public FishItem createFish(String fishType, String season, String weather, String timeOfDay, int rarity) {
         int baseBuyPrice = 50;
         int baseSellPrice = 25;
         
