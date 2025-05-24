@@ -3,13 +3,26 @@ package main;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import entity.Entity;
+import javax.swing.JPanel;
+
+import controller.CookingController;
+import controller.InventoryController;
+import controller.ShippingBinController;
+import controller.SleepController;
+import controller.WatchingController;
+
+
+import controller.StoreController;
+import entity.NPC;
 import entity.Player;
 import environment.EnvironmentManager;
+import environment.GameTime;
+import environment.Lighting;
+import environment.WeatherManager;
+import environment.WeatherType;
 import object.ItemFactory;
 import object.SuperObj;
 import tile.TileManager;
@@ -28,6 +41,17 @@ public class GamePanel extends JPanel implements Runnable {
     public final int worldWidth = tileSize * maxWorldCol;
     public final int worldHeight = tileSize * maxScreenRow;
 
+    // Game Time
+    public GameTime gameTime = new GameTime();
+    public int currentMinute = gameTime.getGameMinute();
+    public int currentHour = gameTime.getGameHour();
+    public int currentDay = gameTime.getGameDay();
+    public boolean isTimePaused = false;
+
+    // Weather
+    public WeatherManager weatherManager;
+    public WeatherType currentWeather;
+
     // Current map
     public String currMap = "/maps/farmmm.txt";
 
@@ -39,7 +63,10 @@ public class GamePanel extends JPanel implements Runnable {
     public final int statsState = 5;
     public final int sleepState = 6;
     public final int cookingState = 7;
+    public final int shippingBinState = 8;
+    public final int storeState = 9;
     public int gameState;
+    private final Object pauseLock = new Object();
 
 
     public KeyHandler keyH;
@@ -48,27 +75,32 @@ public class GamePanel extends JPanel implements Runnable {
     public Collision colCheck;
     public AssetSetter aSetter;
     public Player player;
+
+    // controller
     public InventoryController inventoryController;
+    public SleepController sleepController;
+    public CookingController cookingController;
+    public WatchingController watchingController;
+    public ShippingBinController shippingBinController;
+    public StoreController storeController;
+
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
+    public int interactionTileCol;
+    public int interactionTileRow;
     
     // Arrays for game objects and NPCs
     public SuperObj obj[] = new SuperObj[100];
-    public Entity npc[] = new Entity[6];
+    public NPC npc[] = new NPC[6];
     
     // Current interactive objects
     public SuperObj currObj;
-    public Entity currNPC;
+    public NPC currNPC;
     
     // Game thread
     private Thread gameThread;
     private int fps = 60;
     
-    // Player starting position
-    private int pX = 100;
-    private int pY = 100;
-    private int pSpeed = 4;
-
 
     private boolean isComplete = false;
     public GamePanel() {
@@ -77,6 +109,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         
+        inventoryController = new InventoryController(this);
+        cookingController = new CookingController(this);
+        shippingBinController = new ShippingBinController(this);
+        storeController = new StoreController(this);
 
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
@@ -94,25 +130,24 @@ public class GamePanel extends JPanel implements Runnable {
         colCheck = new Collision(this);
         aSetter = new AssetSetter(this);
         ui = new UI(this);
-        
-
         player = new Player(this, keyH);
-        
-
         tileM = new TileManager(this);
-        
- 
         eManager = new EnvironmentManager(this);
-        inventoryController = new InventoryController(this);
         itemFactory = new ItemFactory(this);
-        
+        sleepController = new SleepController(this, player);
+        watchingController = new WatchingController(this);
 
+        // Weather
+        weatherManager = new WeatherManager();
+        currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
+
+        
         player.inventory = inventoryController;
-        
-
+    
         tileM.setup();  
         setupMap();     
         addStartingItems();
+        addStoreItems();
         eManager.setup();
 
         isComplete = true;
@@ -136,8 +171,31 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("hoe"));
         inventoryController.addItem(itemFactory.createTool("wateringcan"));
         inventoryController.addItem(itemFactory.createTool("fishingpole"));
-    }
+        inventoryController.addItem(itemFactory.createTool("pickaxe"));
+        inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createFood("veggiesoup"));
+        inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createMiscItem("coal"));
 
+    }
+  
+    // starting item buat item awal
+    private void addStoreItems() {
+        storeController.addItem(itemFactory.createTool("hoe"));
+        storeController.addItem(itemFactory.createTool("hoe"));
+        storeController.addItem(itemFactory.createTool("wateringcan"));
+        storeController.addItem(itemFactory.createTool("wateringcan"));
+        storeController.addItem(itemFactory.createTool("fishingpole"));
+        storeController.addItem(itemFactory.createTool("fishingpole"));
+        storeController.addItem(itemFactory.createTool("pickaxe"));
+        storeController.addItem(itemFactory.createTool("pickaxe"));
+        storeController.addItem(itemFactory.createFood("veggiesoup"));
+        storeController.addItem(itemFactory.createFood("veggiesoup"));
+        storeController.addItem(itemFactory.createFood("salmon"));
+        storeController.addItem(itemFactory.createFood("salmon"));
+
+    }
 
     public void startGameThread() {
 
@@ -156,7 +214,7 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currTime;
         long timer = 0;
-        int drawCnt = 0;
+        
 
         while (gameThread != null) {
             currTime = System.nanoTime();
@@ -164,28 +222,95 @@ public class GamePanel extends JPanel implements Runnable {
             timer += (currTime - lastTime);
             lastTime = currTime;
 
+            if (gameState != playState && gameState !=sleepState){
+                pauseGameThread();
+                repaint();
+                synchronized(pauseLock){
+                    try{
+                        pauseLock.wait();
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+                resumeGameThread();
+                continue;
+            }
+
             if (delta >= 1) {
                 update();
                 repaint();
                 delta--;
-                drawCnt++;
             }
 
             if (timer >= 1000000000) {
                 // System.out.println("FPS: " + drawCnt);
-                drawCnt = 0;
                 timer = 0;
             }
+        }
+    }
+
+    public void pauseGameThread(){
+        isTimePaused = true;
+        if (eManager.isLightingSetup()){
+            eManager.getLighting().onPause();
+        }
+
+        if (gameTime != null) {
+            gameTime.pause();
+        }
+        synchronized (pauseLock){}
+    }
+
+    public void resumeGameThread(){
+        isTimePaused = false;
+        synchronized(pauseLock){
+            pauseLock.notifyAll();
+        }
+
+        if (eManager.isLightingSetup()){
+            eManager.getLighting().onResume();
+        }
+
+        if (gameTime != null) {
+            gameTime.resume();
         }
     }
 
     public void update() {
         if (gameState == playState) {
             player.update();
-            tileM.checkTeleport();
+            interactionTileCol = player.interactionBox.x / tileSize;
+            interactionTileRow = player.interactionBox.y / tileSize;
+            tileM.checkTeleport(interactionTileCol, interactionTileRow);
             eManager.update();
+            cookingController.update();
+
+            // Game time update every n frames
+            currentMinute = gameTime.getGameMinute();
+            currentHour = gameTime.getGameHour();
+            currentDay = gameTime.getGameDay();
+
+            if (eManager != null && eManager.isLightingSetup()) {
+                Lighting lighting = eManager.getLighting();
+
+                if (currentHour == 5 && currentMinute == 0) {
+                    lighting.triggerTransition(Lighting.DAWN); // Transisi terang
+                }
+                else if (currentHour == 6 && currentMinute == 0) {
+                    lighting.triggerTransition(Lighting.DAY); // Langsung terang penuh
+                }
+                else if (currentHour == 17 && currentMinute == 0) {
+                    lighting.triggerTransition(Lighting.DUSK); // Transisi gelap
+                }
+                else if (currentHour == 18 && currentMinute == 0) {
+                    lighting.triggerTransition(Lighting.NIGHT); // Langsung gelap penuh
+                }
+            }
+
         } else if (gameState == inventoryState) {
             inventoryController.update();
+        } else if (gameState == sleepState){
+            sleepController.update();
         }
         // nambah gamestate lain kali
     }
@@ -222,17 +347,20 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 
                 // Draw UI elements
-                if (gameState == inventoryState && inventoryController != null) {
-                    inventoryController.draw(g2);
+
+
+                if (eManager != null) {
+                    eManager.draw(g2);
                 }
                 
                 if (ui != null) {
                     ui.draw(g2);
                 }
-                
-                if (eManager != null) {
-                    eManager.draw(g2);
+
+                if (gameState == sleepState && sleepController != null){
+                    sleepController.draw(g2);
                 }
+                
             } catch (Exception e) {
 
                 g2.setColor(Color.WHITE);
@@ -245,6 +373,19 @@ public class GamePanel extends JPanel implements Runnable {
         g2.dispose();
     }
 
+    public void nextDay() {
+        gameTime.nextDay(); // kamu harus buat method ini di GameTime.java
+        currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
+
+        if (currentWeather == WeatherType.RAINY) {
+            // tileManager.waterAllSoilTiles(); // kamu juga buat ini di TileManager.java
+        }
+
+        // Tambahkan hal lain yang perlu dilakukan setiap hari
+        // Misalnya: update tanaman, reset status karakter, dsb.
+    }
+
+
     private void drawLoadingScreen(Graphics2D g2) {
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, screenWidth, screenHeight);
@@ -256,8 +397,90 @@ public class GamePanel extends JPanel implements Runnable {
         g2.drawString(loadingText, (screenWidth - textWidth) / 2, screenHeight / 2);
     }
     
+    public void openTimeCheatDialog() {
+        isTimePaused = true;
+        if (gameTime != null) gameTime.pause();
+
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            // Input hari (boleh kosong)
+            String dayInput = javax.swing.JOptionPane.showInputDialog(
+                this,
+                "Masukkan hari baru (kosongkan jika tidak ingin mengubah):",
+                "Cheat Day",
+                javax.swing.JOptionPane.PLAIN_MESSAGE
+            );
+
+            // Input waktu (boleh kosong)
+            String timeInput = javax.swing.JOptionPane.showInputDialog(
+                this,
+                "Masukkan waktu baru (format: HH:MM, kosongkan jika tidak ingin mengubah):",
+                "Cheat Time",
+                javax.swing.JOptionPane.PLAIN_MESSAGE
+            );
+
+            boolean valid = true;
+
+            // Proses input hari
+            if (dayInput != null && !dayInput.trim().isEmpty()) {
+                try {
+                    int day = Integer.parseInt(dayInput.trim());
+                    if (day > 0) {
+                        gameTime.setGameDay(day);
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(
+                            this, "Hari harus angka positif.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        valid = false;
+                    }
+                } catch (NumberFormatException e) {
+                    javax.swing.JOptionPane.showMessageDialog(
+                        this, "Input hari bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                    );
+                    valid = false;
+                }
+            }
+
+            // Proses input waktu
+            if (timeInput != null && !timeInput.trim().isEmpty()) {
+                if (timeInput.matches("\\d{1,2}:\\d{2}")) {
+                    String[] parts = timeInput.split(":");
+                    try {
+                        int hour = Integer.parseInt(parts[0]);
+                        int minute = Integer.parseInt(parts[1]);
+                        if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+                            gameTime.setTime(hour, minute);
+                        } else {
+                            javax.swing.JOptionPane.showMessageDialog(
+                                this, "Format waktu tidak valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                            );
+                            valid = false;
+                        }
+                    } catch (NumberFormatException e) {
+                        javax.swing.JOptionPane.showMessageDialog(
+                            this, "Input waktu bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                        );
+                        valid = false;
+                    }
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(
+                        this, "Format waktu harus HH:MM.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
+                    );
+                    valid = false;
+                }
+            }
+
+            if (valid) {
+                System.out.println("Cheat berhasil diterapkan.");
+            }
+
+            isTimePaused = false;
+            if (gameTime != null) gameTime.resume();
+        });
+    }
+
 
     private class EmptyTileManager extends TileManager {
+
         public EmptyTileManager(GamePanel gp) {
             super(gp);
         }
@@ -276,5 +499,6 @@ public class GamePanel extends JPanel implements Runnable {
         public void loadMap(String filePath) {
             // Do nothing
         }
+
     }
 }

@@ -22,7 +22,7 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[200];
+        tile = new Tile[250];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         currentMap = gp.currMap;
         
@@ -38,38 +38,13 @@ public class TileManager {
 
     public void getTileImage() {
         // Initialize all tile types
-        for (int i = 0; i <= 194; i++) {
+        for (int i = 0; i <= 201; i++) {
             String fileName = String.format("%03d", i);
             boolean collision = (i >= 20 && i <= 32) || (i >= 65 && i <= 72) || (i >= 183 && i <= 190);
             
             setup(i, fileName, collision);
         }
-   
-        // Set teleport properties
-        tile[33].teleport = true;
-        tile[33].destMap = "/maps/rumah.txt";
-        tile[33].destX = 26;
-        tile[33].destY = 36;
-        tile[33].sourceMap = "/maps/farmmm.txt";
-   
-        tile[109].teleport = true;
-        tile[109].destMap = "/maps/farmmm.txt";
-        tile[109].destX = 19;
-        tile[109].destY = 19;
-        tile[109].sourceMap = "/maps/rumah.txt";
-   
-        tile[116].teleport = true;
-        tile[116].destMap = "/maps/river.txt";
-        tile[116].destX = 23;
-        tile[116].destY = 5;
-        tile[116].sourceMap = "/maps/farmmm.txt";
-   
-        tile[179].teleport = true;
-        tile[179].destMap = "/maps/farmmm.txt";
-        tile[179].destX = 31;
-        tile[179].destY = 47;
-        tile[179].sourceMap = "/maps/river.txt";
-   
+
         tile[16].collision = true;
         tile[19].collision = true;
         tile[35].collision = true;
@@ -98,19 +73,51 @@ public class TileManager {
         }
     }
     
-    public void checkTeleport() {
+    public void checkTeleport(int checkCol, int checkRow) { 
+        // dari map farmm ke map lain
+        if (currentMap.equals("/maps/farmmm.txt")) {
+            if (checkCol == 18 && checkRow == 17) {
 
-        int playerCol = gp.player.wX / gp.tileSize;
-        int playerRow = gp.player.wY / gp.tileSize;
-        
+                teleportPlayer("/maps/rumah.txt", 26, 36);
+                return;
+            }
+            if ((checkCol == 28 || checkCol == 29 || checkCol == 30 || checkCol == 31) && checkRow == 49) { // Contoh teleportasi dari rumah.txt ke farmmm.txt (balikan dari yang sebelumnya)
+                teleportPlayer("/maps/river.txt", 22, 1);
+                return;
+            }
+            if (checkCol == 49 && checkRow == 32) {
 
-        int tileNum = mapTileNum[playerCol][playerRow];
-        if (tile[tileNum] != null && tile[tileNum].teleport) {
-            if (tile[tileNum].sourceMap == null || tile[tileNum].sourceMap.equals(currentMap)) {
-                teleportPlayer(tile[tileNum].destMap, tile[tileNum].destX, tile[tileNum].destY);
+                teleportPlayer("/maps/worldmap.txt", 1, 30);
+                return;
             }
         }
+
+         // dari map rumah ke map lain
+        if (currentMap.equals("/maps/rumah.txt")) {
+            if ((checkCol == 26 || checkCol == 25 || checkCol == 27 || checkCol == 24) && checkRow == 38) {
+                teleportPlayer("/maps/farmmm.txt", 18, 20);
+                return;
+            }
+        } 
+        // dari map river ke map lain
+        if (currentMap.equals("/maps/river.txt")) {
+            if ((checkCol == 21 || checkCol == 22 || checkCol == 23 || checkCol == 24) && checkRow == 0) {
+                teleportPlayer("/maps/farmmm.txt", 31, 48);
+                return;
+            }
+        }
+
+        // dari map world ke map lain
+        if (currentMap.equals("/maps/worldmap.txt")) {
+            if (checkCol == 0 && checkRow == 30) {
+                teleportPlayer("/maps/farmmm.txt", 48, 32);
+                return;
+            }
+        }
+        
+    
     }
+
     
     public void teleportPlayer(String mapPath, int destX, int destY) {
 

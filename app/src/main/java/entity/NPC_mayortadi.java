@@ -1,30 +1,13 @@
 package entity;
 
-import java.awt.Rectangle;
-import java.util.ArrayList;
-
 import main.GamePanel;
-import object.Item;
 
-public class NPC_mayortadi extends Entity {
 
-    private String name = "Mayor Tadi";
-    private int heartPoints;
-    private ArrayList<Item> lovedItems;
-    private ArrayList<Item> hatedItems;
-    private String relationshipStatus;
-    private final int MAX_HEART_POINTS = 150;
+public class NPC_mayortadi extends NPC {
 
     public NPC_mayortadi(GamePanel gp) {
         super(gp);
-        direction = "down";
-        
-        // Set up dialogues
-        setDialogue();
-        
-
-        solid = new Rectangle(8, 16, 32, 32); 
-        
+        name = "Mayor Tadi";
         getImage();
     }
 
@@ -48,21 +31,10 @@ public class NPC_mayortadi extends Entity {
         dialogues[3] = "We have a shipping bin near the center of town where you can sell your produce.";
         dialogues[4] = "Good luck with your farming!";
     }
-    
 
-    public String getName() {
-        return name;
-    }
-
-    public int getHeartPoints(){
-        return heartPoints;
-    }
-
-    public ArrayList<Item> getLovedItems (){
-        return lovedItems;
-    }
-
-    public ArrayList<Item> getHatedItems (){
-        return hatedItems;
+    @Override
+    // contoh
+    public boolean hasStore(){
+        return true;
     }
 }
