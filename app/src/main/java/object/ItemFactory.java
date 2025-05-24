@@ -1,9 +1,14 @@
 package object;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import environment.GameTime;
 import environment.Season;
 import environment.WeatherType;
 import main.GamePanel;
+import object.FishItem.FishCategory;
+import environment.TimeRange;
 
 /**
  * Factory for creating different types of items
@@ -199,14 +204,224 @@ public class ItemFactory {
     /**
      * Creates a fish item
      */
-    public FishItem createFish(String fishType, Season season, WeatherType weather, GameTime timeOfDay, int rarity) {
-        int baseBuyPrice = 50;
-        int baseSellPrice = 25;
-        
-        // Adjust price based on rarity
-        int finalSellPrice = baseSellPrice + (rarity * 15);
-        
-        return new FishItem(fishType, baseBuyPrice, finalSellPrice, season, weather, timeOfDay, rarity, gp);
+ public FishItem createFish(String fishType) {
+        String name = fishType;
+        int buyPrice = 0;
+        Season[] seasons = null;
+        WeatherType[] weathers = null;
+        List<TimeRange> timeRangesParam = null;
+        FishLocation[] locations = null;
+        FishCategory category = FishCategory.COMMON;
+        int energyValue = 1;
+
+        switch (fishType.toLowerCase()) {
+
+            case "salmon":
+                name = "Salmon";
+                seasons = new Season[]{Season.FALL};
+                weathers = null;
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
+                locations = new FishLocation[]{FishLocation.FOREST_RIVER};
+                category = FishCategory.REGULAR;
+                break;
+
+
+            case "bullhead":
+                name = "Bull Head";
+                seasons = new Season[]{Season.SPRING, Season.FALL, Season.SUMMER, Season.WINTER};
+                weathers = null; 
+                timeRangesParam = null;
+                locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE};
+                category = FishCategory.COMMON;
+                break;
+            
+            case "carp":
+                name = "Carp";
+                seasons = new Season[]{Season.SPRING, Season.FALL, Season.SUMMER, Season.WINTER};
+                weathers = null;
+                timeRangesParam = null; 
+                locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE, FishLocation.POND};
+                category = FishCategory.COMMON;
+                break;
+            
+            case "chub":
+                name = "Chub";
+                seasons = new Season[]{Season.SPRING, Season.FALL, Season.SUMMER, Season.WINTER};
+                weathers = null; 
+                timeRangesParam = null;  
+                locations = new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.MOUNTAIN_LAKE};
+                category = FishCategory.COMMON;
+                break;
+            
+            case "largemouthbass": 
+                name = "Largemouth Bass";
+                seasons = null; 
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
+                weathers = null; 
+                locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE};
+                category = FishCategory.REGULAR; 
+                break;
+
+            case "rainbowtrout": 
+                name = "Rainbow Trout";
+                seasons = new Season[]{Season.SUMMER};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
+                weathers = new WeatherType[]{WeatherType.SUNNY};
+                locations = new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.MOUNTAIN_LAKE};
+                category = FishCategory.REGULAR; 
+                break;
+
+            case "sturgeon":
+                name = "Sturgeon";
+                seasons = new Season[]{Season.SUMMER, Season.WINTER}; 
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
+                weathers = null; // Any Weather
+                locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE};
+                category = FishCategory.REGULAR; 
+                break;
+
+            case "midnightcarp": 
+                name = "Midnight Carp";
+                seasons = new Season[]{Season.WINTER, Season.FALL};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(20, 0), new GameTime(2, 0)));
+                weathers = null; 
+                locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE, FishLocation.POND};
+                category = FishCategory.REGULAR;
+                break;
+
+            case "flounder":
+                name = "Flounder";
+                seasons = new Season[]{Season.SPRING, Season.SUMMER};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(22, 0)));
+                weathers = null; 
+                locations = new FishLocation[]{FishLocation.OCEAN};
+                category = FishCategory.REGULAR; 
+                break;
+
+            case "halibut":
+                name = "Halibut";
+                seasons = null; 
+                // Original time: 06.00-11.00, 19.00-02.00. Using the longer/later slot.
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
+                timeRangesParam.add(new TimeRange(new GameTime(19, 0), new GameTime(2, 0)));
+                weathers = null; // Any Weather
+                locations = new FishLocation[]{FishLocation.OCEAN};
+                category = FishCategory.REGULAR; // Default
+                break;
+
+            case "octopus": // 7. Octopus
+                name = "Octopus";
+                seasons = new Season[]{Season.SUMMER};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(22, 0)));
+                weathers = null; // Any Weather
+                locations = new FishLocation[]{FishLocation.OCEAN};
+                category = FishCategory.REGULAR; // Default, could be higher
+                break;
+
+            case "pufferfish": // 8. Pufferfish
+                name = "Pufferfish";
+                seasons = new Season[]{Season.SUMMER};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(0, 0), new GameTime(16, 0)));
+                weathers = new WeatherType[]{WeatherType.SUNNY};
+                locations = new FishLocation[]{FishLocation.OCEAN};
+                category = FishCategory.REGULAR; // Can be tricky, adjust if needed
+                 // Placeholder
+                break;
+
+            case "sardine": // 9. Sardine
+                name = "Sardine";
+                seasons = null; // Any Season
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
+                weathers = null; // Any Weather
+                locations = new FishLocation[]{FishLocation.OCEAN};
+                category = FishCategory.COMMON; // Sardines are usually common
+                
+                break;
+
+            case "supercucumber": // 10. Super Cucumber
+                name = "Super Cucumber";
+                seasons = new Season[]{Season.SUMMER, Season.FALL, Season.WINTER};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(18, 0), new GameTime(2, 0)));
+                weathers = null;
+                locations = new FishLocation[]{FishLocation.OCEAN};
+                category = FishCategory.REGULAR; 
+                
+                break;
+
+            case "catfish": // 11. Catfish
+                name = "Catfish";
+                seasons = new Season[]{Season.SPRING, Season.SUMMER, Season.FALL};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(22, 0)));
+                weathers = new WeatherType[]{WeatherType.RAINY};
+                locations = new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.POND};
+                category = FishCategory.REGULAR; 
+                break;
+
+            case "angler": // 8. Pufferfish
+                name = "Angler";
+                seasons = new Season[]{Season.FALL};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(8, 0), new GameTime(20, 0)));
+                weathers = null;
+                locations = new FishLocation[]{FishLocation.POND};
+                category = FishCategory.LEGENDARY; 
+                break;
+
+            case "crimsonfish": // 9. Sardine
+                name = "Crimsonfish";
+                seasons = new Season[]{Season.SUMMER};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(8, 0), new GameTime(20, 0)));
+                weathers = null; 
+                locations = new FishLocation[]{FishLocation.FOREST_RIVER};
+                category = FishCategory.LEGENDARY; // Sardines are usually common
+                break;
+
+            case "glacierfish": // 10. Super Cucumber
+                name = "Glacierfish";
+                seasons = new Season[]{Season.WINTER};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(8, 0), new GameTime(20, 0)));
+                weathers = null;
+                locations = new FishLocation[]{FishLocation.FOREST_RIVER};
+                category = FishCategory.LEGENDARY;  
+                break;
+
+            case "legend": // 11. Catfish
+                name = "Legend";
+                seasons = new Season[]{Season.SPRING};
+                timeRangesParam = new ArrayList<>();
+                timeRangesParam.add(new TimeRange(new GameTime(8, 0), new GameTime(20, 0)));
+                weathers = new WeatherType[]{WeatherType.RAINY};
+                locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE};
+                category = FishCategory.LEGENDARY; 
+                break;
+
+            default:
+                System.err.println("Warning: Attempted to create unknown fish type: " + fishType + ". Creating a default common fish.");
+                name = "Minnow";
+                seasons = new Season[]{Season.SPRING};
+                timeRangesParam = new ArrayList<>(); // Default ke satu slot waktu atau null jika "Any time"
+                timeRangesParam.add(new TimeRange(new GameTime(6,0), new GameTime(18,0)));
+                weathers = null;
+                locations = new FishLocation[]{FishLocation.POND};
+                category = FishCategory.COMMON;
+                energyValue = 5;
+                break;
+        }
+        return new FishItem(name, buyPrice, seasons, weathers, timeRangesParam, locations, category, energyValue, gp);
     }
 
     public MiscItem createMiscItem(String itemName) {

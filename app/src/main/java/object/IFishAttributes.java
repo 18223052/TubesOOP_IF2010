@@ -6,8 +6,8 @@ import environment.WeatherType;
 import object.FishItem.FishCategory;
 
 public interface IFishAttributes {
-    Season getSeason();
-    WeatherType getWeather();
+    Season[] getSeason();
+    WeatherType[] getWeather();
     GameTime getTime();
     FishCategory getFishCategory();
 }

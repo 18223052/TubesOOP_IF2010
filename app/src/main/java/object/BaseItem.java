@@ -45,6 +45,11 @@ public abstract class BaseItem implements IItem {
     }
     
     @Override
+    public void setSellPrice(int sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
+    @Override
     public String getCategory() {
         return category;
     }
