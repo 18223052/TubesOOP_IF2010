@@ -171,6 +171,11 @@ public class InventoryController {
         return selectedSlot;
     }
 
+    public void setSelectedSlot(int slot) {
+        this.selectedSlot = slot;
+    }
+
+
     public void setFilter(String category) {
         this.currentFilter = category;
     }
