@@ -38,11 +38,11 @@ public class Stove extends SuperObj {
     @Override
     public void onInteract(GamePanel gp, Player player){
         gp.currNPC = null;
-        gp.gameState = gp.cookingState;
-        gp.ui.selectRecipe = 0;
-        gp.ui.doneCooking = false;
-        gp.ui.hasIngradients = true;
-        gp.ui.cookingMenuSelection = 0;
+        gp.gameState = GamePanel.cookingState;
+        gp.ui.cookingMenu.selectRecipe = 0;
+        gp.ui.cookingMenu.doneCooking = false;
+        gp.ui.cookingMenu.hasIngradients = true;
+        gp.ui.cookingMenu.cookingMenuSelection = 0;
     }
 
 }

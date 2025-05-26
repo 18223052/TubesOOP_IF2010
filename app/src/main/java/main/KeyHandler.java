@@ -1,3 +1,5 @@
+// File: KeyHandler.java
+
 package main;
 
 import java.awt.event.KeyEvent;
@@ -15,7 +17,7 @@ public class KeyHandler implements KeyListener {
     public boolean useItemPressed, discardItemPressed, sellItemPressed;
     public boolean filterPressed;
     private int currentFilterIndex = 0;
-    private String[] filters = {"all", "tools", "consumables", "crops", "fish"};
+    private String[] filters = {"all", "tools", "consumables", "crops", "fish", "seeds", "fuel"};
     StringBuilder inputBuffer = new StringBuilder();
     public int singleNumPress;
     public String multiNumPress = "";
@@ -32,28 +34,27 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-        // System.out.println("Pressed: " + code); // Debug
 
-        // State transitions based on game state
-        if (gp.gameState == gp.playState) {
+        // Ganti gp.STATE_NAME menjadi GamePanel.STATE_NAME di semua tempat
+        if (gp.gameState == GamePanel.playState) {
             gp.isTimePaused = false;
             handlePlayState(code);
-        } else if (gp.gameState == gp.pauseState) {
+        } else if (gp.gameState == GamePanel.pauseState) {
             gp.isTimePaused = true;
             handlePauseState(code);
-        } else if (gp.gameState == gp.dialogState) {
+        } else if (gp.gameState == GamePanel.dialogState) {
             handleDialogState(code);
-        } else if (gp.gameState == gp.statsState) {
+        } else if (gp.gameState == GamePanel.statsState) { // Perubahan di sini
             handleStatsState(code);
-        } else if (gp.gameState == gp.inventoryState) {
+        } else if (gp.gameState == GamePanel.inventoryState) { // Perubahan di sini
             handleInventoryState(code);
-        } else if (gp.gameState == gp.cookingState) {
+        } else if (gp.gameState == GamePanel.cookingState) { // Perubahan di sini
             handleCookingState(code);
-        } else if (gp.gameState == gp.shippingBinState) {
+        } else if (gp.gameState == GamePanel.shippingBinState) { // Perubahan di sini
             handleShippingBinState(code);
-        } else if (gp.gameState == gp.storeState) {
+        } else if (gp.gameState == GamePanel.storeState) { // Perubahan di sini
             handleStoreState(code);
-        } else if (gp.gameState == gp.npcContextMenuState){
+        } else if (gp.gameState == GamePanel.npcContextMenuState){ // Perubahan di sini
             handleNpcContextMenuState(code);
         }
     }
@@ -69,13 +70,16 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D ->
                 rightPressed = true;
             case KeyEvent.VK_P ->
-                gp.gameState = gp.pauseState;
+                gp.gameState = GamePanel.pauseState; // Di sini sudah benar karena ini penugasan
             case KeyEvent.VK_E ->
                 interactPressed = true;
-            case KeyEvent.VK_I ->
-                gp.gameState = gp.inventoryState;
+            case KeyEvent.VK_I -> {
+                gp.setGameState(GamePanel.inventoryState); // Perubahan di sini
+                gp.isGifting = false;
+                gp.resumeGameThread();
+            }
             case KeyEvent.VK_C ->
-                gp.gameState = gp.statsState;
+                gp.gameState = GamePanel.statsState; // Di sini sudah benar karena ini penugasan
             case KeyEvent.VK_ENTER ->
                 enterPressed = true;
             case KeyEvent.VK_SLASH -> {
@@ -87,48 +91,49 @@ public class KeyHandler implements KeyListener {
 
     public void handlePauseState(int code) {
         if (code == KeyEvent.VK_P) {
-            gp.gameState = gp.playState;
+            gp.gameState = GamePanel.playState;
             gp.resumeGameThread();
         }
     }
 
     public void handleDialogState(int code) {
         if (code == KeyEvent.VK_E) {
-            gp.gameState = gp.playState;
+            gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
         if (code == KeyEvent.VK_S) {
-            gp.gameState = gp.storeState;
-            gp.repaint();
+            if (gp.currNPC != null && gp.currNPC.hasStore()) {
+                gp.setGameState(GamePanel.storeState); // Perubahan di sini
+                gp.repaint();
+            }
         }
     }
 
     public void handleStatsState(int code) {
         if (code == KeyEvent.VK_C) {
-            gp.gameState = gp.playState;
+            gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
     }
 
     public void handleInventoryState(int code) {
-        // If gifting is active, handle 'E' as gift confirmation
         if (gp.isGifting) {
             switch (code) {
                 case KeyEvent.VK_E:
                     IItem selectedItem = gp.inventoryController.getSelectedItem();
-                    if (selectedItem instanceof BaseItem) { // Cast to BaseItem for NPCController
+                    if (selectedItem instanceof BaseItem) {
                         gp.npcController.giftItemToNPC((BaseItem) selectedItem);
                     } else {
-                        gp.ui.currentDialog = "That item cannot be gifted."; // Or some other message
-                        gp.gameState = gp.dialogState;
+                        gp.ui.setDialog("That item cannot be gifted.");
+                        gp.setGameState(GamePanel.dialogState); // Perubahan di sini
                     }
-                    gp.isGifting = false; // Reset gifting flag after action
-                    gp.setGameState(gp.dialogState); // Show NPC reaction
+                    gp.isGifting = false;
+                    gp.setGameState(GamePanel.dialogState); // Perubahan di sini
                     gp.resumeGameThread();
                     break;
-                case KeyEvent.VK_ESCAPE: // Allow escape to cancel gifting
+                case KeyEvent.VK_ESCAPE:
                     gp.isGifting = false;
-                    gp.setGameState(gp.playState); // Go back to play state or NPC context menu
+                    gp.setGameState(GamePanel.playState);
                     gp.resumeGameThread();
                     break;
                 case KeyEvent.VK_W, KeyEvent.VK_UP:
@@ -181,18 +186,23 @@ public class KeyHandler implements KeyListener {
                 case KeyEvent.VK_F -> {
                     toggleFilter();
                     filterPressed = true;
-                    gp.repaint(); // Trigger a screen update after changing the filter
+                    gp.repaint();
+                }
+                case KeyEvent.VK_DELETE -> {
+                    gp.inventoryController.discardItem(gp.inventoryController.getSelectedSlot());
+                    discardItemPressed = true;
+                    gp.repaint();
+                    break;
                 }
             }
         }
     }
-    
 
     private void toggleInventoryState() {
-        if (gp.gameState == gp.playState) {
-            gp.gameState = gp.inventoryState;
-        } else if (gp.gameState == gp.inventoryState) {
-            gp.gameState = gp.playState;
+        if (gp.gameState == GamePanel.playState) {
+            gp.setGameState(GamePanel.inventoryState); // Perubahan di sini
+        } else if (gp.gameState == GamePanel.inventoryState) { // Perubahan di sini
+            gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
         inventoryPressed = true;
@@ -202,57 +212,40 @@ public class KeyHandler implements KeyListener {
         switch (code) {
             case KeyEvent.VK_E ->
                 toggleShippingBinState();
-            case KeyEvent.VK_W -> {
+            case KeyEvent.VK_W, KeyEvent.VK_UP -> {
                 gp.shippingBinController.moveSelectionUp();
                 gp.repaint();
             }
-            case KeyEvent.VK_S -> {
+            case KeyEvent.VK_S, KeyEvent.VK_DOWN -> {
                 gp.shippingBinController.moveSelectionDown();
                 gp.repaint();
             }
-            case KeyEvent.VK_A -> {
+            case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
                 gp.shippingBinController.moveSelectionLeft();
                 gp.repaint();
             }
-            case KeyEvent.VK_D -> {
+            case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
                 gp.shippingBinController.moveSelectionRight();
-                gp.repaint();
-            }
-            case KeyEvent.VK_UP -> {
-                gp.inventoryController.moveSelectionUp();
-                gp.repaint();
-            }
-            case KeyEvent.VK_DOWN -> {
-                gp.inventoryController.moveSelectionDown();
-                gp.repaint();
-            }
-            case KeyEvent.VK_LEFT -> {
-                gp.inventoryController.moveSelectionLeft();
-                gp.repaint();
-            }
-            case KeyEvent.VK_RIGHT -> {
-                gp.inventoryController.moveSelectionRight();
                 gp.repaint();
             }
             case KeyEvent.VK_F -> {
                 toggleFilter();
                 filterPressed = true;
-                gp.repaint(); // Trigger a screen update after changing the filter
+                gp.repaint();
             }
             case KeyEvent.VK_ENTER -> {
                 gp.inventoryController.sellItem(gp.inventoryController.getSelectedSlot());
                 sellItemPressed = true;
                 gp.repaint();
             }
-
         }
     }
 
     private void toggleShippingBinState() {
-        if (gp.gameState == gp.playState) {
-            gp.gameState = gp.shippingBinState;
-        } else if (gp.gameState == gp.shippingBinState) {
-            gp.gameState = gp.playState;
+        if (gp.gameState == GamePanel.playState) {
+            gp.setGameState(GamePanel.shippingBinState); // Perubahan di sini
+        } else if (gp.gameState == GamePanel.shippingBinState) { // Perubahan di sini
+            gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
         inventoryPressed = true;
@@ -262,86 +255,69 @@ public class KeyHandler implements KeyListener {
         switch (code) {
             case KeyEvent.VK_E ->
                 toggleStoreState();
-            case KeyEvent.VK_W -> {
+            case KeyEvent.VK_W, KeyEvent.VK_UP -> {
                 gp.storeController.moveSelectionUp();
                 gp.repaint();
             }
-            case KeyEvent.VK_S -> {
-                if (gp.gameState == gp.storeState) {
-                    gp.storeController.moveSelectionDown();
-                    gp.repaint();
-                } else {
-                    gp.gameState = gp.storeState;
-                }
-
+            case KeyEvent.VK_S, KeyEvent.VK_DOWN -> {
+                gp.storeController.moveSelectionDown();
+                gp.repaint();
             }
-            case KeyEvent.VK_A -> {
+            case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
                 gp.storeController.moveSelectionLeft();
                 gp.repaint();
             }
-            case KeyEvent.VK_D -> {
+            case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
                 gp.storeController.moveSelectionRight();
-                gp.repaint();
-            }
-            case KeyEvent.VK_UP -> {
-                gp.inventoryController.moveSelectionUp();
-                gp.repaint();
-            }
-            case KeyEvent.VK_DOWN -> {
-                gp.inventoryController.moveSelectionDown();
-                gp.repaint();
-            }
-            case KeyEvent.VK_LEFT -> {
-                gp.inventoryController.moveSelectionLeft();
-                gp.repaint();
-            }
-            case KeyEvent.VK_RIGHT -> {
-                gp.inventoryController.moveSelectionRight();
                 gp.repaint();
             }
             case KeyEvent.VK_F -> {
                 toggleFilter();
                 filterPressed = true;
-                gp.repaint(); // Trigger a screen update after changing the filter
+                gp.repaint();
             }
             case KeyEvent.VK_ENTER -> {
                 gp.storeController.sellItem(gp.storeController.getSelectedSlot());
                 sellItemPressed = true;
                 gp.repaint();
             }
-
         }
     }
 
     public void handleNpcContextMenuState(int code) {
         switch (code) {
-            case KeyEvent.VK_E: // Press 'E' again to speak
-                interactPressed = true; // Or can directly call action
+            case KeyEvent.VK_E:
+                interactPressed = true;
                 if (gp.currNPC != null) {
-                    gp.currNPC.speak(); // This will set gameState to dialogState
+                    gp.currNPC.speak();
                     gp.resumeGameThread();
                 }
                 break;
-            case KeyEvent.VK_G: // Press 'G' for gifting
-                giftKeyPressed = true; // Set this flag
-                gp.isGifting = true; // Indicate that we are in a gifting flow
-                gp.setGameState(gp.inventoryState); // Change to inventory state
-                // gp.inventoryController.resetSelection(); // Optional: Reset inventory selection to 0
-                gp.inventoryController.setSelectedSlot(0); // Reset selection
+            case KeyEvent.VK_G:
+                giftKeyPressed = true;
+                gp.isGifting = true;
+                gp.setGameState(GamePanel.inventoryState); // Perubahan di sini
+                gp.inventoryController.setSelectedSlot(0);
                 gp.resumeGameThread();
                 break;
-            case KeyEvent.VK_ESCAPE: // Exit from context menu
-                gp.setGameState(gp.playState);
+            case KeyEvent.VK_ESCAPE:
+                gp.setGameState(GamePanel.playState); // Perubahan di sini
                 gp.currNPC = null;
-                gp.isGifting = false; // Ensure gifting flag is reset
+                gp.isGifting = false;
                 gp.resumeGameThread();
+                break;
+            case KeyEvent.VK_S:
+                if (gp.currNPC != null && gp.currNPC.hasStore()) {
+                    gp.setGameState(GamePanel.storeState); // Perubahan di sini
+                    gp.repaint();
+                }
                 break;
         }
     }
 
     private void toggleStoreState() {
-        if (gp.gameState == gp.storeState) {
-            gp.gameState = gp.playState;
+        if (gp.gameState == GamePanel.storeState) { // Perubahan di sini
+            gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
         inventoryPressed = true;
@@ -353,62 +329,57 @@ public class KeyHandler implements KeyListener {
     }
 
     public void handleCookingState(int code) {
-        boolean stateChanged = false; // Flag untuk menandai jika ada perubahan yang butuh repaint
+        boolean stateChanged = false;
 
         switch (code) {
             case KeyEvent.VK_E:
-
-                gp.gameState = gp.playState;
-                gp.resumeGameThread();       
-
-                gp.ui.selectRecipe = 0;
-                gp.ui.cookingMenuSelection = 0;
-                gp.ui.doneCooking = false;
-
-                return; 
+            case KeyEvent.VK_ESCAPE:
+                gp.setGameState(GamePanel.playState); // Perubahan di sini
+                gp.resumeGameThread();
+                gp.ui.cookingMenu.selectRecipe = 0;
+                gp.ui.cookingMenu.cookingMenuSelection = 0;
+                gp.ui.cookingMenu.doneCooking = false;
+                return;
 
             case KeyEvent.VK_UP:
-            case KeyEvent.VK_W: 
-                if (gp.ui.selectRecipe == 0) {
-                    gp.ui.moveCookingSelectionUp();
+            case KeyEvent.VK_W:
+                if (gp.ui.cookingMenu.selectRecipe == 0) {
+                    gp.ui.cookingMenu.moveSelectionUp();
                     stateChanged = true;
                 }
                 break;
 
             case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S: 
-                if (gp.ui.selectRecipe == 0) {
-                    gp.ui.moveCookingSelectionDown();
+            case KeyEvent.VK_S:
+                if (gp.ui.cookingMenu.selectRecipe == 0) {
+                    gp.ui.cookingMenu.moveSelectionDown();
                     stateChanged = true;
                 }
                 break;
 
             case KeyEvent.VK_ENTER:
-                // enterPressed = true; // Mungkin tidak dibutuhkan flag ini
-
-                if (gp.ui.doneCooking || gp.ui.selectRecipe == -1) {
-                    gp.ui.selectRecipe = 0;
-                    gp.ui.doneCooking = false;
-                } else if (gp.ui.selectRecipe == 0) {
-                    gp.ui.selectChosenRecipe();
-                } else if (gp.ui.selectRecipe > 0) {
-                    gp.ui.attemptToCookSelectedRecipe();
+                if (gp.ui.cookingMenu.doneCooking || gp.ui.cookingMenu.selectRecipe == -1) {
+                    gp.ui.cookingMenu.selectRecipe = 0;
+                    gp.ui.cookingMenu.doneCooking = false;
+                } else if (gp.ui.cookingMenu.selectRecipe == 0) {
+                    gp.ui.cookingMenu.selectChosenRecipe();
+                } else if (gp.ui.cookingMenu.selectRecipe > 0) {
+                    gp.ui.cookingMenu.attemptToCookSelectedRecipe();
                 }
                 stateChanged = true;
                 break;
 
             case KeyEvent.VK_0:
             case KeyEvent.VK_BACK_SPACE:
-                if (gp.ui.selectRecipe != 0) {
-                    gp.ui.selectRecipe = 0;
-                    gp.ui.doneCooking = false;
+                if (gp.ui.cookingMenu.selectRecipe != 0) {
+                    gp.ui.cookingMenu.selectRecipe = 0;
+                    gp.ui.cookingMenu.doneCooking = false;
                     stateChanged = true;
                 }
                 break;
         }
 
-        // Jika ada perubahan UI dalam cookingState, panggil repaint
-        if (stateChanged && gp.gameState == gp.cookingState) {
+        if (stateChanged && gp.gameState == GamePanel.cookingState) { // Perubahan di sini
             gp.repaint();
         }
     }
@@ -427,8 +398,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D ->
                 rightPressed = false;
             case KeyEvent.VK_E ->
-                rightPressed = false;
-
+                interactPressed = false;
         }
     }
 }

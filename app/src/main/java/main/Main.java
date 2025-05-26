@@ -19,8 +19,7 @@ public class Main {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         
-        // Start the game thread after everything is visible
-        // Using SwingUtilities.invokeLater ensures this happens after initial rendering
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

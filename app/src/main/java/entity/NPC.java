@@ -136,7 +136,7 @@ public abstract class NPC extends Character implements Interactable {
 
     protected boolean checkItemInList(ArrayList<BaseItem> list, BaseItem itemToCheck) {
         for (BaseItem item : list) {
-            if (item.equals(itemToCheck)) { // Or item.getName().equals(itemToCheck.getName())
+            if (item.equals(itemToCheck)) { 
                 return true;
             }
         }
