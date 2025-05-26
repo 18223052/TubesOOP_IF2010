@@ -192,9 +192,9 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
         inventoryController.addItem(itemFactory.createFood("veggiesoup"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
+        // inventoryController.addItem(itemFactory.createFish("salmon"));
+        // inventoryController.addItem(itemFactory.createFish("salmon"));
+        // inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createMiscItem("coal"));
 
     }

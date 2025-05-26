@@ -53,13 +53,13 @@ public abstract class NPC extends Character implements Interactable {
             dialogIndex =0;
             if (dialogues[dialogIndex] == null){
                 gp.ui.currentDialog = "Hmmm..";
-                gp.gameState = gp.dialogState;
+                gp.gameState = GamePanel.dialogState;
                 return;
             }
         }
         gp.ui.currentDialog = dialogues[dialogIndex];
         dialogIndex ++;
-        gp.gameState = gp.dialogState;
+        gp.gameState = GamePanel.dialogState;
     }
 
     @Override
@@ -72,7 +72,7 @@ public abstract class NPC extends Character implements Interactable {
     public void onInteract(GamePanel gp, Player player){
         gp.currNPC = this;
         this.dialogIndex = 0;
-        gp.gameState = gp.npcContextMenuState;
+        gp.gameState = GamePanel.npcContextMenuState;
         gp.resumeGameThread();
     }
 

@@ -212,32 +212,49 @@ public class KeyHandler implements KeyListener {
         switch (code) {
             case KeyEvent.VK_E ->
                 toggleShippingBinState();
-            case KeyEvent.VK_W, KeyEvent.VK_UP -> {
+            case KeyEvent.VK_W -> {
                 gp.shippingBinController.moveSelectionUp();
                 gp.repaint();
             }
-            case KeyEvent.VK_S, KeyEvent.VK_DOWN -> {
+            case KeyEvent.VK_S -> {
                 gp.shippingBinController.moveSelectionDown();
                 gp.repaint();
             }
-            case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
+            case KeyEvent.VK_A -> {
                 gp.shippingBinController.moveSelectionLeft();
                 gp.repaint();
             }
-            case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
+            case KeyEvent.VK_D -> {
                 gp.shippingBinController.moveSelectionRight();
+                gp.repaint();
+            }
+            case KeyEvent.VK_UP -> {
+                gp.inventoryController.moveSelectionUp();
+                gp.repaint();
+            }
+            case KeyEvent.VK_DOWN -> {
+                gp.inventoryController.moveSelectionDown();
+                gp.repaint();
+            }
+            case KeyEvent.VK_LEFT -> {
+                gp.inventoryController.moveSelectionLeft();
+                gp.repaint();
+            }
+            case KeyEvent.VK_RIGHT -> {
+                gp.inventoryController.moveSelectionRight();
                 gp.repaint();
             }
             case KeyEvent.VK_F -> {
                 toggleFilter();
                 filterPressed = true;
-                gp.repaint();
+                gp.repaint(); // Trigger a screen update after changing the filter
             }
             case KeyEvent.VK_ENTER -> {
                 gp.inventoryController.sellItem(gp.inventoryController.getSelectedSlot());
                 sellItemPressed = true;
                 gp.repaint();
             }
+
         }
     }
 
