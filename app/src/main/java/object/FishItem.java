@@ -107,7 +107,7 @@ public class FishItem extends BaseItem implements IFishAttributes, IConsumable {
         gp.player.addEnergy(energyValue);
         gp.gameTime.addTime(5);
     }
-
+    
 
     @Override
     public Season[] getSeason() {
