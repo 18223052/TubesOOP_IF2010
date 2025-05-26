@@ -64,7 +64,7 @@ public class AssetSetter {
 
     public void setNPC(){
         if (gp.currMap.equals("/maps/farmmm.txt")) {
-            gp.npc[0] = new NPC_mayortadi(gp);
+            gp.npc[0] = new NPC_mayortadi(gp, gp.itemFactory);
             gp.npc[0].wX = gp.tileSize*16;
             gp.npc[0].wY = gp.tileSize*20;
         }

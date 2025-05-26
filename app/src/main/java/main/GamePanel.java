@@ -13,6 +13,7 @@ import controller.InventoryController;
 import controller.ShippingBinController;
 import controller.SleepController;
 import controller.WatchingController;
+import controller.NPCController;
 
 
 import controller.StoreController;
@@ -65,6 +66,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int cookingState = 7;
     public final int shippingBinState = 8;
     public final int storeState = 9;
+    public final int npcContextMenuState = 10;
     public int gameState;
     private final Object pauseLock = new Object();
 
@@ -83,6 +85,8 @@ public class GamePanel extends JPanel implements Runnable {
     public WatchingController watchingController;
     public ShippingBinController shippingBinController;
     public StoreController storeController;
+    public NPCController npcController;
+    public boolean isGifting = false;
 
     public ItemFactory itemFactory;
     public EnvironmentManager eManager;
@@ -113,6 +117,7 @@ public class GamePanel extends JPanel implements Runnable {
         cookingController = new CookingController(this);
         shippingBinController = new ShippingBinController(this);
         storeController = new StoreController(this);
+        npcController = new NPCController(this);
 
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
@@ -174,8 +179,8 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
         inventoryController.addItem(itemFactory.createFood("veggiesoup"));
-        inventoryController.addItem(itemFactory.createFood("salmon"));
-        inventoryController.addItem(itemFactory.createFood("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createMiscItem("coal"));
 
     }
@@ -476,6 +481,20 @@ public class GamePanel extends JPanel implements Runnable {
             isTimePaused = false;
             if (gameTime != null) gameTime.resume();
         });
+    }
+
+    public void setGameState(int newState){
+        this.gameState = newState;
+
+        if (newState == npcContextMenuState){
+            
+        } else if (newState == inventoryState){
+            if (ui != null && inventoryController != null){
+                if (inventoryController != null){
+                    inventoryController.setSelectedSlot(0);
+                }
+            }
+        }
     }
 
 

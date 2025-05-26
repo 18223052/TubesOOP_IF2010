@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 import main.UtilityTool;
 
+import java.util.Objects;
+
 /**
  * Base abstract class for all items in the game
  * Implements common functionality for all items
@@ -45,6 +47,11 @@ public abstract class BaseItem implements IItem {
     }
     
     @Override
+    public void setSellPrice(int sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
+    @Override
     public String getCategory() {
         return category;
     }
@@ -75,5 +82,18 @@ public abstract class BaseItem implements IItem {
         }
         
         return image;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseItem baseItem = (BaseItem) o;
+        return name.equals(baseItem.name);
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(name);
     }
 }

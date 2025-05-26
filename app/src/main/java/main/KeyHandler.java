@@ -3,10 +3,14 @@ package main;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import object.BaseItem;
+import object.IItem;
+
 public class KeyHandler implements KeyListener {
 
     GamePanel gp;
     public boolean upPressed, downPressed, leftPressed, rightPressed, interactPressed, enterPressed;
+    public boolean giftPressed, confirmPressed, cancelPressed;
     public boolean inventoryPressed;
     public boolean useItemPressed, discardItemPressed, sellItemPressed;
     public boolean filterPressed;
@@ -15,6 +19,7 @@ public class KeyHandler implements KeyListener {
     StringBuilder inputBuffer = new StringBuilder();
     public int singleNumPress;
     public String multiNumPress = "";
+    public boolean giftKeyPressed;
 
     public KeyHandler(GamePanel gp) {
         this.gp = gp;
@@ -48,6 +53,8 @@ public class KeyHandler implements KeyListener {
             handleShippingBinState(code);
         } else if (gp.gameState == gp.storeState) {
             handleStoreState(code);
+        } else if (gp.gameState == gp.npcContextMenuState){
+            handleNpcContextMenuState(code);
         }
     }
 
@@ -104,37 +111,82 @@ public class KeyHandler implements KeyListener {
     }
 
     public void handleInventoryState(int code) {
-        switch (code) {
-            case KeyEvent.VK_I ->
-                toggleInventoryState();
-            case KeyEvent.VK_W, KeyEvent.VK_UP -> {
-                gp.inventoryController.moveSelectionUp();
-                gp.repaint();
+        // If gifting is active, handle 'E' as gift confirmation
+        if (gp.isGifting) {
+            switch (code) {
+                case KeyEvent.VK_E:
+                    IItem selectedItem = gp.inventoryController.getSelectedItem();
+                    if (selectedItem instanceof BaseItem) { // Cast to BaseItem for NPCController
+                        gp.npcController.giftItemToNPC((BaseItem) selectedItem);
+                    } else {
+                        gp.ui.currentDialog = "That item cannot be gifted."; // Or some other message
+                        gp.gameState = gp.dialogState;
+                    }
+                    gp.isGifting = false; // Reset gifting flag after action
+                    gp.setGameState(gp.dialogState); // Show NPC reaction
+                    gp.resumeGameThread();
+                    break;
+                case KeyEvent.VK_ESCAPE: // Allow escape to cancel gifting
+                    gp.isGifting = false;
+                    gp.setGameState(gp.playState); // Go back to play state or NPC context menu
+                    gp.resumeGameThread();
+                    break;
+                case KeyEvent.VK_W, KeyEvent.VK_UP:
+                    gp.inventoryController.moveSelectionUp();
+                    gp.repaint();
+                    break;
+                case KeyEvent.VK_S, KeyEvent.VK_DOWN:
+                    gp.inventoryController.moveSelectionDown();
+                    gp.repaint();
+                    break;
+                case KeyEvent.VK_A, KeyEvent.VK_LEFT:
+                    gp.inventoryController.moveSelectionLeft();
+                    gp.repaint();
+                    break;
+                case KeyEvent.VK_D, KeyEvent.VK_RIGHT:
+                    gp.inventoryController.moveSelectionRight();
+                    gp.repaint();
+                    break;
+                case KeyEvent.VK_F:
+                    toggleFilter();
+                    filterPressed = true;
+                    gp.repaint();
+                    break;
             }
-            case KeyEvent.VK_S, KeyEvent.VK_DOWN -> {
-                gp.inventoryController.moveSelectionDown();
-                gp.repaint();
-            }
-            case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
-                gp.inventoryController.moveSelectionLeft();
-                gp.repaint();
-            }
-            case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
-                gp.inventoryController.moveSelectionRight();
-                gp.repaint();
-            }
-            case KeyEvent.VK_E -> {
-                gp.inventoryController.useItem(gp.inventoryController.getSelectedSlot());
-                useItemPressed = true;
-                gp.repaint();
-            }
-            case KeyEvent.VK_F -> {
-                toggleFilter();
-                filterPressed = true;
-                gp.repaint(); // Trigger a screen update after changing the filter
+        } else { // Normal inventory navigation and actions
+            switch (code) {
+                case KeyEvent.VK_I ->
+                    toggleInventoryState();
+                case KeyEvent.VK_W, KeyEvent.VK_UP -> {
+                    gp.inventoryController.moveSelectionUp();
+                    gp.repaint();
+                }
+                case KeyEvent.VK_S, KeyEvent.VK_DOWN -> {
+                    gp.inventoryController.moveSelectionDown();
+                    gp.repaint();
+                }
+                case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
+                    gp.inventoryController.moveSelectionLeft();
+                    gp.repaint();
+                }
+                case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
+                    gp.inventoryController.moveSelectionRight();
+                    gp.repaint();
+                }
+                case KeyEvent.VK_E -> {
+                    gp.inventoryController.useItem(gp.inventoryController.getSelectedSlot());
+                    useItemPressed = true;
+                    gp.repaint();
+                }
+                case KeyEvent.VK_F -> {
+                    toggleFilter();
+                    filterPressed = true;
+                    gp.repaint(); // Trigger a screen update after changing the filter
+                }
             }
         }
     }
+    
 
     private void toggleInventoryState() {
         if (gp.gameState == gp.playState) {
@@ -258,6 +310,32 @@ public class KeyHandler implements KeyListener {
                 gp.repaint();
             }
 
+        }
+    }
+
+    public void handleNpcContextMenuState(int code) {
+        switch (code) {
+            case KeyEvent.VK_E: // Press 'E' again to speak
+                interactPressed = true; // Or can directly call action
+                if (gp.currNPC != null) {
+                    gp.currNPC.speak(); // This will set gameState to dialogState
+                    gp.resumeGameThread();
+                }
+                break;
+            case KeyEvent.VK_G: // Press 'G' for gifting
+                giftKeyPressed = true; // Set this flag
+                gp.isGifting = true; // Indicate that we are in a gifting flow
+                gp.setGameState(gp.inventoryState); // Change to inventory state
+                // gp.inventoryController.resetSelection(); // Optional: Reset inventory selection to 0
+                gp.inventoryController.setSelectedSlot(0); // Reset selection
+                gp.resumeGameThread();
+                break;
+            case KeyEvent.VK_ESCAPE: // Exit from context menu
+                gp.setGameState(gp.playState);
+                gp.currNPC = null;
+                gp.isGifting = false; // Ensure gifting flag is reset
+                gp.resumeGameThread();
+                break;
         }
     }
 

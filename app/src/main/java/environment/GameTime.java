@@ -1,5 +1,7 @@
 package environment;
 
+import org.checkerframework.checker.units.qual.t;
+
 public class GameTime implements Runnable {
     private int gameMinute = 0;
     private int gameHour = 6;
@@ -7,26 +9,43 @@ public class GameTime implements Runnable {
 
     // Season
     private final int totalDaysPerSeason = 10;
-    private Season currentSeason = Season.SPRING;
-    private Season lastSeason = Season.SPRING;
+    // private Season currentSeason = Season.SPRING;
+    // private Season lastSeason = Season.SPRING;
 
     private boolean paused = false;
     private final Object pauseLock = new Object();
 
     private Thread thread;
+    private boolean isTimePointOnly = false;
 
     public GameTime() {
+        this.isTimePointOnly = false;
+
+        this.gameHour = 6;
+        this.gameMinute = 0;
+        this.gameDay = 1;
         thread = new Thread(this);
         thread.start();
     }
 
+    public GameTime(int hour, int minute){
+        this.gameHour = hour;
+        this.gameMinute = minute;
+        this.isTimePointOnly = true;
+    }
+
     @Override
     public void run() {
+        if (isTimePointOnly){
+            return;
+        }
         while (true) {
             try {
                 Thread.sleep(1000);  // 1 detik = 5 menit game (atur sesuai kebutuhan)
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
+                return;
             }
 
             synchronized (pauseLock) {
@@ -34,16 +53,20 @@ public class GameTime implements Runnable {
                     try {
                         pauseLock.wait();
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         e.printStackTrace();
                     }
                 }
             }
-
-            addTime(5);
+            if(!paused){
+            addTime(5);}
         }
     }
 
     public synchronized void addTime(int minutes) {
+
+        if (isTimePointOnly) return;
+
         gameMinute += minutes;
         if (gameMinute >= 60) {
             gameMinute = 0;
@@ -68,12 +91,14 @@ public class GameTime implements Runnable {
     }
 
     public void pause() {
+        if (isTimePointOnly) return;
         synchronized (pauseLock) {
             paused = true;
         }
     }
 
     public void resume() {
+        if (isTimePointOnly) return;
         synchronized (pauseLock) {
             paused = false;
             pauseLock.notifyAll();
@@ -103,14 +128,16 @@ public class GameTime implements Runnable {
 
     public void nextDaySleep() {
         gameDay++;
-        gameHour = 6;      // Mulai pagi
+        gameHour = 6;      
         gameMinute = 0;
     }
 
 
     public Season getCurrentSeason() {
-        int seasonIndex = (gameDay - 1) / 10;
-        return Season.values()[seasonIndex % 4];
+
+        if (gameDay <= 0) return Season.SPRING;
+        int seasonIndex = (gameDay - 1) / totalDaysPerSeason;
+        return Season.values()[seasonIndex % Season.values().length];
     }
 
     public String getSeasonName() {
@@ -119,6 +146,7 @@ public class GameTime implements Runnable {
 
 
     public int getDayInCurrentSeason() {
+        if (gameDay <= 0) return 1;
         return (this.gameDay - 1) % this.totalDaysPerSeason + 1; 
     }
 
