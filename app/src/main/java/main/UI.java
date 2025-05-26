@@ -69,12 +69,12 @@ public class UI {
         hud = new HUD(gp, generalFont);
         pauseScreen = new PauseScreen(gp, generalFont);
         dialogBox = new DialogBox(gp, dialogFont);
-        inventoryScreen = new InventoryScreen(gp, inventoryFont); // Gunakan inventoryFont
-        characterScreen = new CharacterScreen(gp, generalFont); // Sesuaikan jika ingin font beda
-        cookingMenu = new CookingMenu(gp, cookingFont); // Gunakan cookingFont
-        shippingBinMenu = new ShippingBinMenu(gp, inventoryFont); // Mungkin sama dengan inventory
-        storeMenu = new StoreMenu(gp, inventoryFont); // Mungkin sama dengan inventory
-        npcContextMenu = new NPCContextMenu(gp, generalFont); // Sesuaikan jika ingin font beda
+        inventoryScreen = new InventoryScreen(gp, inventoryFont); 
+        characterScreen = new CharacterScreen(gp, generalFont); 
+        cookingMenu = new CookingMenu(gp, cookingFont); 
+        shippingBinMenu = new ShippingBinMenu(gp, inventoryFont);
+        storeMenu = new StoreMenu(gp, inventoryFont); 
+        npcContextMenu = new NPCContextMenu(gp, generalFont); 
     }
 
     private void setupDefaultGraphics(Graphics2D g2) {
@@ -115,7 +115,7 @@ public class UI {
                 break;
             case GamePanel.storeState:
                 storeMenu.draw(g2);
-                inventoryScreen.draw(g2, false); // Inventori juga harus menggunakan inventoryFont-nya
+                inventoryScreen.draw(g2, false); 
                 break;
             case GamePanel.npcContextMenuState:
                 npcContextMenu.draw(g2, gp.currNPC);

@@ -14,7 +14,7 @@ public class NPCController {
     public void giftItemToNPC(BaseItem itemToGift){
         if (itemToGift == null){
             gp.ui.currentDialog = "Kamu tidak memiliki barang yang akan dijadikan gift";
-            gp.gameState = gp.dialogState;
+            gp.gameState = GamePanel.dialogState;
             return;
         }
         

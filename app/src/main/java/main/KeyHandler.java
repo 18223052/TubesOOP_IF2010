@@ -44,17 +44,17 @@ public class KeyHandler implements KeyListener {
             handlePauseState(code);
         } else if (gp.gameState == GamePanel.dialogState) {
             handleDialogState(code);
-        } else if (gp.gameState == GamePanel.statsState) { // Perubahan di sini
+        } else if (gp.gameState == GamePanel.statsState) { 
             handleStatsState(code);
-        } else if (gp.gameState == GamePanel.inventoryState) { // Perubahan di sini
+        } else if (gp.gameState == GamePanel.inventoryState) { 
             handleInventoryState(code);
-        } else if (gp.gameState == GamePanel.cookingState) { // Perubahan di sini
+        } else if (gp.gameState == GamePanel.cookingState) { 
             handleCookingState(code);
-        } else if (gp.gameState == GamePanel.shippingBinState) { // Perubahan di sini
+        } else if (gp.gameState == GamePanel.shippingBinState) { 
             handleShippingBinState(code);
-        } else if (gp.gameState == GamePanel.storeState) { // Perubahan di sini
+        } else if (gp.gameState == GamePanel.storeState) { 
             handleStoreState(code);
-        } else if (gp.gameState == GamePanel.npcContextMenuState){ // Perubahan di sini
+        } else if (gp.gameState == GamePanel.npcContextMenuState){ 
             handleNpcContextMenuState(code);
         }
     }
@@ -70,16 +70,16 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D ->
                 rightPressed = true;
             case KeyEvent.VK_P ->
-                gp.gameState = GamePanel.pauseState; // Di sini sudah benar karena ini penugasan
+                gp.gameState = GamePanel.pauseState; 
             case KeyEvent.VK_E ->
                 interactPressed = true;
             case KeyEvent.VK_I -> {
-                gp.setGameState(GamePanel.inventoryState); // Perubahan di sini
+                gp.setGameState(GamePanel.inventoryState); 
                 gp.isGifting = false;
                 gp.resumeGameThread();
             }
             case KeyEvent.VK_C ->
-                gp.gameState = GamePanel.statsState; // Di sini sudah benar karena ini penugasan
+                gp.gameState = GamePanel.statsState; 
             case KeyEvent.VK_ENTER ->
                 enterPressed = true;
             case KeyEvent.VK_SLASH -> {
@@ -101,12 +101,12 @@ public class KeyHandler implements KeyListener {
             gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
-        if (code == KeyEvent.VK_S) {
-            if (gp.currNPC != null && gp.currNPC.hasStore()) {
-                gp.setGameState(GamePanel.storeState); // Perubahan di sini
-                gp.repaint();
-            }
-        }
+        // if (code == KeyEvent.VK_S) {
+        //     if (gp.currNPC != null && gp.currNPC.hasStore()) {
+        //         gp.setGameState(GamePanel.storeState); 
+        //         gp.repaint();
+        //     }
+        // }
     }
 
     public void handleStatsState(int code) {
@@ -125,10 +125,10 @@ public class KeyHandler implements KeyListener {
                         gp.npcController.giftItemToNPC((BaseItem) selectedItem);
                     } else {
                         gp.ui.setDialog("That item cannot be gifted.");
-                        gp.setGameState(GamePanel.dialogState); // Perubahan di sini
+                        gp.setGameState(GamePanel.dialogState); 
                     }
                     gp.isGifting = false;
-                    gp.setGameState(GamePanel.dialogState); // Perubahan di sini
+                    gp.setGameState(GamePanel.dialogState); 
                     gp.resumeGameThread();
                     break;
                 case KeyEvent.VK_ESCAPE:
@@ -200,8 +200,8 @@ public class KeyHandler implements KeyListener {
 
     private void toggleInventoryState() {
         if (gp.gameState == GamePanel.playState) {
-            gp.setGameState(GamePanel.inventoryState); // Perubahan di sini
-        } else if (gp.gameState == GamePanel.inventoryState) { // Perubahan di sini
+            gp.setGameState(GamePanel.inventoryState); 
+        } else if (gp.gameState == GamePanel.inventoryState) { 
             gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
@@ -243,8 +243,8 @@ public class KeyHandler implements KeyListener {
 
     private void toggleShippingBinState() {
         if (gp.gameState == GamePanel.playState) {
-            gp.setGameState(GamePanel.shippingBinState); // Perubahan di sini
-        } else if (gp.gameState == GamePanel.shippingBinState) { // Perubahan di sini
+            gp.setGameState(GamePanel.shippingBinState); 
+        } else if (gp.gameState == GamePanel.shippingBinState) { 
             gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
@@ -296,19 +296,19 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_G:
                 giftKeyPressed = true;
                 gp.isGifting = true;
-                gp.setGameState(GamePanel.inventoryState); // Perubahan di sini
+                gp.setGameState(GamePanel.inventoryState); 
                 gp.inventoryController.setSelectedSlot(0);
                 gp.resumeGameThread();
                 break;
             case KeyEvent.VK_ESCAPE:
-                gp.setGameState(GamePanel.playState); // Perubahan di sini
+                gp.setGameState(GamePanel.playState); 
                 gp.currNPC = null;
                 gp.isGifting = false;
                 gp.resumeGameThread();
                 break;
             case KeyEvent.VK_S:
                 if (gp.currNPC != null && gp.currNPC.hasStore()) {
-                    gp.setGameState(GamePanel.storeState); // Perubahan di sini
+                    gp.setGameState(GamePanel.storeState); 
                     gp.repaint();
                 }
                 break;
@@ -316,7 +316,7 @@ public class KeyHandler implements KeyListener {
     }
 
     private void toggleStoreState() {
-        if (gp.gameState == GamePanel.storeState) { // Perubahan di sini
+        if (gp.gameState == GamePanel.storeState) { 
             gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
@@ -334,7 +334,7 @@ public class KeyHandler implements KeyListener {
         switch (code) {
             case KeyEvent.VK_E:
             case KeyEvent.VK_ESCAPE:
-                gp.setGameState(GamePanel.playState); // Perubahan di sini
+                gp.setGameState(GamePanel.playState); 
                 gp.resumeGameThread();
                 gp.ui.cookingMenu.selectRecipe = 0;
                 gp.ui.cookingMenu.cookingMenuSelection = 0;
@@ -379,7 +379,7 @@ public class KeyHandler implements KeyListener {
                 break;
         }
 
-        if (stateChanged && gp.gameState == GamePanel.cookingState) { // Perubahan di sini
+        if (stateChanged && gp.gameState == GamePanel.cookingState) { 
             gp.repaint();
         }
     }

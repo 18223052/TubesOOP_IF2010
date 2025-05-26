@@ -54,19 +54,19 @@ public class StoreMenu extends BaseUIPanel {
 
             if (i == gp.storeController.getSelectedSlot()) {
                 if (item.getBuyPrice() <= gp.player.getGold()) {
-                    g2.setColor(new Color(0, 213, 190, 128)); // Affordable highlight (teal)
+                    g2.setColor(new Color(0, 213, 190, 128)); 
                 } else {
-                    g2.setColor(new Color(255, 100, 103, 128)); // Not affordable highlight (reddish)
+                    g2.setColor(new Color(255, 100, 103, 128)); 
                 }
                 g2.fillRect(currentSlotX - 5, currentSlotY - 5, SLOT_SIZE + 10, SLOT_SIZE + 10);
             } else {
-                // Background color even when not selected, to indicate affordability
+
                 if (item.getBuyPrice() <= gp.player.getGold()) {
-                    g2.setColor(new Color(0, 213, 190, 60)); // Lighter affordable (teal)
+                    g2.setColor(new Color(0, 213, 190, 60)); 
                 } else {
-                    g2.setColor(new Color(255, 100, 103, 60)); // Lighter not affordable (reddish)
+                    g2.setColor(new Color(255, 100, 103, 60));
                 }
-                g2.fillRect(currentSlotX, currentSlotY, SLOT_SIZE, SLOT_SIZE); // Fill entire slot
+                g2.fillRect(currentSlotX, currentSlotY, SLOT_SIZE, SLOT_SIZE); 
             }
             g2.setColor(Color.white); // Border color
             g2.drawRect(currentSlotX, currentSlotY, SLOT_SIZE, SLOT_SIZE);
@@ -84,8 +84,5 @@ public class StoreMenu extends BaseUIPanel {
             itemCount++;
         }
 
-        // Removed the drawItemDetails call here to prevent duplicate item details when inventory is also drawn.
-        // If Store needs its OWN item details panel, create a separate one for it, or draw it on the left.
-        // For now, it's assumed the InventoryScreen's item details covers it.
     }
 }

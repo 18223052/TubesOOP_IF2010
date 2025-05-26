@@ -3,6 +3,7 @@ import entity.NPC_mayortadi;
 
 import object.Bed;
 import object.ShippingBin;
+import object.Store;
 import object.Stove;
 import object.TV;
 
@@ -46,9 +47,10 @@ public class AssetSetter {
             gp.obj[0].wY = 30 * gp.tileSize;
         }
 
-        else if(gp.currMap.equals("/maps/river.txt")) {
-            // Set objects for river map
-            // Add river-specific objects here
+        else if(gp.currMap.equals("/maps/worldmap.txt")) {
+            gp.obj[0] = new Store(gp);
+            gp.obj[0].wX = 33 * gp.tileSize;
+            gp.obj[0].wY = 30 * gp.tileSize;
         }
         else if(gp.currMap.equals("/maps/rumah.txt")) {
 
@@ -57,8 +59,7 @@ public class AssetSetter {
             gp.obj[0] = new Bed(gp);
             gp.obj[0].wX = 18 * gp.tileSize;
             gp.obj[0].wY = 15 * gp.tileSize;
-            
-            // Adding the stove (which is now a multi-tile object)
+
             gp.obj[1] = new Stove(gp);
             gp.obj[1].wX = 34 * gp.tileSize;
             gp.obj[1].wY = 14 * gp.tileSize;

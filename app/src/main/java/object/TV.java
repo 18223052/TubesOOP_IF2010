@@ -9,7 +9,7 @@ import entity.Player;
 import main.GamePanel;
 
 public class TV extends SuperObj {
-   private static final int TV_WIDTH = 2;
+    private static final int TV_WIDTH = 2;
     private static final int TV_HEIGHT = 2;
     
     public TV(GamePanel gp){

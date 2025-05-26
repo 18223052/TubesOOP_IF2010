@@ -17,7 +17,7 @@ public class WatchingController {
 
         gp.ui.setDialog(weatherForecast);
 
-        gp.gameState = gp.dialogState;
+        gp.gameState = GamePanel.dialogState;
         gp.currNPC = null;
         gp.keyH.enterPressed = false;
 

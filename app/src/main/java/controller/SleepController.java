@@ -39,7 +39,7 @@ public class SleepController {
                 fadingIn = true;
                 transitionStartTime = System.nanoTime();
                 transitionAlpha = 0f;
-                gp.gameState = gp.sleepState;
+                gp.gameState = GamePanel.sleepState;
             } else {
                 showCannotSleepMessage();
             }
@@ -54,7 +54,7 @@ public class SleepController {
             fadingIn = true;
             transitionStartTime = System.nanoTime();
             transitionAlpha = 0f;
-            gp.gameState = gp.sleepState;
+            gp.gameState = GamePanel.sleepState;
         }
     }
     
