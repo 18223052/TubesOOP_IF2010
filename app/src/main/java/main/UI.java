@@ -7,947 +7,123 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Objects;
 
-import controller.CookingController;
-import controller.InventoryController;
-import controller.ShippingBinController;
-import controller.StoreController;
-import entity.Ingredient;
-import entity.NPC_mayortadi;
-import entity.Recipe;
-import object.IConsumable;
-import object.IFishAttributes;
-import object.IItem;
+// Import all new UI panel classes
+import GUI.panels.HUD;
+import GUI.panels.PauseScreen;
+import GUI.panels.DialogBox;
+import GUI.panels.InventoryScreen;
+import GUI.panels.CharacterScreen;
+import GUI.panels.CookingMenu;
+import GUI.panels.ShippingBinMenu;
+import GUI.panels.StoreMenu;
+import GUI.panels.NPCContextMenu;
 
 public class UI {
 
     GamePanel gp;
-    Font arial_40;
-    Graphics2D g2;
-    Font retroFont, arial_20;
-    Recipe recipe;
-    private Font maruMonica;
-    private InventoryController inventory;
-    private CookingController cookingController;
-    private ShippingBinController shippingBin;
-    private StoreController store;
+    public Graphics2D g2;
 
-    public int cookingMenuSelection = 0; 
+    // Deklarasikan font dengan nama yang lebih spesifik
+    public Font generalFont, dialogFont, inventoryFont, cookingFont, smallFont;
 
-    public int selectRecipe = 0; 
-    public boolean doneCooking = false;
-    public boolean hasIngradients = true;
+    // References to your new UI panel objects
+    private HUD hud;
+    private PauseScreen pauseScreen;
+    private DialogBox dialogBox;
+    private InventoryScreen inventoryScreen;
+    private CharacterScreen characterScreen;
+    public CookingMenu cookingMenu;
+    private ShippingBinMenu shippingBinMenu;
+    private StoreMenu storeMenu;
+    private NPCContextMenu npcContextMenu;
 
     public String currentDialog = "";
 
     public UI(GamePanel gp) {
         this.gp = gp;
-        this.inventory = gp.inventoryController;
-        this.cookingController = gp.cookingController; 
-        this.shippingBin = gp.shippingBinController;
-        this.store = gp.storeController;
-        arial_40 = new Font("Arial", Font.PLAIN, 40);
 
         try {
-
             InputStream inputStream = getClass().getResourceAsStream("/fonts/x12y16pxMaruMonica.ttf");
-            this.maruMonica = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(inputStream));
+            Font baseMaruMonica = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(inputStream));
 
-            arial_20 = maruMonica.deriveFont(20f);
+            // Inisialisasi setiap font dengan ukuran yang berbeda
+            this.generalFont = baseMaruMonica.deriveFont(Font.PLAIN, 30f); // Contoh: Font umum untuk HUD, menu utama
+            this.dialogFont = baseMaruMonica.deriveFont(Font.PLAIN, 28f);  // Contoh: Font untuk kotak dialog
+            this.inventoryFont = baseMaruMonica.deriveFont(Font.PLAIN, 26f); // Contoh: Font untuk inventori
+            this.cookingFont = baseMaruMonica.deriveFont(Font.PLAIN, 20f);  // Sesuai permintaan: Font untuk CookingMenu
+            this.smallFont = baseMaruMonica.deriveFont(Font.PLAIN, 18f);   // Contoh: Font yang sangat kecil untuk detail
+
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
-
-            maruMonica = new Font("Arial", Font.PLAIN, 16);
-            arial_20 = maruMonica.deriveFont(20f);
+            // Fallback fonts jika font kustom gagal dimuat
+            this.generalFont = new Font("Arial", Font.PLAIN, 30);
+            this.dialogFont = new Font("Arial", Font.PLAIN, 28);
+            this.inventoryFont = new Font("Arial", Font.PLAIN, 26);
+            this.cookingFont = new Font("Arial", Font.PLAIN, 30);
+            this.smallFont = new Font("Arial", Font.PLAIN, 18);
         }
+
+        // Inisialisasi semua panel UI, passing font yang sesuai
+        hud = new HUD(gp, generalFont);
+        pauseScreen = new PauseScreen(gp, generalFont);
+        dialogBox = new DialogBox(gp, dialogFont);
+        inventoryScreen = new InventoryScreen(gp, inventoryFont); // Gunakan inventoryFont
+        characterScreen = new CharacterScreen(gp, generalFont); // Sesuaikan jika ingin font beda
+        cookingMenu = new CookingMenu(gp, cookingFont); // Gunakan cookingFont
+        shippingBinMenu = new ShippingBinMenu(gp, inventoryFont); // Mungkin sama dengan inventory
+        storeMenu = new StoreMenu(gp, inventoryFont); // Mungkin sama dengan inventory
+        npcContextMenu = new NPCContextMenu(gp, generalFont); // Sesuaikan jika ingin font beda
     }
 
     private void setupDefaultGraphics(Graphics2D g2) {
-        g2.setFont(maruMonica);
+
+        g2.setFont(generalFont);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.WHITE);
     }
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
+        setupDefaultGraphics(g2); // Tetap panggil ini untuk pengaturan global (anti-aliasing, warna)
 
-        setupDefaultGraphics(g2);
-
-        if (gp.gameState == gp.playState) {
-            drawTimeHUD();
-            // gp.repaint();
-        }
-        if (gp.gameState == gp.pauseState) {
-            drawPause();
-        }
-        if (gp.gameState == gp.dialogState) {
-            if (gp.currNPC != null){
-                drawNPCDialog();
-            } else {
-                drawObjectDialog();
-            }
-        }
-        if (gp.gameState == gp.inventoryState) {
-            drawInventory();
-            if (gp.isGifting){
-                drawGiftingInstructions(g2);
-            }
-        }
-        if (gp.gameState == gp.statsState) {
-            drawCharacterScreen();
-        }
-        if (gp.gameState == gp.cookingState) {
-            drawCookingMenu();
-        }
-        if (gp.gameState == gp.shippingBinState) {
-            drawInventory();
-            drawShippingBin();
-        }
-        if (gp.gameState == gp.storeState) {
-            drawInventory();
-            drawStore();
-        }
-        if (gp.gameState == gp.npcContextMenuState){
-            drawNPCContextMenu();
+        // Delegasi drawing berdasarkan game state
+        // Setiap panel akan menggambar dengan font yang sudah mereka terima saat inisialisasi
+        switch (gp.gameState) {
+            case GamePanel.playState:
+                hud.draw(g2);
+                break;
+            case GamePanel.pauseState:
+                pauseScreen.draw(g2);
+                break;
+            case GamePanel.dialogState:
+                dialogBox.draw(g2, currentDialog, gp.currNPC != null ? gp.currNPC.getName() : null, gp.currNPC != null && gp.currNPC.hasStore());
+                break;
+            case GamePanel.inventoryState:
+                inventoryScreen.draw(g2, gp.isGifting);
+                break;
+            case GamePanel.statsState:
+                characterScreen.draw(g2);
+                break;
+            case GamePanel.cookingState:
+                cookingMenu.draw(g2);
+                break;
+            case GamePanel.shippingBinState:
+                shippingBinMenu.draw(g2);
+                inventoryScreen.draw(g2, false); // Inventori juga harus menggunakan inventoryFont-nya
+                break;
+            case GamePanel.storeState:
+                storeMenu.draw(g2);
+                inventoryScreen.draw(g2, false); // Inventori juga harus menggunakan inventoryFont-nya
+                break;
+            case GamePanel.npcContextMenuState:
+                npcContextMenu.draw(g2, gp.currNPC);
+                break;
         }
     }
-
-    public void drawCharacterScreen() {
-
-        final int frameX = gp.tileSize * 2;
-        final int frameY = gp.tileSize;
-        final int frameWidth = gp.tileSize * 5;
-        final int frameHeight = gp.tileSize * 10;
-        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
-
-        g2.setColor(Color.white);
-        g2.setFont(g2.getFont().deriveFont(32F));
-
-        int textX = frameX + 20;
-        int textY = frameY + gp.tileSize;
-        final int lineHeight = 32;
-
-        g2.drawString("Name", textX, textY);
-        textY += lineHeight;
-        g2.drawString("Gender", textX, textY);
-        textY += lineHeight;
-        g2.drawString("Farm Map", textX, textY);
-        textY += lineHeight;
-        g2.drawString("Energy", textX, textY);
-        textY += lineHeight;
-        g2.drawString("Gold", textX, textY);
-        textY += lineHeight;
-        g2.drawString("Partner", textX, textY);
-        textY += lineHeight;
-        // values
-        int tailX = (frameX + frameWidth) - 30;
-        // reset
-        textY = frameY + gp.tileSize;
-        String value;
-
-        value = String.valueOf(gp.player.getName());
-        textX = getXforAllignToRight(value, tailX);
-        g2.drawString(value, textX, textY);
-        textY += lineHeight;
-
-        value = String.valueOf(gp.player.getGender());
-        textX = getXforAllignToRight(value, tailX);
-        g2.drawString(value, textX, textY);
-        textY += lineHeight;
-
-        value = String.valueOf(gp.player.getFarmMap());
-        textX = getXforAllignToRight(value, tailX);
-        g2.drawString(value, textX, textY);
-        textY += lineHeight;
-
-        value = String.valueOf(gp.player.getEnergy());
-        textX = getXforAllignToRight(value, tailX);
-        g2.drawString(value, textX, textY);
-        textY += lineHeight;
-
-        value = String.valueOf(gp.player.getGold());
-        textX = getXforAllignToRight(value, tailX);
-        g2.drawString(value, textX, textY);
-        textY += lineHeight;
-
-        // value = String.valueOf(gp.player.getPartner());
-        // textX = getXforAllignToRight(value, tailX);
-        // g2.drawString(value, textX, textY);
-        // textY += lineHeight;
-    }
-
-    public void drawPause() {
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 80F));
-        String text = "PAUSE";
-        int x = getXCenterText(text);
-        int y = gp.screenHeight / 2;
-
-        g2.drawString(text, x, y);
-    }
-
-    public int getXforCenteredText(String text, int screenWidth) {
-        int length = (int) this.g2.getFontMetrics().getStringBounds(text, this.g2).getWidth();
-        // this.gp.getClass();
-        int x = screenWidth / 2 - length / 2;
-        return x;
-    }
-
-    public void drawNPCDialog(){
-        int x = gp.tileSize*2;
-        int y = gp.tileSize*8;
-        int width = gp.screenWidth - (gp.tileSize*4);
-        int height = gp.tileSize *3;
-
-        drawSubWindow(x, y, width, height);
-
-        g2.setFont(maruMonica.deriveFont(20f));
-        g2.setColor(Color.WHITE);
-
-        int textX = x + 20;
-        int textY = y + 30;
-        int lineHeight = 30;
-
-        // Tampilkan nama NPC
-        if (gp.currNPC != null) {
-            String npcName = "";
-            if (gp.currNPC instanceof NPC_mayortadi) {
-                npcName = ((NPC_mayortadi) gp.currNPC).getName();
-            }
-            if (npcName != null && !npcName.isEmpty()) {
-                g2.setColor(new Color(255, 255, 150));
-                g2.drawString(npcName, textX, textY);
-                g2.setColor(Color.WHITE);
-                textY += lineHeight;
-            }
-        }
-
-        // Tampilkan dialog text
-        if (currentDialog != null && !currentDialog.isEmpty()) {
-            String[] paragraphs = currentDialog.split("\n");
-
-            for (String paragraph : paragraphs) {
-                String[] words = paragraph.split(" ");
-                StringBuilder line = new StringBuilder();
-
-                for (String word : words) {
-                    if (g2.getFontMetrics().stringWidth(line + " " + word) < width - 40) {
-                        if (line.length() > 0) {
-                            line.append(" ");
-                        }
-                        line.append(word);
-                    } else {
-                        g2.drawString(line.toString(), textX, textY);
-                        textY += lineHeight;
-                        line = new StringBuilder(word);
-
-                        if (textY > y + height - 30 - lineHeight) { 
-                            g2.drawString("...", textX + width - 50, textY);
-                            break;
-                        }
-                    }
-                }
-
-                if (line.length() > 0) {
-                    if (textY <= y + height - 30) {
-                        g2.drawString(line.toString(), textX, textY);
-                        textY += lineHeight;
-                    } else if (!line.toString().equals("...")) {
-                        
-                    }
-                }
-                if (textY > y + height - 30 - lineHeight && paragraphs.length > 1 && !paragraph.equals(paragraphs[paragraphs.length-1])) {
-                    break; 
-                }
-                textY += 5; 
-            }
-            // Prompt to continue
-            g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
-            g2.drawString("Press [E] to continue", x + width - 180, y + height - 20);
-
-            if (gp.currNPC != null &&  gp.currNPC.hasStore()) { 
-                g2.drawString("Press [S] to Shop", textX, y + height - 20);
-            }
-        } else {
-            g2.drawString("...", textX, textY);
-            g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
-            g2.drawString("Press [E] to exit", x + width - 180, y + height - 20);
-        }
-    }
-
-    public void drawObjectDialog(){
-        int x = gp.tileSize * 2;
-        int y = gp.tileSize * 8;
-        int width = gp.screenWidth - (gp.tileSize * 4);
-        int height = gp.tileSize * 3;
-
-        drawSubWindow(x, y, width, height);
-
-        g2.setFont(maruMonica.deriveFont(20f));
-        g2.setColor(Color.WHITE);
-
-        int textX = x + 20;
-        int textY = y + 30;
-        int lineHeight = 30;
-
-        if (currentDialog != null && !currentDialog.isEmpty()) {
-            String[] paragraphs = currentDialog.split("\n");
-
-            for (String paragraph : paragraphs) {
-                String[] words = paragraph.split(" ");
-                StringBuilder line = new StringBuilder();
-
-                for (String word : words) {
-                    if (g2.getFontMetrics().stringWidth(line + " " + word) < width - 40) {
-                        if (line.length() > 0) {
-                            line.append(" ");
-                        }
-                        line.append(word);
-                    } else {
-                        g2.drawString(line.toString(), textX, textY);
-                        textY += lineHeight;
-                        line = new StringBuilder(word);
-                        if (textY > y + height - 30 - lineHeight) {
-                            g2.drawString("...", textX + width - 50, textY);
-                            break;
-                        }
-                    }
-                }
-                if (line.length() > 0) {
-                    if (textY <= y + height - 30) {
-                        g2.drawString(line.toString(), textX, textY);
-                        textY += lineHeight;
-                    }
-                }
-                if (textY > y + height - 30 - lineHeight && paragraphs.length > 1 && !paragraph.equals(paragraphs[paragraphs.length-1])) {
-                    break;
-                }
-                textY += 5;
-            }
-            g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
-            g2.drawString("Press [E] to continue", x + width - 180, y + height - 20);
-        } else {
-            g2.drawString("...", textX, textY);
-            g2.setFont(maruMonica.deriveFont(Font.ITALIC, 16f));
-            g2.drawString("Press [E] to exit", x + width - 180, y + height - 20);
-        }
-    }
-
 
     public void setDialog(String dialog) {
         this.currentDialog = dialog;
     }
-
-    public void drawSubWindow(int x, int y, int width, int height) {
-
-        Color c = new Color(0, 0, 0, 210);
-        g2.setColor(c);
-        g2.fillRoundRect(x, y, width, height, 35, 35);
-
-        c = new Color(255, 255, 255);
-        g2.setColor(c);
-        g2.setStroke(new java.awt.BasicStroke(5));
-        g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
-    }
-
-    public int getXCenterText(String text) {
-        int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        int x = gp.screenWidth / 2 - length / 2;
-        return x;
-    }
-
-    public int getXforAllignToRight(String text, int tailX) {
-        int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        int x = tailX - length;
-        return x;
-    }
-
-    public void moveCookingSelectionUp() {
-        List<Recipe> allRecipes = Recipe.getRecipeList();
-        if (allRecipes.isEmpty()) {
-            return;
-        }
-        cookingMenuSelection--;
-        if (cookingMenuSelection < 0) {
-            cookingMenuSelection = allRecipes.size() - 1;
-        }
-    }
-
-    public void moveCookingSelectionDown() {
-        List<Recipe> allRecipes = Recipe.getRecipeList();
-        if (allRecipes.isEmpty()) {
-            return;
-        }
-        cookingMenuSelection++;
-        if (cookingMenuSelection >= allRecipes.size()) {
-            cookingMenuSelection = 0;
-        }
-    }
-
-    public void selectChosenRecipe() {
-        List<Recipe> allRecipes = Recipe.getRecipeList();
-        if (allRecipes.isEmpty() || cookingMenuSelection < 0 || cookingMenuSelection >= allRecipes.size()) {
-            return;
-        }
-
-        this.selectRecipe = cookingMenuSelection + 1;
-        this.doneCooking = false; // Reset status
-    }
-
-    public void attemptToCookSelectedRecipe() {
-        List<Recipe> allRecipes = Recipe.getRecipeList();
-
-        if (selectRecipe <= 0 || selectRecipe > allRecipes.size()) {
-            System.err.println("AttemptToCook: Invalid selectRecipe index: " + selectRecipe);
-            this.selectRecipe = 0; 
-            return;
-        }
-        
-        Recipe recipeToCook = allRecipes.get(selectRecipe - 1);
-
-        boolean cookingSuccessful = gp.cookingController.cookRecipe(recipeToCook);
-
-        if (cookingSuccessful) {
-            this.doneCooking = true; 
-
-        } else {
-            this.selectRecipe = -1; // state kalo masaknya amburadul
-            this.doneCooking = false;
-        }
-    }
-
-    public void drawCookingMenu() {
-        String text;
-        List<Recipe> allRecipes = Recipe.getRecipeList();
-        List<Recipe> cookableRecipes = gp.cookingController.getCookableRecipe();
-
-        int frameX = gp.tileSize;
-        int frameY = gp.tileSize;
-        // int frameWidth = gp.screenWidth / 3; 
-        int frameWidth = gp.screenWidth / 2 - gp.tileSize;
-        int frameHeight = gp.screenHeight - (gp.tileSize * 2);
-
-        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
-
-        g2.setFont(arial_20);
-        g2.setColor(Color.WHITE);
-
-        int textX = frameX + gp.tileSize / 2; // Padding dari kiri window
-        int textY = frameY + gp.tileSize;    // Padding dari atas window
-        int lineHeight = g2.getFontMetrics().getHeight() + 5; // Spasi antar baris
-
-        if (doneCooking) { 
-            g2.setFont(arial_20.deriveFont(Font.BOLD, 24f));
-            text = "Congratulations!";
-            drawCenteredString(text, frameX, textY, frameWidth); 
-            textY += lineHeight * 2;
-
-            g2.setFont(arial_20);
-            text = "You succeeded in cooking:";
-            g2.drawString(text, textX, textY);
-            textY += lineHeight;
-
-
-            if (selectRecipe > 0 && selectRecipe <= allRecipes.size()) {
-                g2.setColor(Color.CYAN); 
-                g2.drawString(allRecipes.get(selectRecipe - 1).title, textX + gp.tileSize, textY);
-                g2.setColor(Color.WHITE);
-            } else {
-
-                g2.drawString("a delicious meal!", textX + gp.tileSize, textY);
-            }
-
-            textY += lineHeight * 2;
-            g2.drawString("Press ENTER to return.", textX, textY);
-
-        } else if (selectRecipe == 0) { 
-            g2.setFont(arial_20.deriveFont(Font.BOLD, 24f));
-            text = "RECIPE LIST";
-            drawCenteredString(text, frameX, textY, frameWidth);
-            textY += lineHeight * 1.5;
-
-            g2.setFont(arial_20);
-            if (allRecipes.isEmpty()) {
-                g2.drawString("No recipes available in the game.", textX, textY);
-            } else {
-                for (int i = 0; i < allRecipes.size(); i++) {
-                    Recipe currentListedRecipe = allRecipes.get(i);
-                    String recipeTitleText = (i + 1) + ". " + currentListedRecipe.title;
-
-                    if (i == cookingMenuSelection) { 
-                        g2.setColor(Color.YELLOW);
-                        g2.drawString(">" + recipeTitleText, textX - 10, textY); 
-                    } else {
-
-                        if (cookableRecipes.contains(currentListedRecipe)) {
-                            g2.setColor(Color.GREEN); 
-                        } else {
-                            g2.setColor(Color.LIGHT_GRAY); // nda bisa masak
-                        }
-                        g2.drawString(recipeTitleText, textX, textY);
-                    }
-                    textY += lineHeight * 0.9;
-                    g2.setColor(Color.WHITE); // Reset warna untuk iterasi berikutnya
-                }
-            }
-            textY += lineHeight * 1.5;
-            g2.drawString("W/S or UP/DOWN: Select", textX, textY);
-            textY += lineHeight * 0.9;
-            g2.drawString("ENTER: View Details", textX, textY);
-            textY += lineHeight * 0.9;
-            g2.drawString("K or ESC: Exit", textX, textY);
-
-        } else if (selectRecipe == -1) { //bahan ora cekap
-            g2.setFont(arial_20.deriveFont(Font.BOLD, 24f));
-            text = "Failed to Cook!";
-            drawCenteredString(text, frameX, textY, frameWidth);
-            textY += lineHeight * 2;
-
-            g2.setFont(arial_20);
-            g2.setColor(Color.ORANGE);
-            g2.drawString("You don't have enough", textX, textY);
-            textY += lineHeight;
-            g2.drawString("ingredients for this recipe.", textX, textY);
-            g2.setColor(Color.WHITE);
-
-            textY += lineHeight * 2;
-            g2.drawString("Press ENTER to return.", textX, textY);
-
-        } else {
-            if (selectRecipe <= 0 || selectRecipe > allRecipes.size()) {
-
-                this.selectRecipe = 0;
-
-                return;
-            }
-            Recipe currentRecipeToDisplay = allRecipes.get(selectRecipe - 1);
-
-            g2.setFont(arial_20.deriveFont(Font.BOLD, 24f));
-            text = currentRecipeToDisplay.title;
-            drawCenteredString(text, frameX, textY, frameWidth);
-            textY += lineHeight * 1.5;
-            boolean hasAllIngredientsForThisRecipe = true; // Flag untuk tombol "Cook"
-            // --- Logika khusus "Spakbor Salad" (Hot Pepper) ---
-            boolean canViewRecipeDetails = true;
-            if (currentRecipeToDisplay.title.equals("Spakbor Salad") && !gp.inventoryController.hasItem("Hot Pepper")) {
-                canViewRecipeDetails = false;
-            }
-
-            if (!canViewRecipeDetails) {
-                g2.setFont(arial_20);
-                g2.setColor(Color.PINK);
-                textY += lineHeight;
-                g2.drawString("You need a 'Hot Pepper' in your", textX, textY);
-                textY += lineHeight;
-                g2.drawString("inventory to view this recipe's details.", textX, textY);
-                g2.setColor(Color.WHITE);
-            } else {
-                // --- Tampilkan Bahan ---
-                g2.setFont(arial_20.deriveFont(Font.BOLD));
-                g2.drawString("Ingredients:", textX, textY);
-                textY += lineHeight;
-                g2.setFont(arial_20);
-
-                for (Ingredient ingredient : currentRecipeToDisplay.ingredients) {
-                    String ingredientName = ingredient.name;
-                    int requiredAmount = ingredient.amount;
-                    int ownedAmount;
-
-                    if (ingredientName.equalsIgnoreCase("Any Fish")) {
-                        ownedAmount = gp.inventoryController.getItemCountByCategory("fish");
-                    } else {
-                        ownedAmount = gp.inventoryController.getItemCount(ingredientName);
-                    }
-
-                    String ingredientLine = "- " + ingredientName + " " + requiredAmount + "x (Have: " + ownedAmount + ")";
-
-                    if (ownedAmount < requiredAmount) {
-                        g2.setColor(Color.RED); // Bahan kurang
-                        hasAllIngredientsForThisRecipe = false;
-                    } else {
-                        g2.setColor(Color.WHITE); // Bahan cukup
-                    }
-                    g2.drawString(ingredientLine, textX + 15, textY);
-                    textY += lineHeight * 0.9;
-                }
-                g2.setColor(Color.WHITE); // Reset warna
-
-                textY += lineHeight * 0.5;
-                g2.setFont(arial_20.deriveFont(Font.BOLD));
-                g2.drawString("Produces:", textX, textY);
-                textY += lineHeight * 0.9;
-                g2.setFont(arial_20);
-                g2.setColor(Color.CYAN);
-
-                String outputName = currentRecipeToDisplay.getOutputItemName();
-                // FoodItem outputPreview = gp.itemFactory.createFood(outputName);
-                // if (outputPreview != null) {
-                //     g2.drawString(outputPreview.getName(), textX + 15, textY);
-                //     // Anda juga bisa menggambar icon kecil dari outputPreview.getImage() di sini
-                // } else {
-                g2.drawString(outputName, textX + 15, textY); // Fallback jika createFood gagal atau tidak perlu preview
-                // }
-                g2.setColor(Color.WHITE);
-                textY += lineHeight * 0.9;
-            }
-
-            textY += lineHeight * 1.5;
-            if (canViewRecipeDetails) {
-
-                if (hasAllIngredientsForThisRecipe) {
-                    g2.setColor(Color.GREEN);
-                    g2.drawString("ENTER: Cook", textX, textY);
-                } else {
-                    g2.setColor(Color.GRAY); // Warna abu-abu jika tidak bisa masak
-                    g2.drawString("ENTER: Cook (Not enough ingredients)", textX, textY);
-                }
-                g2.setColor(Color.WHITE);
-            }
-
-            textY += lineHeight * 0.9;
-            g2.drawString("0 or BACKSPACE: Back to List", textX, textY);
-            textY += lineHeight * 0.9;
-            g2.drawString("K or ESC: Exit Menu", textX, textY);
-        }
-    }
-
-    public void drawInventory() {
-        int frameX = gp.tileSize * 9;
-        int frameY = gp.tileSize;
-        int frameWidth = gp.tileSize * 6;
-        int frameHeight = gp.tileSize * 5;
-
-        // Draw main window
-        drawSubWindow(g2, frameX, frameY, frameWidth, frameHeight);
-
-        // Draw category filters
-        drawCategoryFilters(g2, frameX, frameY - 30, frameWidth);
-
-        // Draw inventory info
-        g2.setFont(new Font("Arial", Font.BOLD, 12));
-        g2.setColor(Color.white);
-        g2.drawString("Items: " + inventory.getInventory().size() + "/" + inventory.getInventoryMaxSize(), frameX + 10, frameY + 20);
-
-        // Draw inventory slots
-        int slotX = frameX + 10;
-        int slotY = frameY + 35;
-        int itemCount = 0;
-
-        for (int i = 0; i < inventory.getInventory().size(); i++) { // Iterasi melalui inventaris aktual
-            IItem item = inventory.getInventory().get(i);
-
-            // Filter berdasarkan kategori
-            if (!inventory.getInventoryFilter().equals("all") && !item.getCategory().equalsIgnoreCase(inventory.getInventoryFilter())) {
-                continue;
-            }
-
-            // Hanya gambar item yang terlihat di layar inventaris (asumsi 4 kolom)
-            int col = itemCount % 4;
-            int row = itemCount / 4;
-
-            int currentSlotX = frameX + 10 + (col * (gp.tileSize + 5));
-            int currentSlotY = frameY + 35 + (row * (gp.tileSize + 25));
-
-            if (i == inventory.getSelectedSlot()) {
-                g2.setColor(new Color(255, 255, 0, 128));
-                g2.fillRect(currentSlotX - 5, currentSlotY - 5, gp.tileSize + 10, gp.tileSize + 10);
-            }
-
-            g2.setColor(Color.white);
-            g2.drawRect(currentSlotX, currentSlotY, gp.tileSize, gp.tileSize);
-
-            if (item.getImage() != null) {
-                g2.drawImage(item.getImage(), currentSlotX + 5, currentSlotY + 5, gp.tileSize - 10, gp.tileSize - 10, null);
-            } else {
-                g2.setColor(Color.gray);
-                g2.fillRect(currentSlotX + 5, currentSlotY + 5, gp.tileSize - 10, gp.tileSize - 10);
-            }
-
-            // Draw category indicator
-            g2.setFont(new Font("Arial", Font.ITALIC, 8));
-            g2.setColor(getCategoryColor(item.getCategory()));
-            g2.drawString(item.getCategory(), currentSlotX, currentSlotY + gp.tileSize + 22);
-
-            itemCount++;
-        }
-
-        if (inventory.getSelectedItem() != null) {
-            drawItemDetails(g2, inventory.getSelectedItem(), frameX, frameY + frameHeight + 10);
-        }
-    }
-
-    private void drawCategoryFilters(Graphics2D g2, int x, int y, int width) {
-        String[] categories = {"all", "tools", "consumables", "crops", "fish", "seeds"};
-        int buttonWidth = width / categories.length;
-
-        for (int i = 0; i < categories.length; i++) {
-            int buttonX = x + (i * buttonWidth);
-
-            // Highlight active filter
-            if (categories[i].equals(inventory.getInventoryFilter())) {
-                g2.setColor(new Color(255, 255, 100, 200));
-            } else {
-                g2.setColor(new Color(100, 100, 100, 200));
-            }
-            g2.fillRect(buttonX, y, buttonWidth, 25);
-
-            g2.setColor(Color.white);
-            g2.drawRect(buttonX, y, buttonWidth, 25);
-
-            g2.setFont(new Font("Arial", Font.BOLD, 10));
-            int textX = buttonX + (buttonWidth / 2) - (g2.getFontMetrics().stringWidth(categories[i]) / 2);
-            g2.drawString(categories[i], textX, y + 15);
-        }
-    }
-
-    /**
-     * Draws the details of the selected item
-     */
-    private void drawItemDetails(Graphics2D g2, IItem item, int x, int y) {
-        int detailWidth = gp.tileSize * 6;
-        int detailHeight = gp.tileSize * 2;
-
-        drawSubWindow(g2, x, y, detailWidth, detailHeight);
-
-        g2.setFont(new Font("Arial", Font.BOLD, 14));
-        g2.setColor(Color.yellow);
-       
-        g2.drawString(item.getName(), x + 10, y + 20);
-
-        g2.setFont(new Font("Arial", Font.PLAIN, 12));
-        g2.setColor(Color.white);
-        g2.drawString("Category: " + item.getCategory(), x + 10, y + 40);
-        g2.drawString("Buy: " + item.getBuyPrice() + "g | Sell: " + item.getSellPrice() + "g", x + 10, y + 60);
-
-        if (item instanceof IConsumable) {
-            g2.drawString("Energy: +" + ((IConsumable) item).getEnergyRestoration(), x + 10, y + 80);
-        }
-
-        if (item instanceof IFishAttributes) {
-            IFishAttributes fishItem = (IFishAttributes) item;
-            g2.setFont(new Font("Arial", Font.ITALIC, 10));
-            int currentY = y + 80;
-            if (item instanceof IConsumable) {
-                currentY += 15;
-            }
-            g2.drawString("Season: " + fishItem.getSeason() + " | Weather: " + fishItem.getWeather(), x + 10, currentY);
-        }
-
-        g2.setFont(new Font("Arial", Font.ITALIC, 11));
-        if (gp.gameState == gp.inventoryState) {
-            g2.drawString("E: Use/Equip", x + 10, y + 100);
-        }
-    }
-
-    private void drawGiftingInstructions(Graphics2D g2) {
-        int x = gp.tileSize;
-        int y = gp.tileSize * 8; // Adjust y as needed
-        int width = gp.screenWidth / 2 - gp.tileSize; // Adjust width as needed
-        int height = gp.tileSize * 3;
-
-        drawSubWindow(x, y, width, height);
-
-        g2.setFont(maruMonica.deriveFont(20f));
-        g2.setColor(Color.WHITE);
-
-        int textX = x + 20;
-        int textY = y + 30;
-        int lineHeight = 30;
-
-        g2.drawString("Gifting to " + gp.currNPC.getName(), textX, textY);
-        textY += lineHeight;
-        g2.drawString("Select an item to gift.", textX, textY);
-        textY += lineHeight;
-        g2.drawString("Press [E] to Gift", textX, textY);
-        textY += lineHeight;
-        g2.drawString("Press [ESC] to Cancel", textX, textY);
-    }
-
-
-    /**
-     * Returns color associated with item category
-     */
-    private Color getCategoryColor(String category) {
-        switch (category) {
-            case "tools":
-                return new Color(150, 150, 255);
-            case "consumables":
-                return new Color(255, 150, 150);
-            case "crops":
-                return new Color(150, 255, 150);
-            case "fish":
-                return new Color(150, 200, 255);
-            case "seeds":
-                return new Color(255, 255, 150);
-            default:
-                return Color.gray;
-        }
-    }
-
-    public void drawNPCContextMenu(){
-        int x = gp.tileSize * 2;
-        int y = gp.tileSize * 8;
-        int width = gp.screenWidth - (gp.tileSize * 4);
-        int height = gp.tileSize * 4;
-
-        drawSubWindow(x, y, width, height);
-
-        g2.setFont(maruMonica.deriveFont(20f));
-        g2.setColor(Color.WHITE);
-
-        int textX = x + 20;
-        int textY = y + 30;
-        int lineHeight = 30;
-
-        if (gp.currNPC != null) {
-            String npcName = gp.currNPC.getName();
-            g2.setColor(new Color(255, 255, 150));
-            g2.drawString(npcName + " Options:", textX, textY);
-            g2.setColor(Color.WHITE);
-            textY += lineHeight * 1.5;
-
-            // Options
-            g2.drawString("[E] Talk", textX, textY);
-            textY += lineHeight;
-            g2.drawString("[G] Give Gift", textX, textY);
-            textY += lineHeight;
-
-            if (gp.currNPC.hasStore()) {
-                g2.drawString("[S] Shop", textX, textY);
-                textY += lineHeight;
-            }
-
-            g2.drawString("[ESC] Back", textX, textY);
-        }
-    }
-
-    private void drawSubWindow(Graphics2D g2, int x, int y, int width, int height) {
-        Color c = new Color(0, 0, 0, 210);
-        g2.setColor(c);
-        g2.fillRoundRect(x, y, width, height, 35, 35);
-
-        c = new Color(255, 255, 255);
-        g2.setColor(c);
-        g2.setStroke(new java.awt.BasicStroke(5));
-        g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
-    }
-
-    private void drawCenteredString(String text, int frameX, int y, int frameWidth) {
-        if (g2 == null || g2.getFontMetrics() == null) {
-            return;
-        }
-        int textWidth = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        g2.drawString(text, frameX + (frameWidth - textWidth) / 2, y);
-    }
-
-    public void drawTimeHUD() {
-        String season = gp.gameTime.getSeasonName();
-        g2.setFont(arial_20);
-        g2.setColor(Color.white);
-        String time = String.format("Day %d - %02d:%02d", gp.gameTime.getGameDay(), gp.gameTime.getGameHour(), gp.gameTime.getGameMinute());
-        String seasonText = "Season: " + season;
-        int x = gp.tileSize / 2;
-        int y = gp.tileSize / 2;
-        g2.drawString(time, x, y);
-        g2.drawString(seasonText, x, y + 30);
-    }
-
-    public void drawShippingBin() {
-        int frameX = gp.tileSize;
-        int frameY = gp.tileSize;
-        int frameWidth = gp.tileSize * 6;
-        int frameHeight = gp.tileSize * 7;
-
-        drawSubWindow(g2, frameX, frameY - 40, frameWidth, 35);
-        g2.setFont(new Font("Arial", Font.BOLD, 16));
-        g2.drawString("Shipping Bin", frameX + (frameWidth / 3) + 10, frameY - 17);
-        drawSubWindow(g2, frameX, frameY, frameWidth, frameHeight);
-        g2.setFont(new Font("Arial", Font.BOLD, 12));
-        g2.setColor(Color.white);
-        g2.drawString("Selling Items : " + shippingBin.sellingItems().size() + "/" + shippingBin.sellingItemsMaxSize(), frameX + 12, frameY + 22);
-        g2.drawString("Total Price : " + shippingBin.goldEarned + "g", (frameWidth - frameX) - 20, frameY + 22);
-
-        int itemCount = 0;
-        for (int i = 0; i < shippingBin.sellingItems().size(); i++) {
-            IItem item = shippingBin.sellingItems().get(i);
-            int col = itemCount % 4;
-            int row = itemCount / 4;
-            int currentSlotX = frameX + 10 + (col * (gp.tileSize + 5));
-            int currentSlotY = frameY + 35 + (row * (gp.tileSize + 25));
-            if (i == shippingBin.getSelectedSlot()) {
-                g2.setColor(new Color(255, 255, 0, 128));
-                g2.fillRect(currentSlotX - 5, currentSlotY - 5, gp.tileSize + 10, gp.tileSize + 10);
-            }
-            g2.setColor(Color.white);
-            g2.drawRect(currentSlotX, currentSlotY, gp.tileSize, gp.tileSize);
-            if (item.getImage() != null) {
-                g2.drawImage(item.getImage(), currentSlotX + 5, currentSlotY + 5, gp.tileSize - 10, gp.tileSize - 10, null);
-            } else {
-                g2.setColor(Color.gray);
-                g2.fillRect(currentSlotX + 5, currentSlotY + 5, gp.tileSize - 10, gp.tileSize - 10);
-            }
-            g2.setFont(new Font("Arial", Font.ITALIC, 8));
-            g2.setColor(getCategoryColor(item.getCategory()));
-            g2.drawString(item.getCategory(), currentSlotX, currentSlotY + gp.tileSize + 22);
-            itemCount++;
-        }
-        if (shippingBin.getSelectedItem() != null) {
-            drawItemDetails(g2, shippingBin.getSelectedItem(), frameX, frameY + frameHeight + 10);
-        }
-    }
-
-    public void drawStore() {
-        int frameX = gp.tileSize;
-        int frameY = gp.tileSize;
-        int frameWidth = gp.tileSize * 6;
-        int frameHeight = gp.tileSize * 5;
-
-        drawSubWindow(g2, frameX, frameY - 40, frameWidth, 35);
-        g2.setFont(new Font("Arial", Font.BOLD, 16));
-        g2.drawString("Store", frameX + (frameWidth / 3) + 20, frameY - 17);
-        drawSubWindow(g2, frameX, frameY, frameWidth, frameHeight);
-        g2.setFont(new Font("Arial", Font.BOLD, 12));
-        g2.setColor(Color.white);
-        g2.drawString("Available Items : " + store.storeItems().size() + "/" + store.storeItemsMaxSize(), frameX + 12, frameY + 22);
-        g2.drawString("Your Gold : " + gp.player.getGold() + "g", (frameWidth - frameX) - 10, frameY + 22);
-
-        int itemCount = 0;
-        for (int i = 0; i < store.storeItems().size(); i++) {
-            IItem item = store.storeItems().get(i);
-            int col = itemCount % 4;
-            int row = itemCount / 4;
-            int currentSlotX = frameX + 10 + (col * (gp.tileSize + 5));
-            int currentSlotY = frameY + 35 + (row * (gp.tileSize + 25));
-            if (i == store.getSelectedSlot()) {
-                if (item.getBuyPrice() <= gp.player.getGold()) {
-                    g2.setColor(new Color(0, 213, 190, 128));
-                } else {
-                    g2.setColor(new Color(255, 100, 103, 128));
-                }
-                g2.fillRect(currentSlotX - 5, currentSlotY - 5, gp.tileSize + 10, gp.tileSize + 10);
-            } else {
-                if (item.getBuyPrice() <= gp.player.getGold()) {
-                    g2.setColor(new Color(0, 213, 190, 128));
-                } else {
-                    g2.setColor(new Color(255, 100, 103, 128));
-                }
-            }
-            g2.drawRect(currentSlotX, currentSlotY, gp.tileSize, gp.tileSize);
-            if (item.getImage() != null) {
-                g2.drawImage(item.getImage(), currentSlotX + 5, currentSlotY + 5, gp.tileSize - 10, gp.tileSize - 10, null);
-            } else {
-                g2.setColor(Color.gray);
-                g2.fillRect(currentSlotX + 5, currentSlotY + 5, gp.tileSize - 10, gp.tileSize - 10);
-            }
-            g2.setFont(new Font("Arial", Font.ITALIC, 8));
-            g2.setColor(getCategoryColor(item.getCategory()));
-            g2.drawString(item.getCategory(), currentSlotX, currentSlotY + gp.tileSize + 22);
-            itemCount++;
-        }
-        if (store.getSelectedItem() != null) {
-            drawItemDetails(g2, store.getSelectedItem(), frameX, frameY + frameHeight + 10);
-        }
-    }
-
 }

@@ -34,6 +34,18 @@ public class AssetSetter {
             gp.obj[0].wX = 20 * gp.tileSize;
             gp.obj[0].wY = 20 * gp.tileSize;
         }
+
+        if(gp.currMap.equals("/maps/farmmm2.txt")) {
+            gp.obj[0] = new ShippingBin(gp);
+            gp.obj[0].wX = 20 * gp.tileSize;
+            gp.obj[0].wY = 30 * gp.tileSize;
+        }
+        if(gp.currMap.equals("/maps/farmmm3.txt")) {
+            gp.obj[0] = new ShippingBin(gp);
+            gp.obj[0].wX = 33 * gp.tileSize;
+            gp.obj[0].wY = 30 * gp.tileSize;
+        }
+
         else if(gp.currMap.equals("/maps/river.txt")) {
             // Set objects for river map
             // Add river-specific objects here
