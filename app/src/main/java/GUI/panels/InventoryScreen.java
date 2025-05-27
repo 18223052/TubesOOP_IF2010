@@ -4,10 +4,12 @@ import main.GamePanel;
 import object.IConsumable;
 import object.IFishAttributes;
 import object.IItem;
+import object.InventorySlot; // Import the new InventorySlot class
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 public class InventoryScreen extends BaseUIPanel {
 
@@ -17,9 +19,9 @@ public class InventoryScreen extends BaseUIPanel {
     private final int INV_FRAME_WIDTH;
     private final int INV_FRAME_HEIGHT;
     private final int INV_SLOT_SIZE;
-    private final int INV_SLOT_PADDING_X = 5; 
-    private final int INV_SLOT_PADDING_Y = 25; 
-    private final int INV_COLS = 4; 
+    private final int INV_SLOT_PADDING_X = 5;
+    private final int INV_SLOT_PADDING_Y = 25;
+    private final int INV_COLS = 4; // Moved to InventoryController
 
     // Item Details UI Constants
     private final int DETAIL_FRAME_WIDTH;
@@ -32,15 +34,15 @@ public class InventoryScreen extends BaseUIPanel {
 
     public InventoryScreen(GamePanel gp, Font uiFont) {
         super(gp, uiFont);
-        
+
         INV_FRAME_X = gp.tileSize * 9;
         INV_FRAME_Y = gp.tileSize;
         INV_FRAME_WIDTH = gp.tileSize * 6;
-        INV_FRAME_HEIGHT = gp.tileSize * 6; 
+        INV_FRAME_HEIGHT = gp.tileSize * 6;
         INV_SLOT_SIZE = gp.tileSize;
 
         DETAIL_FRAME_WIDTH = gp.tileSize * 6;
-        DETAIL_FRAME_HEIGHT = gp.tileSize * 25 / 10; 
+        DETAIL_FRAME_HEIGHT = gp.tileSize * 25 / 10;
     }
 
     public void draw(Graphics2D g2, boolean isGifting) {
@@ -53,15 +55,18 @@ public class InventoryScreen extends BaseUIPanel {
 
         g2.setFont(new Font("Arial", Font.BOLD, 12));
         g2.setColor(Color.white);
-        g2.drawString("Items: " + gp.inventoryController.getInventory().size() + "/" + gp.inventoryController.getInventoryMaxSize(),
+        // Display actual number of distinct item stacks vs. max inventory size
+        g2.drawString("Slots Used: " + gp.inventoryController.getInventorySlots().size() + "/" + gp.inventoryController.getInventoryMaxSize(),
                       INV_FRAME_X + 10, INV_FRAME_Y + 20);
 
         // Draw inventory slots and items
         drawInventorySlots(g2);
 
         // Draw item details if an item is selected
-        if (gp.inventoryController.getSelectedItem() != null) {
-            drawItemDetails(g2, gp.inventoryController.getSelectedItem(), INV_FRAME_X, INV_FRAME_Y + INV_FRAME_HEIGHT + 10, isGifting);
+        // We now get the selected slot object, then its item
+        InventorySlot selectedSlot = gp.inventoryController.getSelectedSlotItem();
+        if (selectedSlot != null) {
+            drawItemDetails(g2, selectedSlot.getItem(), selectedSlot.getQuantity(), INV_FRAME_X, INV_FRAME_Y + INV_FRAME_HEIGHT + 10, isGifting);
         }
 
         // Draw gifting instructions if in gifting mode
@@ -71,23 +76,20 @@ public class InventoryScreen extends BaseUIPanel {
     }
 
     private void drawInventorySlots(Graphics2D g2) {
-        int visibleSlotCount = 0;
+        ArrayList<InventorySlot> filteredInventorySlots = gp.inventoryController.getFilteredInventorySlots();
 
-        for (int i = 0; i < gp.inventoryController.getInventory().size(); i++) {
-            IItem item = gp.inventoryController.getInventory().get(i);
+        for (int i = 0; i < filteredInventorySlots.size(); i++) {
+            InventorySlot slot = filteredInventorySlots.get(i);
+            IItem item = slot.getItem(); // Get the IItem from the slot
 
-            if (!gp.inventoryController.getInventoryFilter().equals("all") && 
-                !item.getCategory().equalsIgnoreCase(gp.inventoryController.getInventoryFilter())) {
-                continue; 
-            }
-
-            int col = visibleSlotCount % INV_COLS;
-            int row = visibleSlotCount / INV_COLS;
+            int col = i % INV_COLS;
+            int row = i / INV_COLS;
 
             int currentSlotX = INV_FRAME_X + 10 + (col * (INV_SLOT_SIZE + INV_SLOT_PADDING_X));
             int currentSlotY = INV_FRAME_Y + 35 + (row * (INV_SLOT_SIZE + INV_SLOT_PADDING_Y));
 
-            if (i == gp.inventoryController.getSelectedSlot()) {
+            // Highlight selected slot based on the *filtered* inventory's index
+            if (gp.inventoryController.getSelectedSlotItem() == slot) { // Compare the InventorySlot objects
                 g2.setColor(new Color(255, 255, 0, 128));
                 g2.fillRect(currentSlotX - 5, currentSlotY - 5, INV_SLOT_SIZE + 10, INV_SLOT_SIZE + 10);
             }
@@ -102,12 +104,19 @@ public class InventoryScreen extends BaseUIPanel {
                 g2.fillRect(currentSlotX + 5, currentSlotY + 5, INV_SLOT_SIZE - 10, INV_SLOT_SIZE - 10);
             }
 
+            // Draw quantity for stackable items
+            if (item.isStackable() && slot.getQuantity() > 1) { // Get quantity from slot
+                g2.setFont(new Font("Arial", Font.BOLD, 16));
+                g2.setColor(Color.white);
+                String quantityStr = String.valueOf(slot.getQuantity());
+                int textWidth = g2.getFontMetrics().stringWidth(quantityStr);
+                g2.drawString(quantityStr, currentSlotX + INV_SLOT_SIZE - textWidth - 5, currentSlotY + INV_SLOT_SIZE - 5);
+            }
+
             // Draw category indicator below the item
             g2.setFont(new Font("Arial", Font.ITALIC, 8));
-            g2.setColor(getCategoryColor(item.getCategory())); 
+            g2.setColor(getCategoryColor(item.getCategory()));
             g2.drawString(item.getCategory(), currentSlotX, currentSlotY + INV_SLOT_SIZE + 12);
-
-            visibleSlotCount++;
         }
     }
 
@@ -139,10 +148,10 @@ public class InventoryScreen extends BaseUIPanel {
     /**
      * Draws the details of the selected item
      */
-    private void drawItemDetails(Graphics2D g2, IItem item, int x, int y, boolean isGifting) {
-        drawSubWindow(g2, x, y, DETAIL_FRAME_WIDTH, DETAIL_FRAME_HEIGHT); // Use utility from BaseUIPanel
+    private void drawItemDetails(Graphics2D g2, IItem item, int quantity, int x, int y, boolean isGifting) {
+        drawSubWindow(g2, x, y, DETAIL_FRAME_WIDTH, DETAIL_FRAME_HEIGHT);
 
-        int currentY = y + DETAIL_PADDING_X + 10; 
+        int currentY = y + DETAIL_PADDING_X + 10;
 
         g2.setFont(new Font("Arial", Font.BOLD, 14));
         g2.setColor(Color.yellow);
@@ -155,6 +164,12 @@ public class InventoryScreen extends BaseUIPanel {
         currentY += DETAIL_LINE_HEIGHT_SMALL;
         g2.drawString("Buy: " + item.getBuyPrice() + "g | Sell: " + item.getSellPrice() + "g", x + DETAIL_PADDING_X, currentY);
         currentY += DETAIL_LINE_HEIGHT_SMALL;
+
+        // Display quantity in item details if stackable
+        if (item.isStackable()) {
+            g2.drawString("Quantity: " + quantity, x + DETAIL_PADDING_X, currentY);
+            currentY += DETAIL_LINE_HEIGHT_SMALL;
+        }
 
         if (item instanceof IConsumable) {
             g2.drawString("Energy: +" + ((IConsumable) item).getEnergyRestoration(), x + DETAIL_PADDING_X, currentY);
@@ -169,22 +184,22 @@ public class InventoryScreen extends BaseUIPanel {
         }
 
         g2.setFont(new Font("Arial", Font.ITALIC, 11));
-        if (isGifting) { // If gifting, show gifting prompt
+        if (isGifting) {
             g2.drawString("E: Gift to " + gp.currNPC.getName(), x + DETAIL_PADDING_X, currentY);
-        } else { // Normal inventory actions
+        } else {
             g2.drawString("E: Use/Equip", x + DETAIL_PADDING_X, currentY);
         }
         currentY += DETAIL_LINE_HEIGHT_LARGE;
-        g2.drawString("ESC: Back", x + DETAIL_PADDING_X, currentY); 
+        g2.drawString("ESC: Back", x + DETAIL_PADDING_X, currentY);
     }
 
     private void drawGiftingInstructions(Graphics2D g2) {
-        int x = gp.tileSize; 
-        int y = gp.tileSize * 8; 
-        int width = gp.screenWidth / 2 - gp.tileSize; 
+        int x = gp.tileSize;
+        int y = gp.tileSize * 8;
+        int width = gp.screenWidth / 2 - gp.tileSize;
         int height = gp.tileSize * 2;
 
-        drawSubWindow(g2, x, y, width, height); // Use utility from BaseUIPanel
+        drawSubWindow(g2, x, y, width, height);
 
         g2.setFont(uiFont.deriveFont(20f));
         g2.setColor(Color.WHITE);
@@ -201,4 +216,17 @@ public class InventoryScreen extends BaseUIPanel {
         textY += lineHeight;
         g2.drawString("Press [ESC] to Cancel", textX, textY);
     }
+
+    // // Helper method to get category color
+    // private Color getCategoryColor(String category) {
+    //     return switch (category.toLowerCase()) {
+    //         case "tools" -> new Color(150, 200, 255);
+    //         case "consumables" -> new Color(255, 150, 150);
+    //         case "crops" -> new Color(150, 255, 150);
+    //         case "fish" -> new Color(200, 150, 255);
+    //         case "seeds" -> new Color(255, 200, 150);
+    //         case "fuel" -> new Color(255, 255, 150);
+    //         default -> Color.WHITE;
+    //     };
+    // }
 }

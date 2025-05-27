@@ -12,4 +12,5 @@ public interface IItem {
     void setSellPrice(int sellPrice);
 
     boolean isStackable();
+    
 }

@@ -5,16 +5,16 @@ import java.util.ArrayList;
 
 import interactable.Interactable;
 import main.GamePanel;
-import object.BaseItem;
+import object.IItem;
 import object.ItemFactory;
 
 public abstract class NPC extends Character implements Interactable {
 
     protected String name;
     protected int heartPoints;
-    protected ArrayList<BaseItem> lovedItems;
-    protected ArrayList<BaseItem> likedItems;
-    protected ArrayList<BaseItem> hatedItems;
+    protected ArrayList<IItem> lovedItems;
+    protected ArrayList<IItem> likedItems;
+    protected ArrayList<IItem> hatedItems;
     protected String relationshipStatus;
     protected int dayBecameFiance;
 
@@ -84,11 +84,11 @@ public abstract class NPC extends Character implements Interactable {
         return heartPoints;
     }
 
-    public ArrayList<BaseItem> getLovedItems(){
+    public ArrayList<IItem> getLovedItems(){
         return lovedItems;
     }
 
-    public ArrayList<BaseItem> getHatedItems(){
+    public ArrayList<IItem> getHatedItems(){
         return hatedItems;
     }
 
@@ -134,8 +134,8 @@ public abstract class NPC extends Character implements Interactable {
         return false; 
     }
 
-    protected boolean checkItemInList(ArrayList<BaseItem> list, BaseItem itemToCheck) {
-        for (BaseItem item : list) {
+    protected boolean checkItemInList(ArrayList<IItem> list, IItem itemToCheck) {
+        for (IItem item : list) {
             if (item.equals(itemToCheck)) { 
                 return true;
             }
@@ -143,15 +143,15 @@ public abstract class NPC extends Character implements Interactable {
         return false;
     }
 
-    public boolean isLovedItem(BaseItem item) {
+    public boolean isLovedItem(IItem item) {
         return checkItemInList(this.lovedItems, item);
     }
 
-    public boolean isLikedItem(BaseItem item) {
+    public boolean isLikedItem(IItem item) {
         return checkItemInList(this.likedItems, item);
     }
 
-    public boolean isExplicitlyHatedItem(BaseItem item) {
+    public boolean isExplicitlyHatedItem(IItem item) {
         return checkItemInList(this.hatedItems, item);
     }
     

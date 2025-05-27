@@ -1,7 +1,7 @@
 package entity;
 
 import main.GamePanel;
-import object.BaseItem;
+import object.IItem;
 import object.ItemFactory;
 
 
@@ -78,7 +78,7 @@ public class NPC_mayortadi extends NPC {
         // hatedItems.add(itemFactory.createFood("legend"));
     }
 
-    public String getGiftReaction(BaseItem item, int pointsAwarded){
+    public String getGiftReaction(IItem item, int pointsAwarded){
         if (pointsAwarded == 25) return name + " absolutely loves this! Thank you so much!";
         if (pointsAwarded == 20) return name + " likes this. It's a thoughtful gift.";
         if (pointsAwarded == -25) return name + " seems to dislike this... Oh dear.";
