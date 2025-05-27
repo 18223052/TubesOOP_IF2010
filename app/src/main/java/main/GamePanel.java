@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Random;
 
 import javax.swing.JPanel;
 
@@ -54,19 +55,27 @@ public class GamePanel extends JPanel implements Runnable {
     public WeatherType currentWeather;
 
     // Current map
-    public String currMap = "/maps/farmmm.txt";
+    public String currMap;
+    public String prevFarmMap = "/maps/farmmm.txt";
+    private String[] farmMapVariations = {
+        "/maps/farmmm.txt",
+        "/maps/farmmm2.txt",
+        "/maps/farmmm3.txt"
+    };
+    
+    private Random random = new Random();
 
     // Game state constants
-    public final int playState = 1;
-    public final int pauseState = 2;
-    public final int dialogState = 3;
-    public final int inventoryState = 4;
-    public final int statsState = 5;
-    public final int sleepState = 6;
-    public final int cookingState = 7;
-    public final int shippingBinState = 8;
-    public final int storeState = 9;
-    public final int npcContextMenuState = 10;
+    public static final int playState = 1;
+    public static final int pauseState = 2;
+    public static final int dialogState = 3;
+    public static final int inventoryState = 4;
+    public static final int statsState = 5;
+    public static final int sleepState = 6;
+    public static final int cookingState = 7;
+    public static final int shippingBinState = 8;
+    public static final int storeState = 9;
+    public static final int npcContextMenuState = 10;
     public int gameState;
     private final Object pauseLock = new Object();
 
@@ -126,6 +135,10 @@ public class GamePanel extends JPanel implements Runnable {
 
         gameState = playState;
 
+        int randIndex = random.nextInt(farmMapVariations.length);
+        this.currMap = farmMapVariations[randIndex];
+        this.prevFarmMap = this.currMap;
+        System.out.println("Starting map: " + currMap);
         tileM = new EmptyTileManager(this);
     }
     
@@ -179,6 +192,7 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
         inventoryController.addItem(itemFactory.createFood("veggiesoup"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createMiscItem("coal"));

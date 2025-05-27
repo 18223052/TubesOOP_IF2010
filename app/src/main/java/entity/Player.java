@@ -203,7 +203,7 @@ public class Player extends Character {
         return tileNum == tileType;
     }
 
-    @Override // Override the update method from Character
+    @Override 
     public void update() {
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
 
@@ -256,7 +256,6 @@ public class Player extends Character {
         updateInteractionBox();
     }
 
-    // interactNPC and interactOBJ methods are moved to the respective NPC/SuperObj classes via onInteract
 
     @Override
     public void draw(Graphics2D g2) {
