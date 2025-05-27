@@ -77,7 +77,7 @@ public class UI {
 
         if (gp.gameState == gp.playState) {
             drawTimeHUD();
-            gp.repaint();
+            // gp.repaint();
         }
         if (gp.gameState == gp.pauseState) {
             drawPause();
@@ -90,8 +90,10 @@ public class UI {
             }
         }
         if (gp.gameState == gp.inventoryState) {
-
             drawInventory();
+            if (gp.isGifting){
+                drawGiftingInstructions(g2);
+            }
         }
         if (gp.gameState == gp.statsState) {
             drawCharacterScreen();
@@ -106,6 +108,9 @@ public class UI {
         if (gp.gameState == gp.storeState) {
             drawInventory();
             drawStore();
+        }
+        if (gp.gameState == gp.npcContextMenuState){
+            drawNPCContextMenu();
         }
     }
 
@@ -735,6 +740,31 @@ public class UI {
         }
     }
 
+    private void drawGiftingInstructions(Graphics2D g2) {
+        int x = gp.tileSize;
+        int y = gp.tileSize * 8; // Adjust y as needed
+        int width = gp.screenWidth / 2 - gp.tileSize; // Adjust width as needed
+        int height = gp.tileSize * 3;
+
+        drawSubWindow(x, y, width, height);
+
+        g2.setFont(maruMonica.deriveFont(20f));
+        g2.setColor(Color.WHITE);
+
+        int textX = x + 20;
+        int textY = y + 30;
+        int lineHeight = 30;
+
+        g2.drawString("Gifting to " + gp.currNPC.getName(), textX, textY);
+        textY += lineHeight;
+        g2.drawString("Select an item to gift.", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Press [E] to Gift", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Press [ESC] to Cancel", textX, textY);
+    }
+
+
     /**
      * Returns color associated with item category
      */
@@ -752,6 +782,43 @@ public class UI {
                 return new Color(255, 255, 150);
             default:
                 return Color.gray;
+        }
+    }
+
+    public void drawNPCContextMenu(){
+        int x = gp.tileSize * 2;
+        int y = gp.tileSize * 8;
+        int width = gp.screenWidth - (gp.tileSize * 4);
+        int height = gp.tileSize * 4;
+
+        drawSubWindow(x, y, width, height);
+
+        g2.setFont(maruMonica.deriveFont(20f));
+        g2.setColor(Color.WHITE);
+
+        int textX = x + 20;
+        int textY = y + 30;
+        int lineHeight = 30;
+
+        if (gp.currNPC != null) {
+            String npcName = gp.currNPC.getName();
+            g2.setColor(new Color(255, 255, 150));
+            g2.drawString(npcName + " Options:", textX, textY);
+            g2.setColor(Color.WHITE);
+            textY += lineHeight * 1.5;
+
+            // Options
+            g2.drawString("[E] Talk", textX, textY);
+            textY += lineHeight;
+            g2.drawString("[G] Give Gift", textX, textY);
+            textY += lineHeight;
+
+            if (gp.currNPC.hasStore()) {
+                g2.drawString("[S] Shop", textX, textY);
+                textY += lineHeight;
+            }
+
+            g2.drawString("[ESC] Back", textX, textY);
         }
     }
 

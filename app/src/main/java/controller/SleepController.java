@@ -67,6 +67,8 @@ public class SleepController {
     
     private void showCannotSleepMessage() {
         System.out.println("Kamu hanya bisa tidur di malam hari!");
+        gp.ui.setDialog("Kamu hanya bisa tidur di malam hari!");
+        gp.gameState = gp.dialogState;
 
         // if (gp.ui != null) {
         //     gp.ui.setDialog("You can only sleep at night!");

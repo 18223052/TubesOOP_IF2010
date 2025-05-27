@@ -9,6 +9,7 @@ public interface IItem {
 
     int getBuyPrice();
     int getSellPrice();
+    void setSellPrice(int sellPrice);
 
     boolean isStackable();
 }
