@@ -5,12 +5,12 @@ import object.BaseItem;
 import object.ItemFactory;
 
 
-public class NPC_mayortadi extends NPC {
+public class NPC_abigail extends NPC {
 
-    public NPC_mayortadi(GamePanel gp,ItemFactory itemFactory) {
+    public NPC_abigail(GamePanel gp,ItemFactory itemFactory) {
         super(gp);
-        name = "Mayor Tadi";
-        gender = gender_male;
+        name = "Abigail";
+        gender = gender_female;
         setHatesAllUnlistedItems(true);
         getImage();
         initializeGiftPreference(itemFactory);
@@ -18,14 +18,14 @@ public class NPC_mayortadi extends NPC {
     }
 
     public void getImage() {
-        u1 = setup("/player/police_diem");
-        u2 = setup("/player/police_diem");
-        r1 = setup("/player/police_diem");
-        r2 = setup("/player/police_diem");
-        l1 = setup("/player/police_diem");
-        l2 = setup("/player/police_diem");
-        d1 = setup("/player/police_diem");
-        d2 = setup("/player/police_diem");
+        u1 = setup("/player/abigail_diem");
+        u2 = setup("/player/abigail_diem");
+        r1 = setup("/player/abigail_diem");
+        r2 = setup("/player/abigail_diem");
+        l1 = setup("/player/abigail_diem");
+        l2 = setup("/player/abigail_diem");
+        d1 = setup("/player/abigail_diem");
+        d2 = setup("/player/abigail_diem");
     }
     
 
@@ -45,11 +45,11 @@ public class NPC_mayortadi extends NPC {
                 break;
             default:
                 if (heartPoints < 20) {
-                    dialogues[0] = "Hello there! I'm Mayor Tadi. Welcome to our town!";
+                    dialogues[0] = "Hello there! I'm Abigail. Nice to meet you!";
                     dialogues[1] = "I hope you're enjoying your time on the farm.";
                 } else if (heartPoints < 100) {
                     dialogues[0] = "It's good to see you, farmer!";
-                    dialogues[1] = "The town appreciates all your hard work.";
+                    dialogues[1] = "Thank you for all of your hardwork";
                 } else {
                     dialogues[0] = "Ah, my favorite farmer! So glad to see you.";
                     dialogues[1] = "You've become such an important part of our community.";
@@ -67,7 +67,7 @@ public class NPC_mayortadi extends NPC {
     @Override
     // contoh
     public boolean hasStore(){
-        return true;
+        return false;
     }
 
     @Override

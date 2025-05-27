@@ -818,6 +818,51 @@ public class UI {
                 textY += lineHeight;
             }
 
+            // --- Opsi Propose ---
+            // Opsi Propose selalu muncul jika pemain punya cincin,
+            // tapi tampilannya bisa berbeda jika NPC belum siap.
+            if (gp.player != null && gp.player.hasItem("ring")) {
+                // if (currentSelection == optionIndex) g2.setColor(Color.YELLOW);
+
+                // Cek apakah NPC kemungkinan akan menerima (untuk pewarnaan/petunjuk)
+                // Ini adalah petunjuk visual, bukan pembatasan fungsional di sini.
+                if (gp.currNPC.isProposable(gp.player)) {
+                    g2.setColor(Color.PINK); // Warna jika NPC kemungkinan besar menerima
+                    g2.drawString("[P] Propose", textX, textY);
+                } else {
+                    g2.setColor(Color.ORANGE); // Warna jika NPC kemungkinan belum menerima (misal, hati belum penuh)
+                                            // Pemain tetap bisa mencoba, tapi mungkin ditolak.
+                    g2.drawString("[P] Propose (?)", textX, textY); // Tambahkan (?) sebagai petunjuk
+                }
+                g2.setColor(Color.WHITE); // Reset warna
+                // optionIndex++;
+                textY += lineHeight;
+            } else if (gp.player != null && !gp.player.hasItem("ring")) {
+                // Jika tidak punya cincin, tampilkan sebagai tidak aktif
+                // if (currentSelection == optionIndex) g2.setColor(Color.YELLOW); // Mungkin tidak bisa dipilih
+                g2.setColor(Color.GRAY);
+                g2.drawString("[P] Propose (Need Ring)", textX, textY);
+                g2.setColor(Color.WHITE);
+                // optionIndex++; // Atau lewati opsi ini dari seleksi
+                textY += lineHeight;
+            }
+
+
+            // --- Opsi Marry ---
+            if (gp.player != null && gp.player.getFiance() == gp.currNPC &&
+                gp.currNPC.canMarryPlayer(gp.player, gp.gameTime.getGameDay())) {
+                // if (currentSelection == optionIndex) g2.setColor(Color.YELLOW);
+                if (gp.player.hasItem("ring")) { // Cek apakah pemain punya cincin (untuk upacara)
+                    g2.setColor(Color.CYAN); // Warna berbeda untuk aksi spesial
+                    g2.drawString("[M] Marry", textX, textY);
+                } else {
+                    g2.setColor(Color.GRAY);
+                    g2.drawString("[M] Marry (Need Ring)", textX, textY);
+                }
+                g2.setColor(Color.WHITE);
+                // optionIndex++;
+                textY += lineHeight;
+            }
             g2.drawString("[ESC] Back", textX, textY);
         }
     }

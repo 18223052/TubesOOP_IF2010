@@ -9,7 +9,7 @@ import controller.InventoryController;
 import interactable.Interactable;
 import main.GamePanel;
 import main.KeyHandler;
-
+import object.BaseItem;
 import object.IItem; 
 
 public class Player extends Character { 
@@ -35,6 +35,10 @@ public class Player extends Character {
     private String farmMap;
     private int gold;
     // private NPC partner; 
+
+    // Propose & Marry
+    private NPC fiance = null;
+    private NPC spouse = null;
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -121,6 +125,16 @@ public class Player extends Character {
 
     public void setEnergy(int energy){
         this.energy = energy;
+        if (this.energy > MAX_ENERGY){
+            this.energy = MAX_ENERGY;
+        }
+    }
+
+    public void changeEnergy(int amount) {
+        this.energy += amount;
+        if (this.energy > MAX_ENERGY) {
+            this.energy = MAX_ENERGY;
+        }
     }
 
     public boolean deductEnergy(int amount){
@@ -285,5 +299,47 @@ public class Player extends Character {
 
     public InventoryController getInventory() {
         return inventory;
+    }
+
+    // Propose & Marry
+
+    public NPC getFiance() {
+        return this.fiance;
+    }
+
+    public void setFiance(NPC npc) {
+        this.fiance = npc;
+        if (npc != null) { // Jika menetapkan tunangan baru
+            this.spouse = null; // Pastikan tidak bisa memiliki pasangan dan tunangan sekaligus
+        }
+    }
+
+    public boolean hasFiance() {
+        return this.fiance != null;
+    }
+
+    public NPC getSpouse() {
+        return this.spouse;
+    }
+
+    public void setSpouse(NPC npc) {
+        this.spouse = npc;
+        if (npc != null) { // Jika menetapkan pasangan baru
+            if (this.fiance == npc) { // Jika menikah dengan tunangan saat ini
+                this.fiance = null; // Hapus status tunangan
+            }
+        }
+    }
+
+    public boolean hasSpouse() {
+        return this.spouse != null;
+    }
+
+    public boolean hasItem(String itemName) {
+        if (this.inventory != null) { // inventoryController adalah instance dari InventoryController
+            return this.inventory.hasItem(itemName);
+        }
+        System.err.println("Peringatan: InventoryController adalah null di Player.hasItem()");
+        return false;
     }
 }

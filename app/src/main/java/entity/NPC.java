@@ -16,7 +16,7 @@ public abstract class NPC extends Character implements Interactable {
     protected ArrayList<BaseItem> likedItems;
     protected ArrayList<BaseItem> hatedItems;
     protected String relationshipStatus;
-    protected int dayBecameFiance;
+    public int dayBecameFiance;
 
     protected final int MAX_HEART_POINTS = 150;
     protected final int MIN_HEART_POINTS = 0;
@@ -26,6 +26,14 @@ public abstract class NPC extends Character implements Interactable {
 
     protected boolean hatesAllUnlistedItems;
 
+    public static final String STATUS_SINGLE = "Single";
+    public static final String STATUS_FIANCE = "Fiance";
+    public static final String STATUS_MARRIED = "Married";
+
+    // Gender
+    protected String gender;
+    public static final String gender_male = "Male";
+    public static final String gender_female = "Female";
 
     public NPC(GamePanel gp){
         super(gp);
@@ -34,10 +42,14 @@ public abstract class NPC extends Character implements Interactable {
         this.lovedItems = new ArrayList<>();
         this.likedItems = new ArrayList<>();
         this.hatedItems = new ArrayList<>();
-        this.relationshipStatus = "Neutral";
+        this.relationshipStatus = STATUS_SINGLE;
         this.dayBecameFiance = -1;
         this.hatesAllUnlistedItems = false;
         // setDialogue();
+
+        // Propose & Marry
+        this.heartPoints = 0;
+        this.dayBecameFiance = -1;
     }
 
     public abstract void setDialogue();
@@ -154,5 +166,40 @@ public abstract class NPC extends Character implements Interactable {
     public boolean isExplicitlyHatedItem(BaseItem item) {
         return checkItemInList(this.hatedItems, item);
     }
+
+    public boolean isProposable(Player player){
+        if (player == null) return false;
+        return this.heartPoints >= MAX_HEART_POINTS && this.relationshipStatus.equals(STATUS_SINGLE) && !player.hasFiance() && !player.hasSpouse() && this.gender == gender_female;  // Pemain tidak sedang menikah dengan orang lain
+    }
+
+    public void becomeFiance(Player player, int currentDay) {
+        this.relationshipStatus = NPC.STATUS_FIANCE;
+        this.dayBecameFiance = currentDay;
+        // player.setFiance(this); // Ini akan diatur dari sisi controller/player untuk menghindari circular dependency langsung
+    }
+
+    public boolean canMarryPlayer(Player player, int currentDay) {
+        if (player == null) return false;
+        return this.relationshipStatus.equals(STATUS_FIANCE) &&
+            player.getFiance() == this && // Memastikan pemain bertunangan DENGAN NPC INI
+            currentDay > this.dayBecameFiance; // Sudah lewat minimal 1 hari
+    }
+
+    public void marryPlayer(Player player) {
+        this.relationshipStatus = STATUS_MARRIED;
+        // dayBecameFiance bisa dibiarkan sebagai catatan atau direset
+        // player.setSpouse(this); // Ini akan diatur dari sisi controller/player
+    }
+
+    public int getMaxHeartPoint(){
+        return MAX_HEART_POINTS;
+    }
     
+    public String getRelationshipStatus(){
+        return this.relationshipStatus;
+    }
+
+    public String getGender(){
+        return this.gender;
+    }
 }
