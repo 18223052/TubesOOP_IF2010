@@ -5,16 +5,16 @@ import java.util.ArrayList;
 
 import interactable.Interactable;
 import main.GamePanel;
-import object.BaseItem;
+import object.IItem;
 import object.ItemFactory;
 
 public abstract class NPC extends Character implements Interactable {
 
     protected String name;
     protected int heartPoints;
-    protected ArrayList<BaseItem> lovedItems;
-    protected ArrayList<BaseItem> likedItems;
-    protected ArrayList<BaseItem> hatedItems;
+    protected ArrayList<IItem> lovedItems;
+    protected ArrayList<IItem> likedItems;
+    protected ArrayList<IItem> hatedItems;
     protected String relationshipStatus;
     public int dayBecameFiance;
 
@@ -35,6 +35,15 @@ public abstract class NPC extends Character implements Interactable {
     public static final String gender_male = "Male";
     public static final String gender_female = "Female";
 
+    public static final String STATUS_SINGLE = "Single";
+    public static final String STATUS_FIANCE = "Fiance";
+    public static final String STATUS_MARRIED = "Married";
+
+    // Gender
+    protected String gender;
+    public static final String gender_male = "Male";
+    public static final String gender_female = "Female";
+
     public NPC(GamePanel gp){
         super(gp);
         this.direction = "down";
@@ -43,11 +52,14 @@ public abstract class NPC extends Character implements Interactable {
         this.likedItems = new ArrayList<>();
         this.hatedItems = new ArrayList<>();
         this.relationshipStatus = STATUS_SINGLE;
+        this.relationshipStatus = STATUS_SINGLE;
         this.dayBecameFiance = -1;
         this.hatesAllUnlistedItems = false;
         // setDialogue();
 
         // Propose & Marry
+        this.heartPoints = 0;
+        this.dayBecameFiance = -1;
         this.heartPoints = 0;
         this.dayBecameFiance = -1;
     }
@@ -65,13 +77,13 @@ public abstract class NPC extends Character implements Interactable {
             dialogIndex =0;
             if (dialogues[dialogIndex] == null){
                 gp.ui.currentDialog = "Hmmm..";
-                gp.gameState = gp.dialogState;
+                gp.setGameState(GamePanel.dialogState);
                 return;
             }
         }
         gp.ui.currentDialog = dialogues[dialogIndex];
         dialogIndex ++;
-        gp.gameState = gp.dialogState;
+        gp.setGameState(GamePanel.dialogState);
     }
 
     @Override
@@ -84,7 +96,7 @@ public abstract class NPC extends Character implements Interactable {
     public void onInteract(GamePanel gp, Player player){
         gp.currNPC = this;
         this.dialogIndex = 0;
-        gp.gameState = gp.npcContextMenuState;
+        gp.gameState = GamePanel.npcContextMenuState;
         gp.resumeGameThread();
     }
 
@@ -96,11 +108,11 @@ public abstract class NPC extends Character implements Interactable {
         return heartPoints;
     }
 
-    public ArrayList<BaseItem> getLovedItems(){
+    public ArrayList<IItem> getLovedItems(){
         return lovedItems;
     }
 
-    public ArrayList<BaseItem> getHatedItems(){
+    public ArrayList<IItem> getHatedItems(){
         return hatedItems;
     }
 
@@ -142,28 +154,33 @@ public abstract class NPC extends Character implements Interactable {
         System.out.println(name + " now has " + heartPoints + " heart points.");
     }
 
+    
+    public String getGender(){
+        return this.gender;
+    }
+
     public boolean hasStore() {
         return false; 
     }
 
-    protected boolean checkItemInList(ArrayList<BaseItem> list, BaseItem itemToCheck) {
-        for (BaseItem item : list) {
-            if (item.equals(itemToCheck)) { // Or item.getName().equals(itemToCheck.getName())
+    protected boolean checkItemInList(ArrayList<IItem> list, IItem itemToCheck) {
+        for (IItem item : list) {
+            if (item.equals(itemToCheck)) { 
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isLovedItem(BaseItem item) {
+    public boolean isLovedItem(IItem item) {
         return checkItemInList(this.lovedItems, item);
     }
 
-    public boolean isLikedItem(BaseItem item) {
+    public boolean isLikedItem(IItem item) {
         return checkItemInList(this.likedItems, item);
     }
 
-    public boolean isExplicitlyHatedItem(BaseItem item) {
+    public boolean isExplicitlyHatedItem(IItem item) {
         return checkItemInList(this.hatedItems, item);
     }
 

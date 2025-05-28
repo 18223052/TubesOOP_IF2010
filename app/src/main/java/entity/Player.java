@@ -4,15 +4,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList; // Import ArrayList
 
 import controller.InventoryController;
 import interactable.Interactable;
 import main.GamePanel;
 import main.KeyHandler;
 import object.BaseItem;
-import object.IItem; 
+import object.IItem;
+import object.NoItem;
+import object.SuperObj; // Pastikan SuperObj di-import
 
-public class Player extends Character { 
+public class Player extends Character {
 
     KeyHandler keyH;
 
@@ -34,9 +37,7 @@ public class Player extends Character {
     private int energy;
     private String farmMap;
     private int gold;
-    // private NPC partner; 
-
-    // Propose & Marry
+    // private NPC partner;
     private NPC fiance = null;
     private NPC spouse = null;
 
@@ -59,6 +60,8 @@ public class Player extends Character {
 
         inventory = new InventoryController(gp);
 
+        setActiveItem(new NoItem(gp));
+
         setDefaultValues();
         getPlayerImage();
         updateInteractionBox();
@@ -76,9 +79,6 @@ public class Player extends Character {
         return gender;
     }
 
-    // public NPC getPartnerName(){
-    //     return farmMap;
-    // }
     public int getGold(){
         return gold;
     }
@@ -148,6 +148,40 @@ public class Player extends Character {
         return true;
     }
 
+    // Propose & Marry
+     public NPC getFiance() {
+        return this.fiance;
+    }
+
+    public void setFiance(NPC npc) {
+        this.fiance = npc;
+        if (npc != null) { // Jika menetapkan tunangan baru
+            this.spouse = null; // Pastikan tidak bisa memiliki pasangan dan tunangan sekaligus
+        }
+    }
+
+    public boolean hasFiance() {
+        return this.fiance != null;
+    }
+
+    public NPC getSpouse() {
+        return this.spouse;
+    }
+
+    public void setSpouse(NPC npc) {
+        this.spouse = npc;
+        if (npc != null) { // Jika menetapkan pasangan baru
+            if (this.fiance == npc) { // Jika menikah dengan tunangan saat ini
+                this.fiance = null; // Hapus status tunangan
+            }
+        }
+    }
+
+    public boolean hasSpouse() {
+        return this.spouse != null;
+    }
+
+
     public void getPlayerImage() {
         u1 = setup("/player/u1");
         u2 = setup("/player/u2");
@@ -191,20 +225,23 @@ public class Player extends Character {
         interactionBox.height = gp.tileSize;
     }
 
-    // Refactored checkInteraction to use Interactable interface
-    public int checkInteraction(Interactable[] interactables) {
+    // REVISI: Ubah parameter agar menerima ArrayList
+    public <T extends Interactable> int checkInteraction(ArrayList<T> interactables) {
         int index = 999;
-        for (int i = 0; i < interactables.length; i++) {
-            if (interactables[i] != null) {
+        // Iterasi menggunakan for-each loop karena ini adalah ArrayList
+        for (int i = 0; i < interactables.size(); i++) {
+            T obj = interactables.get(i); // Ambil objek dari ArrayList
+            if (obj != null) {
                 updateInteractionBox(); // Ensure interactionBox is up-to-date
-                if (interactables[i].isInteractable(interactionBox)) {
-                    index = i;
+                if (obj.isInteractable(interactionBox)) {
+                    index = i; // Simpan indeks dari ArrayList
                     break; // Found an interaction, no need to check further
                 }
             }
         }
         return index;
     }
+
 
     public int[] getInteractionTile() {
         updateInteractionBox();
@@ -217,7 +254,7 @@ public class Player extends Character {
         return tileNum == tileType;
     }
 
-    @Override // Override the update method from Character
+    @Override
     public void update() {
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
 
@@ -251,26 +288,25 @@ public class Player extends Character {
                 }
             }
 
-            super.update(); // Call the Character's update for animation
+            super.update(); 
         }
 
         if (keyH.interactPressed) {
             keyH.interactPressed = false; // Reset immediately
 
-
-            int npcIndex = checkInteraction(gp.npc);
+            
+            int npcIndex = checkInteraction(convertArrayToArrayList(gp.npc)); 
             int objIndex = checkInteraction(gp.obj); 
 
             if (npcIndex != 999) {
-                gp.npc[npcIndex].onInteract(gp,this); // Let the NPC handle its interaction
+                gp.npc[npcIndex].onInteract(gp,this); // NPC masih diakses via array
             } else if (objIndex != 999) {
-                gp.obj[objIndex].onInteract(gp,this); // Let the Object handle its interaction
+                gp.obj.get(objIndex).onInteract(gp,this); // OBJEK sekarang diakses via ArrayList
             }
         }
         updateInteractionBox();
     }
 
-    // interactNPC and interactOBJ methods are moved to the respective NPC/SuperObj classes via onInteract
 
     @Override
     public void draw(Graphics2D g2) {
@@ -290,7 +326,7 @@ public class Player extends Character {
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Arial", Font.BOLD, 10));
         g2.drawString("Tile: " + interactionTileCol + "," + interactionTileRow,
-                screenX + 5, screenY + 15);
+            screenX + 5, screenY + 15);
     }
 
     public Rectangle getInteractionBox() {
@@ -299,6 +335,19 @@ public class Player extends Character {
 
     public InventoryController getInventory() {
         return inventory;
+    }
+
+   
+    private <T extends Interactable> ArrayList<T> convertArrayToArrayList(T[] array) {
+        ArrayList<T> list = new ArrayList<>();
+        if (array != null) {
+            for (T element : array) {
+                if (element != null) {
+                    list.add(element);
+                }
+            }
+        }
+        return list;
     }
 
     // Propose & Marry

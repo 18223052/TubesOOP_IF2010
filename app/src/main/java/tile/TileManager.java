@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import javax.imageio.ImageIO;
+import java.util.Map;
+import java.util.HashMap;
 
 import main.GamePanel;
 import main.UtilityTool;
@@ -15,10 +17,8 @@ public class TileManager {
     public Tile[] tile;
     public int mapTileNum[][];
     private String currentMap;
-    
-    // // Constants for special tiles
-    // public static final int POND_TILE = 18;
-    // public static final int BED_TILE = 86;
+
+    private Map<String, int[]> farmMapTeleportCoords;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -26,7 +26,7 @@ public class TileManager {
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         currentMap = gp.currMap;
         
-
+        initializeFarmMapTeleportCoords();
         getTileImage();
 
     }
@@ -38,7 +38,7 @@ public class TileManager {
 
     public void getTileImage() {
         // Initialize all tile types
-        for (int i = 0; i <= 201; i++) {
+        for (int i = 0; i <= 203; i++) {
             String fileName = String.format("%03d", i);
             boolean collision = (i >= 20 && i <= 32) || (i >= 65 && i <= 72) || (i >= 183 && i <= 190);
             
@@ -60,6 +60,7 @@ public class TileManager {
         tile[170].collision = true;
 
     }
+
     
     public void setup(int idx, String imagePath, boolean collision){
         UtilityTool uTool = new UtilityTool();
@@ -73,66 +74,129 @@ public class TileManager {
         }
     }
     
+    private void initializeFarmMapTeleportCoords() {
+        farmMapTeleportCoords = new HashMap<>();
+
+
+        farmMapTeleportCoords.put("/maps/farmmm.txt", new int[]{
+            18, 17, // Exit to Rumah
+            28, 49, // Exit to River (using 28 for range, the row 49 is common)
+            49, 32, // Exit to Worldmap
+            // --- Return to Farm (these are the coordinates player lands on when returning to farmmm.txt) ---
+            18, 20, // Return from Rumah to farmmm.txt
+            31, 48, // Return from River to farmmm.txt (using 31 as specific col within range)
+            48, 32  // Return from Worldmap to farmmm.txt
+        });
+
+        farmMapTeleportCoords.put("/maps/farmmm2.txt", new int[]{
+            17, 29, // Exit to Rumah (specific to farmmm2)
+            28, 49, // Exit to River (can be same or different)
+            49, 32, // Exit to Worldmap (can be same or different)
+            // --- Return to Farm (these are the coordinates player lands on when returning to farmmm2.txt) ---
+            17, 30, // Return from Rumah to farmmm2.txt
+            31, 48, // Return from River to farmmm2.txt
+            48, 32  // Return from Worldmap to farmmm2.txt
+        });
+
+        farmMapTeleportCoords.put("/maps/farmmm3.txt", new int[]{
+            30, 29, // Exit to Rumah (specific to farmmm3)
+            28, 49, // Exit to River (can be same or different)
+            49, 32, // Exit to Worldmap (can be same or different)
+            // --- Return to Farm (these are the coordinates player lands on when returning to farmmm3.txt) ---
+            30, 30, // Return from Rumah to farmmm3.txt
+            31, 48, // Return from River to farmmm3.txt
+            48, 32  // Return from Worldmap to farmmm3.txt
+        });
+    }
+    
     public void checkTeleport(int checkCol, int checkRow) { 
-        // dari map farmm ke map lain
-        if (currentMap.equals("/maps/farmmm.txt")) {
-            if (checkCol == 18 && checkRow == 17) {
+        String currentFarmMap = null; 
 
-                teleportPlayer("/maps/rumah.txt", 26, 36);
-                return;
-            }
-            if ((checkCol == 28 || checkCol == 29 || checkCol == 30 || checkCol == 31) && checkRow == 49) { // Contoh teleportasi dari rumah.txt ke farmmm.txt (balikan dari yang sebelumnya)
-                teleportPlayer("/maps/river.txt", 22, 1);
-                return;
-            }
-            if (checkCol == 49 && checkRow == 32) {
-
-                teleportPlayer("/maps/worldmap.txt", 1, 30);
-                return;
+        if (gp.currMap.startsWith("/maps/farmmm")) { // Check if it's one of the farm maps
+            int[] coords = farmMapTeleportCoords.get(gp.currMap);
+            if (coords != null) {
+                // To Rumah
+                if (checkCol == coords[0] && checkRow == coords[1]) {
+                    gp.prevFarmMap = gp.currMap; // Store the current farm map before teleporting
+                    teleportPlayer("/maps/rumah.txt", 26, 36); // Fixed entry point for Rumah
+                    return;
+                }
+                // To River
+                // Note: Your river teleport check is a range (28-31 for col), so we check that
+                if ((checkCol >= coords[2] && checkCol <= coords[2] + 3) && checkRow == coords[3]) {
+                    gp.prevFarmMap = gp.currMap; // Store the current farm map
+                    teleportPlayer("/maps/river.txt", 22, 1); // Fixed entry point for River
+                    return;
+                }
+                // To Worldmap
+                if (checkCol == coords[4] && checkRow == coords[5]) {
+                    gp.prevFarmMap = gp.currMap; // Store the current farm map
+                    teleportPlayer("/maps/worldmap.txt", 1, 30); // Fixed entry point for Worldmap
+                    return;
+                }
             }
         }
 
-         // dari map rumah ke map lain
+        // --- Teleport from Static Maps (Rumah, River, Worldmap) back to the original Farm Map ---
         if (currentMap.equals("/maps/rumah.txt")) {
-            if ((checkCol == 26 || checkCol == 25 || checkCol == 27 || checkCol == 24) && checkRow == 38) {
-                teleportPlayer("/maps/farmmm.txt", 18, 20);
+            if ((checkCol >= 24 && checkCol <= 27) && checkRow == 38) { // Rumah exit trigger (common to all houses)
+                int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
+                if (coords != null) {
+                    teleportPlayer(gp.prevFarmMap, coords[6], coords[7]); // Use stored entry point for specific farm map
+                } else {
+                    // Fallback in case prevFarmMap is not set or invalid
+                    System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
+                    teleportPlayer("/maps/farmmm.txt", 18, 20); // Default to original farmmm exit
+                }
                 return;
             }
         } 
-        // dari map river ke map lain
+        
         if (currentMap.equals("/maps/river.txt")) {
-            if ((checkCol == 21 || checkCol == 22 || checkCol == 23 || checkCol == 24) && checkRow == 0) {
-                teleportPlayer("/maps/farmmm.txt", 31, 48);
+            if ((checkCol >= 21 && checkCol <= 24) && checkRow == 0) { // River exit trigger (common to all rivers)
+                int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
+                if (coords != null) {
+                    teleportPlayer(gp.prevFarmMap, coords[8], coords[9]); // Use stored entry point for specific farm map
+                } else {
+                    System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
+                    teleportPlayer("/maps/farmmm.txt", 31, 48); // Default to original farmmm river entry
+                }
                 return;
             }
         }
 
-        // dari map world ke map lain
         if (currentMap.equals("/maps/worldmap.txt")) {
-            if (checkCol == 0 && checkRow == 30) {
-                teleportPlayer("/maps/farmmm.txt", 48, 32);
+            if (checkCol == 0 && checkRow == 30) { // Worldmap exit trigger (common to all worldmaps)
+                int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
+                if (coords != null) {
+                    teleportPlayer(gp.prevFarmMap, coords[10], coords[11]); // Use stored entry point for specific farm map
+                } else {
+                    System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
+                    teleportPlayer("/maps/farmmm.txt", 48, 32); // Default to original farmmm worldmap entry
+                }
                 return;
             }
         }
-        
-    
     }
 
     
-    public void teleportPlayer(String mapPath, int destX, int destY) {
+    public void teleportPlayer(String newMapPath, int destX, int destY) {
+        String mapPathYangAkanDisimpan = gp.currMap; 
 
-        currentMap = mapPath;
-        gp.currMap = mapPath;
-        
+        gp.currMap = newMapPath;        // 2. Baru ubah gp.currMap ke peta BARU
+        this.currentMap = newMapPath;   // (Untuk TileManager sendiri)
 
-        loadMap(mapPath);
-        
-        // Set player position
+        loadMap(newMapPath);            // Load tile visual peta baru
+
         gp.player.wX = destX * gp.tileSize;
         gp.player.wY = destY * gp.tileSize;
-        
 
-        gp.changeMap();
+        // 3. Panggil metode di GamePanel untuk menangani save lama & load baru
+        gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
+
+
+        gp.player.deductEnergy(10);
+        gp.gameTime.addTime(15);
     }
     
     public void loadMap(String filePath) {

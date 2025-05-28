@@ -1,10 +1,8 @@
 package controller;
 
-import main.GamePanel;
-import object.BaseItem;
-
 import entity.NPC;
-import entity.Player;
+import main.GamePanel;
+import object.IItem;
 
 public class NPCController {
     
@@ -14,10 +12,10 @@ public class NPCController {
         this.gp = gp;
     }
 
-    public void giftItemToNPC(BaseItem itemToGift){
+    public void giftItemToNPC(IItem itemToGift){
         if (itemToGift == null){
             gp.ui.currentDialog = "Kamu tidak memiliki barang yang akan dijadikan gift";
-            gp.gameState = gp.dialogState;
+            gp.gameState = GamePanel.dialogState;
             return;
         }
         

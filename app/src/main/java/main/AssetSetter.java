@@ -1,10 +1,14 @@
 package main;
+import entity.NPC_abigail;
 import entity.*;
 
 import object.Bed;
+import object.LandTile;
 import object.ShippingBin;
+import object.Store;
 import object.Stove;
 import object.TV;
+import object.SuperObj; // Pastikan ini di-import
 
 public class AssetSetter {
     
@@ -15,12 +19,12 @@ public class AssetSetter {
     }
     
     public void clearObjects() {
-        for(int i = 0; i < gp.obj.length; i++) {
-            gp.obj[i] = null;
-        }
+        // Jika gp.obj adalah ArrayList, gunakan metode clear()
+        gp.obj.clear();
     }
     
     public void clearNPCs() {
+        // Untuk NPC, karena masih array, biarkan seperti ini
         for(int i = 0; i < gp.npc.length; i++) {
             gp.npc[i] = null;
         }
@@ -29,40 +33,116 @@ public class AssetSetter {
     public void setObj(){
 
         if(gp.currMap.equals("/maps/farmmm.txt")) {
-   
-            gp.obj[0] = new ShippingBin(gp);
-            gp.obj[0].wX = 20 * gp.tileSize;
-            gp.obj[0].wY = 20 * gp.tileSize;
+            // ShippingBin
+            SuperObj shippingBin1 = new ShippingBin(gp);
+            shippingBin1.wX = 20 * gp.tileSize;
+            shippingBin1.wY = 20 * gp.tileSize;
+            gp.obj.add(shippingBin1); // Tambahkan ke ArrayList
+
+            // LandTile
+
+            for (int x = 27; x <= 34; x++) { 
+                LandTile landTile = new LandTile(gp);
+                landTile.wX = x * gp.tileSize;
+                landTile.wY = 35 * gp.tileSize;
+                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                gp.obj.add(landTile);
+            }
+
+            for (int x = 27; x <= 34; x++) { 
+                LandTile landTile = new LandTile(gp);
+                landTile.wX = x * gp.tileSize;
+                landTile.wY = 36 * gp.tileSize;
+                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                gp.obj.add(landTile);
+            }
         }
-        else if(gp.currMap.equals("/maps/river.txt")) {
-            // Set objects for river map
-            // Add river-specific objects here
+        if(gp.currMap.equals("/maps/farmmm2.txt")) {
+            // ShippingBin
+            SuperObj shippingBin2 = new ShippingBin(gp);
+            shippingBin2.wX = 20 * gp.tileSize;
+            shippingBin2.wY = 30 * gp.tileSize;
+            gp.obj.add(shippingBin2); // Tambahkan ke ArrayList
+
+            for (int x = 28; x <= 35; x++) { 
+                LandTile landTile = new LandTile(gp);
+                landTile.wX = x * gp.tileSize;
+                landTile.wY = 28 * gp.tileSize;
+                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                gp.obj.add(landTile);
+            }
+
+            for (int x = 28; x <= 35; x++) { 
+                LandTile landTile = new LandTile(gp);
+                landTile.wX = x * gp.tileSize;
+                landTile.wY = 29 * gp.tileSize;
+                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                gp.obj.add(landTile);
+            }
         }
+
+        if(gp.currMap.equals("/maps/farmmm3.txt")) {
+            // ShippingBin
+            SuperObj shippingBin3 = new ShippingBin(gp);
+            shippingBin3.wX = 33 * gp.tileSize;
+            shippingBin3.wY = 30 * gp.tileSize;
+            gp.obj.add(shippingBin3); 
+
+
+            for (int x = 14; x <= 21; x++) { 
+                LandTile landTile = new LandTile(gp);
+                landTile.wX = x * gp.tileSize;
+                landTile.wY = 28 * gp.tileSize;
+                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                gp.obj.add(landTile);
+            }
+
+            for (int x = 14; x <= 21; x++) { 
+                LandTile landTile = new LandTile(gp);
+                landTile.wX = x * gp.tileSize;
+                landTile.wY = 29 * gp.tileSize;
+                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                gp.obj.add(landTile);
+            }
+        }
+
+        else if(gp.currMap.equals("/maps/worldmap.txt")) {
+            // Store
+            SuperObj store = new Store(gp);
+            store.wX = 33 * gp.tileSize;
+            store.wY = 30 * gp.tileSize;
+            gp.obj.add(store); // Tambahkan ke ArrayList
+        }
+
         else if(gp.currMap.equals("/maps/rumah.txt")) {
+            // Bed
+            SuperObj bed1 = new Bed(gp);
+            bed1.wX = 18 * gp.tileSize;
+            bed1.wY = 15 * gp.tileSize;
+            gp.obj.add(bed1); // Tambahkan ke ArrayList
 
-            
-            // Adding the bed
-            gp.obj[0] = new Bed(gp);
-            gp.obj[0].wX = 18 * gp.tileSize;
-            gp.obj[0].wY = 15 * gp.tileSize;
-            
-            // Adding the stove (which is now a multi-tile object)
-            gp.obj[1] = new Stove(gp);
-            gp.obj[1].wX = 34 * gp.tileSize;
-            gp.obj[1].wY = 14 * gp.tileSize;
+            // Stove
+            SuperObj stove = new Stove(gp);
+            stove.wX = 34 * gp.tileSize;
+            stove.wY = 14 * gp.tileSize;
+            gp.obj.add(stove); // Tambahkan ke ArrayList
 
-            gp.obj[2] = new Bed(gp);
-            gp.obj[2].wX = 16 * gp.tileSize;
-            gp.obj[2].wY = 15 * gp.tileSize;
+            // Bed (mungkin ini bed lain, atau penempatan yang salah sebelumnya)
+            SuperObj bed2 = new Bed(gp);
+            bed2.wX = 16 * gp.tileSize;
+            bed2.wY = 15 * gp.tileSize;
+            gp.obj.add(bed2); // Tambahkan ke ArrayList
 
-            gp.obj[3] = new TV(gp);
-            gp.obj[3].wX = 19 * gp.tileSize;
-            gp.obj[3].wY = 20 * gp.tileSize;
+            // TV
+            SuperObj tv = new TV(gp);
+            tv.wX = 19 * gp.tileSize;
+            tv.wY = 20 * gp.tileSize;
+            gp.obj.add(tv); // Tambahkan ke ArrayList
         }
-
     }
 
     public void setNPC(){
+        // Bagian ini tidak berubah karena gp.npc masih array
         if (gp.currMap.equals("/maps/farmmm.txt")) {
             gp.npc[0] = new NPC_mayortadi(gp, gp.itemFactory);
             gp.npc[0].wX = gp.tileSize*16;
