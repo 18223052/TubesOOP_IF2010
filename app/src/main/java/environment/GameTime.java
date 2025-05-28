@@ -182,4 +182,14 @@ public class GameTime implements Runnable {
     public synchronized long getCurrentGameTime(){
         return totalGameMillis;
     }
+
+    public synchronized boolean isNewDay(long previousTimeMillis){
+        if (previousTimeMillis == -1){
+            return false;
+        }
+        long previousDay = previousTimeMillis /(24*60*60*1000L);
+        long currentDay = totalGameMillis/ (24*60*60*1000L);
+
+        return currentDay > previousDay;
+    }
 }

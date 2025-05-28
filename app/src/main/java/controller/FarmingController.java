@@ -4,15 +4,14 @@ import entity.Player;
 import main.GamePanel;
 import environment.GameTime;
 import object.LandTile;
-import object.Pickaxe; // Uncommented
+import object.Pickaxe; 
 import object.TileState;
-import object.Hoe; // Uncommented
+import object.Hoe; 
 import object.IItem;
-import object.ToolItem;
-import object.WateringCan; // Uncommented
+import object.WateringCan; 
 import object.SeedItem;
 import object.SuperObj;
-import object.CropItem; // Uncommented
+import object.CropItem; 
 
 public class FarmingController {
 
@@ -37,35 +36,35 @@ public class FarmingController {
     IItem activeItem = player.getActiveItem();
 
     if (activeItem == null) {
-        System.out.println("No active item selected.");
-        System.out.println("Farming: No active item.");
+        System.out.println("Tidak ada item aktif yang dipilih.");
+        System.out.println("Farming: tidak ada item aktif.");
         return;
     }
 
-    System.out.println("Farming: Player has " + activeItem.getName() + " active. Actual class: " + activeItem.getClass().getName() + ". Interacting with " + targetTile.name);
+    System.out.println("Farming: Player menggunakan " + activeItem.getName() + " active. Kelas aktual: " + activeItem.getClass().getName() + ". Berinteraksi dengan " + targetTile.name);
 
     if (activeItem instanceof Hoe) {
-        System.out.println("Farming: Detected Hoe instance."); 
+        System.out.println("Farming: Terdeteksi Hoe instance."); 
         tillage(player, targetTile);
     } else if (activeItem instanceof Pickaxe) {
-        System.out.println("Farming: Detected Pickaxe instance."); 
+        System.out.println("Farming: Terdeteksi Pickaxe instance."); 
         recoverLand(player, targetTile);
     } else if (activeItem instanceof SeedItem) {
-        System.out.println("Farming: Detected SeedItem instance."); 
+        System.out.println("Farming: Terdeteksi SeedItem instance."); 
         plant(player, targetTile, (SeedItem) activeItem);
     } else if (activeItem instanceof WateringCan) {
-        System.out.println("Farming: Detected WateringCan instance."); 
+        System.out.println("Farming: Terdeteksi WateringCan instance."); 
         water(player, targetTile);
     } else if (activeItem.getName().equals("Hand") || activeItem.getName().equals("No Item")) {
         if (targetTile.isHarvestable()) {
             harvest(player, targetTile);
         } else {
-            System.out.println("Nothing to do with " + targetTile.name + " using bare hands.");
+            System.out.println("Tidak ada yang bisa dilakukan " + targetTile.name + " menggunakan tangan.");
             System.out.println("Farming: Hand interaction on non-harvestable tile.");
         }
     } else {
-        System.out.println("You can't use " + activeItem.getName() + " here.");
-        System.out.println("Farming: Cannot use " + activeItem.getName() + " on " + targetTile.name);
+        System.out.println("Player tidak bisa menggunakan " + activeItem.getName() + " disini.");
+        System.out.println("Farming: Tidak bisa menggunakan " + activeItem.getName() + " di " + targetTile.name);
     }
 }
     /**
@@ -75,24 +74,24 @@ public class FarmingController {
      */
     public void tillage(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof Hoe)) {
-            System.out.println("You need a Hoe to till the land.");
+            System.out.println("Kamu butuh Hoe untuk menggarap tanah.");
             return;
         }
 
         if (targetTile.getCurrentState() != TileState.LAND) {
-            System.out.println("This tile is not bare land.");
+            System.out.println("Tile ini bukan tanah polos.");
             return;
         }
 
         if (player.getEnergy() < ENERGY_COST_PER_TILE) {
-            System.out.println("Not enough energy to till!");
+            System.out.println("Energi tidak cukup untuk menggarap tanah!");
             return;
         }
 
         if (player.deductEnergy(ENERGY_COST_PER_TILE)) {
             targetTile.toSoil();
             gameTime.addTime(TIME_COST_PER_TILE_MINUTES);
-            System.out.println("You tilled the land.");
+            System.out.println("Kamu berhasil menggarap tanah.");
             gp.saveGame();
         }
     }
@@ -104,25 +103,25 @@ public class FarmingController {
      */
     public void recoverLand(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof Pickaxe)) {
-            System.out.println("You need a Pickaxe to recover the land.");
+            System.out.println("Kamu butuh pickaxe untuk memulihkan tanah.");
             return;
         }
 
         // Recovery can be done on soil, planted, watered, or harvestable tile
         if (targetTile.getCurrentState() == TileState.LAND) {
-            System.out.println("This tile is already bare land.");
+            System.out.println("Tile ini merupakan tanah polos.");
             return;
         }
 
         if (player.getEnergy() < ENERGY_COST_PER_TILE) {
-            System.out.println("Not enough energy to recover land!");
+            System.out.println("Energi tidak cukup untuk memulihkan tanah!");
             return;
         }
 
         if (player.deductEnergy(ENERGY_COST_PER_TILE)) {
             targetTile.toLand();
             gameTime.addTime(TIME_COST_PER_TILE_MINUTES);
-            System.out.println("You recovered the land.");
+            System.out.println("Kamu berhasil memulihkan tanah.");
         }
     }
 
@@ -135,22 +134,22 @@ public class FarmingController {
     public void plant(Player player, LandTile targetTile, SeedItem seed) {
         if (!(player.getActiveItem() instanceof SeedItem) ||
              !((SeedItem)player.getActiveItem()).getCropType().equals(seed.getCropType())) {
-            System.out.println("Select the correct seed to plant.");
+            System.out.println("Pilih benih yang tepat untuk bercocok tanam.");
             return;
         }
 
         if (targetTile.getCurrentState() != TileState.SOIL) {
-            System.out.println("You can only plant on tilled soil.");
+            System.out.println("Kamu bisa menanam hanya di tanah yang sudah digarap.");
             return;
         }
 
         if (!player.getInventory().hasItem(seed.getName())) {
-            System.out.println("You don't have this seed!");
+            System.out.println("Kamu tidak memiliki benih ini!");
             return;
         }
 
         if (player.getEnergy() < ENERGY_COST_PER_TILE) {
-            System.out.println("Not enough energy to plant!");
+            System.out.println("Energi tidak cukup untuk menanam!");
             return;
         }
 
@@ -158,9 +157,9 @@ public class FarmingController {
             if (targetTile.plant(seed.getCropType())) {
                 player.getInventory().removeItems(seed.getName(), 1);
                 gameTime.addTime(TIME_COST_PER_TILE_MINUTES);
-                System.out.println("You planted a " + seed.getName() + ".");
+                System.out.println("Kamu menanam sebuah " + seed.getName() + ".");
             } else {
-                // LandTile.plant() is expected to already display why it failed (e.g., wrong season)
+
             }
         }
     }
@@ -172,31 +171,31 @@ public class FarmingController {
      */
     public void water(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof WateringCan)) {
-            System.out.println("You need a Watering Can to water plants.");
+            System.out.println("Kamu butuh penyiram tanaman untuk menyiram tanaman.");
             return;
         }
 
         if (targetTile.getCurrentState() != TileState.PLANTED &&
             targetTile.getCurrentState() != TileState.WATERED &&
             targetTile.getCurrentState() != TileState.HARVESTABLE) {
-            System.out.println("There is no plant to water here.");
+            System.out.println("Tidak ada tanaman yang perlu disiram disini.");
             return;
         }
 
         if (targetTile.isWatered()) {
-            System.out.println("This plant is already watered.");
+            System.out.println("Tanaman sudah disiram.");
             return;
         }
 
         if (player.getEnergy() < ENERGY_COST_PER_TILE) {
-            System.out.println("Not enough energy to water!");
+            System.out.println("Energi tidak cukup untuk menyiram tanaman!");
             return;
         }
 
         if (player.deductEnergy(ENERGY_COST_PER_TILE)) {
             targetTile.setWatered(true);
             gameTime.addTime(TIME_COST_PER_TILE_MINUTES);
-            System.out.println("You watered the " + targetTile.getPlantedCropType().name().toLowerCase() + ".");
+            System.out.println("Kamu berhasil menyiram tanaman " + targetTile.getPlantedCropType().name().toLowerCase() + ".");
         }
     }
 
@@ -209,17 +208,17 @@ public class FarmingController {
         // Harvesting is done with bare hands ("Hand" or "No Item")
         IItem activeItem = player.getActiveItem();
         if (!(activeItem.getName().equals("Hand") || activeItem.getName().equals("No Item"))) {
-            System.out.println("You need to use your hands to harvest.");
+            System.out.println("Kamu membutuhkan tangan untuk memanen tanaman.");
             return;
         }
 
         if (targetTile.getCurrentState() != TileState.HARVESTABLE) {
-            System.out.println("Nothing to harvest yet from this tile.");
+            System.out.println("Tidak ada yang bisa dipanen di sini.");
             return;
         }
 
         if (player.getEnergy() < ENERGY_COST_PER_TILE) {
-            System.out.println("Not enough energy to harvest!");
+            System.out.println("Energi tidak cukup untuk memanen!");
             return;
         }
 
@@ -228,7 +227,7 @@ public class FarmingController {
             if (harvestedCrop != null) {
                 player.inventory.addItem((IItem)harvestedCrop);
                 gameTime.addTime(TIME_COST_PER_TILE_MINUTES);
-                System.out.println("You harvested " + harvestedCrop.getName() + "!");
+                System.out.println("Kamu berhasil memanen " + harvestedCrop.getName() + "!");
             } else {
                 System.out.println("Harvest failed unexpectedly.");
             }

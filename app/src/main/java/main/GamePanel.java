@@ -31,6 +31,7 @@ import object.ItemFactory;
 import object.SuperObj;
 import object.TileState;
 import object.LandTile; // Tambahkan import ini untuk LandTile
+import object.PlantType;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -124,6 +125,10 @@ public class GamePanel extends JPanel implements Runnable {
     
 
     private boolean isComplete = false;
+    private int lastCheckedGameDay = -1;
+
+
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -385,6 +390,13 @@ public class GamePanel extends JPanel implements Runnable {
             currentHour = gameTime.getGameHour();
             currentDay = gameTime.getGameDay();
 
+            if (currentDay != lastCheckedGameDay){
+                handleNewDayEvents();
+                lastCheckedGameDay = currentDay;
+            }
+
+
+
             if (eManager != null && eManager.isLightingSetup()) {
                 Lighting lighting = eManager.getLighting();
 
@@ -408,6 +420,25 @@ public class GamePanel extends JPanel implements Runnable {
             sleepController.update();
         }
         // nambah gamestate lain kali
+    }
+
+    private void handleNewDayEvents() {
+        System.out.println("New Day! Game Day: " + gameTime.getGameDay());
+
+        // Iterate through all game objects (assuming gp.obj holds them)
+        for (SuperObj obj : obj) {
+            if (obj instanceof LandTile) {
+                LandTile tile = (LandTile) obj;
+                if (tile.getPlantedCropType() != PlantType.NONE && 
+                    (tile.getCurrentState() == TileState.PLANTED || 
+                    tile.getCurrentState() == TileState.WATERED || 
+                    tile.getCurrentState() == TileState.HARVESTABLE)) {
+                    
+                    tile.setWatered(false); // This will update the image to the 'unwatered' version
+                    System.out.println(tile.getPlantedCropType().name() + " di " + tile.wX/tileSize + "," + tile.wY/tileSize + " butuh disiram.");
+                }
+            }
+        }
     }
 
     @Override
@@ -466,28 +497,6 @@ public class GamePanel extends JPanel implements Runnable {
         g2.dispose();
     }
 
-    // public void nextDay() {
-    //     gameTime.nextDay();
-    //     currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
-
-    //     if (currentWeather == WeatherType.RAINY) {
-    //         // tileManager.waterAllSoilTiles(); // Anda bisa memanggil ini di sini jika diperlukan
-    //     }
-
-    //     // --- PENTING UNTUK STATE TANAMAN SAAT BERPINDAH HARI ---
-    //     // Setelah gameTime.nextDay(), panggil saveGame() dan loadGameState()
-    //     // Ini memastikan bahwa perubahan hari (yang mungkin memicu pertumbuhan tanaman)
-    //     // akan disimpan dan kemudian dimuat ulang untuk memperbarui visual.
-    //     // Atau, pastikan grow() di farmingController.updatePlantGrowth() sudah cukup
-    //     // untuk menangani visual tanpa perlu load/save di sini.
-    //     // Jika pertumbuhan tanaman sudah dihandle oleh updatePlantGrowth() berdasarkan waktu,
-    //     // maka Anda tidak perlu save/load di sini, cukup pastikan grow() selalu dipanggil.
-
-    //     // Jika Anda ingin efek save/load di setiap hari baru, maka:
-    //     saveGame(); 
-    //     saveManger.loadGameState(); // Muat kembali state setelah hari berganti
-    // }
-
 
     private void drawLoadingScreen(Graphics2D g2) {
         g2.setColor(Color.BLACK);
@@ -525,63 +534,72 @@ public class GamePanel extends JPanel implements Runnable {
 
             // Proses input hari
             if (dayInput != null && !dayInput.trim().isEmpty()) {
+            try {
+                int day = Integer.parseInt(dayInput.trim());
+                if (day > 0) {
+                    // Store previous day for new day events check
+                    int previousDay = gameTime.getGameDay(); 
+                    gameTime.setGameDay(day);
+                    // Manually trigger new day events if day changed
+                    if (gameTime.getGameDay() > previousDay) {
+                         // Only trigger if new day is actually greater (jumped forward)
+                        handleNewDayEvents(); 
+                    }
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Hari harus angka positif.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    valid = false;
+                }
+            } catch (NumberFormatException e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Input hari bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                valid = false;
+            }
+        }
+
+        // Process time input
+        if (timeInput != null && !timeInput.trim().isEmpty()) {
+            if (timeInput.matches("\\d{1,2}:\\d{2}")) {
                 try {
-                    int day = Integer.parseInt(dayInput.trim());
-                    if (day > 0) {
-                        gameTime.setGameDay(day);
+                    String[] parts = timeInput.split(":");
+                    int hour = Integer.parseInt(parts[0]);
+                    int minute = Integer.parseInt(parts[1]);
+                    if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+                        // Store previous day for new day events check (if time changes across midnight)
+                        int previousDay = gameTime.getGameDay(); 
+                        gameTime.setTime(hour, minute);
+                        // Manually trigger new day events if day changed
+                        if (gameTime.getGameDay() > previousDay) {
+                            handleNewDayEvents(); 
+                        }
                     } else {
-                        javax.swing.JOptionPane.showMessageDialog(
-                            this, "Hari harus angka positif.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
+                        javax.swing.JOptionPane.showMessageDialog(this, "Format waktu tidak valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                         valid = false;
                     }
                 } catch (NumberFormatException e) {
-                    javax.swing.JOptionPane.showMessageDialog(
-                        this, "Input hari bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                    );
+                    javax.swing.JOptionPane.showMessageDialog(this, "Input waktu bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                     valid = false;
                 }
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Format waktu harus HH:MM.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                valid = false;
             }
+        }
 
-            // Proses input waktu
-            if (timeInput != null && !timeInput.trim().isEmpty()) {
-                if (timeInput.matches("\\d{1,2}:\\d{2}")) {
-                    String[] parts = timeInput.split(":");
-                    try {
-                        int hour = Integer.parseInt(parts[0]);
-                        int minute = Integer.parseInt(parts[1]);
-                        if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
-                            gameTime.setTime(hour, minute);
-                        } else {
-                            javax.swing.JOptionPane.showMessageDialog(
-                                this, "Format waktu tidak valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                            );
-                            valid = false;
-                        }
-                    } catch (NumberFormatException e) {
-                        javax.swing.JOptionPane.showMessageDialog(
-                            this, "Input waktu bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
-                        valid = false;
-                    }
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog(
-                        this, "Format waktu harus HH:MM.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                    );
-                    valid = false;
-                }
-            }
+        if (valid) {
+            System.out.println("Cheat berhasil diterapkan.");
+            
+            // --- ADD THIS LINE ---
+            // Force an immediate update of all plants based on the new time
+            farmingController.updatePlantGrowth(); 
+            // --- END ADDITION ---
 
-            if (valid) {
-                System.out.println("Cheat berhasil diterapkan.");
-                saveGame(); // Simpan state dengan waktu baru
-                saveManger.loadGameState(); // Muat kembali state untuk memperbarui visual dan logika
-            }
+            saveGame(); // Save state with new time
+            saveManger.loadGameState(); // Reload state to update visuals and logic
+        }
 
-            isTimePaused = false;
-            if (gameTime != null) gameTime.resume();
-        });
-    }
+        isTimePaused = false;
+        if (gameTime != null) gameTime.resume();
+    });
+}
 
     public void setGameState(int newState) {
         int oldState = this.gameState;
