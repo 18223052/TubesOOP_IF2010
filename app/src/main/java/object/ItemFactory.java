@@ -5,22 +5,23 @@ import java.util.List;
 
 import environment.GameTime;
 import environment.Season;
+import environment.TimeRange;
 import environment.WeatherType;
 import main.GamePanel;
 import object.FishItem.FishCategory;
-import environment.TimeRange;
 
 /**
- * Factory for creating different types of items
- * Following the Factory pattern to create appropriate item subclasses
+ * Factory for creating different types of items Following the Factory pattern
+ * to create appropriate item subclasses
  */
 public class ItemFactory {
+
     private GamePanel gp;
-    
+
     public ItemFactory(GamePanel gp) {
         this.gp = gp;
     }
-    
+
     /**
      * Creates a seed item
      */
@@ -37,37 +38,38 @@ public class ItemFactory {
                 System.err.println("Unknown seed type: " + seedType + ". Creating a default seed.");
                 buyPrice = 10;
                 sellPrice = 5;
-                seedType = "Unknown"; 
-            break;
+                seedType = "Unknown";
+                break;
         }
 
-    return new SeedItem(seedType, buyPrice, sellPrice, gp);
+        return new SeedItem(seedType, buyPrice, sellPrice, gp);
     }
-    
+
+   
     /**
      * Creates a tool item
      */
     public IItem createTool(String toolName) {
         switch (toolName.toLowerCase()) {
             case "hoe":
-                return new Hoe(gp); 
+                return new Hoe(gp);
             case "pickaxe":
-                return new Pickaxe(gp); 
+                return new Pickaxe(gp);
             case "wateringcan":
-                return new WateringCan(gp); 
+                return new WateringCan(gp);
             default:
                 System.err.println("Unknown tool type: " + toolName);
-                return null; 
+                return null;
         }
     }
-    
+
     /**
      * Creates a crop item
      */
     public CropItem createCrop(String cropName) {
         int buyPrice = 0;
         int sellPrice = 0;
-        
+
         switch (cropName.toLowerCase()) {
             case "tomato":
                 buyPrice = 90;
@@ -118,10 +120,10 @@ public class ItemFactory {
             //     sellPrice = 25;
             //     break;
         }
-        
+
         return new CropItem(cropName, buyPrice, sellPrice, gp);
     }
-    
+
     /**
      * Creates a Food item
      */
@@ -129,7 +131,7 @@ public class ItemFactory {
         int buyPrice = 0;
         int sellPrice = 0;
         int energyValue = 0;
-        
+
         switch (foodName.toLowerCase()) {
             case "fishnchips":
                 buyPrice = 150;
@@ -197,14 +199,14 @@ public class ItemFactory {
                 energyValue = 20;
                 break;
         }
-        
+
         return new FoodItem(foodName, buyPrice, sellPrice, energyValue, gp);
     }
-    
+
     /**
      * Creates a fish item
      */
- public FishItem createFish(String fishType) {
+    public FishItem createFish(String fishType) {
         String name = fishType;
         int buyPrice = 0;
         Season[] seasons = null;
@@ -226,62 +228,61 @@ public class ItemFactory {
                 category = FishCategory.REGULAR;
                 break;
 
-
             case "bullhead":
                 name = "Bull Head";
                 seasons = new Season[]{Season.SPRING, Season.FALL, Season.SUMMER, Season.WINTER};
-                weathers = null; 
+                weathers = null;
                 timeRangesParam = null;
                 locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE};
                 category = FishCategory.COMMON;
                 break;
-            
+
             case "carp":
                 name = "Carp";
                 seasons = new Season[]{Season.SPRING, Season.FALL, Season.SUMMER, Season.WINTER};
                 weathers = null;
-                timeRangesParam = null; 
+                timeRangesParam = null;
                 locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE, FishLocation.POND};
                 category = FishCategory.COMMON;
                 break;
-            
+
             case "chub":
                 name = "Chub";
                 seasons = new Season[]{Season.SPRING, Season.FALL, Season.SUMMER, Season.WINTER};
-                weathers = null; 
-                timeRangesParam = null;  
+                weathers = null;
+                timeRangesParam = null;
                 locations = new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.MOUNTAIN_LAKE};
                 category = FishCategory.COMMON;
                 break;
-            
-            case "largemouthbass": 
+
+            case "largemouthbass":
                 name = "Largemouth Bass";
-                seasons = null; 
+                seasons = null;
                 timeRangesParam = new ArrayList<>();
                 timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
-                weathers = null; 
+                weathers = null;
                 locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE};
-                category = FishCategory.REGULAR; 
+                category = FishCategory.REGULAR;
                 break;
 
-            case "rainbowtrout": 
+            case "rainbowtrout":
                 name = "Rainbow Trout";
                 seasons = new Season[]{Season.SUMMER};
                 timeRangesParam = new ArrayList<>();
                 timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
                 weathers = new WeatherType[]{WeatherType.SUNNY};
                 locations = new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.MOUNTAIN_LAKE};
-                category = FishCategory.REGULAR; 
+                category = FishCategory.REGULAR;
                 break;
 
             case "sturgeon":
                 name = "Sturgeon";
-                seasons = new Season[]{Season.SUMMER, Season.WINTER}; 
+                seasons = new Season[]{Season.SUMMER, Season.WINTER};
                 timeRangesParam = new ArrayList<>();
                 timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
                 weathers = null; // Any Weather
                 locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE};
-                category = FishCategory.REGULAR; 
+                category = FishCategory.REGULAR;
                 break;
 
             // case "midnightcarp": 
@@ -293,7 +294,6 @@ public class ItemFactory {
             //     locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE, FishLocation.POND};
             //     category = FishCategory.REGULAR;
             //     break;
-
             // case "flounder":
             //     name = "Flounder";
             //     seasons = new Season[]{Season.SPRING, Season.SUMMER};
@@ -303,7 +303,6 @@ public class ItemFactory {
             //     locations = new FishLocation[]{FishLocation.OCEAN};
             //     category = FishCategory.REGULAR; 
             //     break;
-
             // case "halibut":
             //     name = "Halibut";
             //     seasons = null; 
@@ -315,7 +314,6 @@ public class ItemFactory {
             //     locations = new FishLocation[]{FishLocation.OCEAN};
             //     category = FishCategory.REGULAR; // Default
             //     break;
-
             case "octopus": // 7. Octopus
                 name = "Octopus";
                 seasons = new Season[]{Season.SUMMER};
@@ -334,7 +332,7 @@ public class ItemFactory {
                 weathers = new WeatherType[]{WeatherType.SUNNY};
                 locations = new FishLocation[]{FishLocation.OCEAN};
                 category = FishCategory.REGULAR; // Can be tricky, adjust if needed
-                 // Placeholder
+                // Placeholder
                 break;
 
             case "sardine": // 9. Sardine
@@ -345,7 +343,7 @@ public class ItemFactory {
                 weathers = null; // Any Weather
                 locations = new FishLocation[]{FishLocation.OCEAN};
                 category = FishCategory.COMMON; // Sardines are usually common
-                
+
                 break;
 
             // case "supercucumber": // 10. Super Cucumber
@@ -356,9 +354,7 @@ public class ItemFactory {
             //     weathers = null;
             //     locations = new FishLocation[]{FishLocation.OCEAN};
             //     category = FishCategory.REGULAR; 
-                
             //     break;
-
             case "catfish": // 11. Catfish
                 name = "Catfish";
                 seasons = new Season[]{Season.SPRING, Season.SUMMER, Season.FALL};
@@ -366,7 +362,7 @@ public class ItemFactory {
                 timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(22, 0)));
                 weathers = new WeatherType[]{WeatherType.RAINY};
                 locations = new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.POND};
-                category = FishCategory.REGULAR; 
+                category = FishCategory.REGULAR;
                 break;
 
             // case "angler": // 8. Pufferfish
@@ -378,7 +374,6 @@ public class ItemFactory {
             //     locations = new FishLocation[]{FishLocation.POND};
             //     category = FishCategory.LEGENDARY; 
             //     break;
-
             // case "crimsonfish": // 9. Sardine
             //     name = "Crimsonfish";
             //     seasons = new Season[]{Season.SUMMER};
@@ -388,7 +383,6 @@ public class ItemFactory {
             //     locations = new FishLocation[]{FishLocation.FOREST_RIVER};
             //     category = FishCategory.LEGENDARY; // Sardines are usually common
             //     break;
-
             // case "glacierfish": // 10. Super Cucumber
             //     name = "Glacierfish";
             //     seasons = new Season[]{Season.WINTER};
@@ -398,7 +392,6 @@ public class ItemFactory {
             //     locations = new FishLocation[]{FishLocation.FOREST_RIVER};
             //     category = FishCategory.LEGENDARY;  
             //     break;
-
             // case "legend": // 11. Catfish
             //     name = "Legend";
             //     seasons = new Season[]{Season.SPRING};
@@ -408,13 +401,12 @@ public class ItemFactory {
             //     locations = new FishLocation[]{FishLocation.MOUNTAIN_LAKE};
             //     category = FishCategory.LEGENDARY; 
             //     break;
-
             default:
                 System.err.println("Warning: Attempted to create unknown fish type: " + fishType + ". Creating a default common fish.");
                 name = "Minnow";
                 seasons = new Season[]{Season.SPRING};
                 timeRangesParam = new ArrayList<>(); // Default ke satu slot waktu atau null jika "Any time"
-                timeRangesParam.add(new TimeRange(new GameTime(6,0), new GameTime(18,0)));
+                timeRangesParam.add(new TimeRange(new GameTime(6, 0), new GameTime(18, 0)));
                 weathers = null;
                 locations = new FishLocation[]{FishLocation.POND};
                 category = FishCategory.COMMON;
@@ -426,23 +418,33 @@ public class ItemFactory {
 
     public MiscItem createMiscItem(String itemName) {
         int buyPrice = 0;
-        int sellPrice =0 ;
+        int sellPrice = 0;
         String category = "misc";
 
-        switch (itemName.toLowerCase()){
+        switch (itemName.toLowerCase()) {
             case "firewood":
                 buyPrice = 10;
                 sellPrice = 5;
                 category = "fuel";
                 break;
-            case "coal" :
+            case "coal":
                 buyPrice = 20;
                 sellPrice = 10;
                 category = "fuel";
                 break;
+            case "recipe_1":
+                buyPrice = 100;
+                sellPrice = 50;
+                category = "fuel";
+                break;
+            case "recipe_10":
+                buyPrice = 150;
+                sellPrice = 100;
+                category = "fuel";
+                break;
             default:
                 System.err.println("Warning: Attempted to create unknown miscellaneous item: " + itemName);
-                buyPrice = 1; 
+                buyPrice = 1;
                 sellPrice = 1;
                 break;
         }

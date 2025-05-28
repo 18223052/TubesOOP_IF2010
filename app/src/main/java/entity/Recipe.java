@@ -9,13 +9,15 @@ public class Recipe {
     public String title;
     public Ingredient[] ingredients;
     public String outputItemName;
+    public boolean hasRecipe;
 
     // Parameterized constructor
-    public Recipe(String id, String title, Ingredient[] ingredients, String outputItemName) {
+    public Recipe(String id, String title, Ingredient[] ingredients, String outputItemName,boolean hasRecipe) {
         this.id = id;
         this.title = title;
         this.ingredients = ingredients;
         this.outputItemName = outputItemName;
+        this.hasRecipe = hasRecipe;
     }
 
     public String getOutputItemName(){
@@ -32,7 +34,8 @@ public class Recipe {
                     new Ingredient("Any Fish", 2),
                     new Ingredient("Wheat", 1),
                     new Ingredient("Potato", 1),},
-                "Fish n' Chips"
+                "Fish n' Chips",
+                false
         ));
 
         recipes.add(new Recipe(
@@ -40,7 +43,8 @@ public class Recipe {
                 "Baguette",
                 new Ingredient[]{
                     new Ingredient("Wheat", 3),},
-                "Baguette"
+                "Baguette",
+                true
         ));
 
         recipes.add(new Recipe(
@@ -48,7 +52,7 @@ public class Recipe {
                 "Sashimi",
                 new Ingredient[]{
                     new Ingredient("Salmon", 3),},
-                "Sashimi"
+                "Sashimi",false
         ));
 
         recipes.add(new Recipe(
@@ -56,7 +60,7 @@ public class Recipe {
                 "Fugu",
                 new Ingredient[]{
                     new Ingredient("Puerfish", 1),},
-                "Fugu"
+                "Fugu",false
         ));
 
         recipes.add(new Recipe(
@@ -64,7 +68,8 @@ public class Recipe {
                 "Wine",
                 new Ingredient[]{
                     new Ingredient("Grape", 2),},
-                "Wine"
+                "Wine",
+                true
         ));
 
         recipes.add(new Recipe(
@@ -74,7 +79,7 @@ public class Recipe {
                     new Ingredient("Egg", 1),
                     new Ingredient("Wheat", 1),
                     new Ingredient("Pumpkin", 1),},
-                "Pumpkin Pie"
+                "Pumpkin Pie",true
         ));
 
         recipes.add(new Recipe(
@@ -85,7 +90,7 @@ public class Recipe {
                     new Ingredient("Parsnip", 1),
                     new Ingredient("Potato", 1),
                     new Ingredient("Tomato", 1),},
-                "Veggie Soup"
+                "Veggie Soup",false
         ));
 
         recipes.add(new Recipe(
@@ -95,7 +100,7 @@ public class Recipe {
                     new Ingredient("Any fish", 2),
                     new Ingredient("Hot pepper", 1),
                     new Ingredient("Cauliflower", 2)},
-                "Fish Stew"
+                "Fish Stew",false
         ));
 
         recipes.add(new Recipe(
@@ -106,7 +111,8 @@ public class Recipe {
                     new Ingredient("Cranberry", 1),
                     new Ingredient("Blueberry", 1),
                     new Ingredient("Tomato", 1)},
-                "Spakbor Salad"
+                "Spakbor Salad",
+                true
         ));
 
         recipes.add(new Recipe(
@@ -117,7 +123,7 @@ public class Recipe {
                     new Ingredient("Wheat", 2),
                     new Ingredient("Tomato", 1),
                     new Ingredient("Hot Pepper", 1)},
-                "Fish Sandwich"
+                "Fish Sandwich",false
         ));
 
         recipes.add(new Recipe(
@@ -129,7 +135,7 @@ public class Recipe {
                     new Ingredient("Parsnip", 1),
                     new Ingredient("Tomato", 1),
                     new Ingredient("Eggplant", 1)},
-                "The Legends of Spakbor"
+                "The Legends of Spakbor",false
         ));
 
         return recipes;

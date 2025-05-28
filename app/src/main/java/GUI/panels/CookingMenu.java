@@ -1,14 +1,14 @@
 package GUI.panels;
 
-import main.GamePanel;
-import entity.Ingredient;
-import entity.Recipe;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.List;
-import java.awt.RenderingHints; // Import for antialiasing
+
+import entity.Ingredient;
+import entity.Recipe;
+import main.GamePanel; // Import for antialiasing
 
 public class CookingMenu extends BaseUIPanel {
 
@@ -16,7 +16,6 @@ public class CookingMenu extends BaseUIPanel {
     public int selectRecipe = 0;
     public boolean doneCooking = false;
     public boolean hasIngradients = true;
-
 
     public CookingMenu(GamePanel gp, Font uiFont) {
         super(gp, uiFont);
@@ -132,18 +131,12 @@ public class CookingMenu extends BaseUIPanel {
             drawCenteredString(g2, text, frameX, textY, frameWidth);
             textY += lineHeight * 1.5;
 
-            boolean canViewRecipeDetails = true;
-            if (currentRecipeToDisplay.title.equals("Spakbor Salad") && !gp.inventoryController.hasItem("Hot Pepper")) {
-                canViewRecipeDetails = false;
-            }
-
-            if (!canViewRecipeDetails) {
+            if (!hasRecipe(currentRecipeToDisplay)) {
                 g2.setFont(uiFont);
                 g2.setColor(new Color(255, 100, 100)); // Red for missing condition
                 textY += lineHeight;
-                g2.drawString("Anda memerlukan 'Hot Pepper' di", textX, textY); // Updated text
+                g2.drawString("Anda tidak memiliki " + currentRecipeToDisplay.id, textX, textY); // Updated text
                 textY += lineHeight;
-                g2.drawString("inventaris Anda untuk melihat detail resep ini.", textX, textY); // Updated text
                 g2.setColor(TEXT_PRIMARY); // Reset to theme primary text color
             } else {
                 // Display Ingredients
@@ -246,13 +239,35 @@ public class CookingMenu extends BaseUIPanel {
             return;
         }
         Recipe recipeToCook = allRecipes.get(selectRecipe - 1);
-        boolean cookingSuccessful = gp.cookingController.cookRecipe(recipeToCook);
 
-        if (cookingSuccessful) {
-            this.doneCooking = true;
-        } else {
-            this.selectRecipe = -1; // Indicate failure
-            this.doneCooking = false;
+        if (hasRecipe(recipeToCook)) {
+            boolean cookingSuccessful = gp.cookingController.cookRecipe(recipeToCook);
+            if (cookingSuccessful) {
+                this.doneCooking = true;
+            } else {
+                this.selectRecipe = -1; // Indicate failure
+                this.doneCooking = false;
+            }
         }
+    }
+
+    private boolean hasRecipe(Recipe recipe) {
+        boolean hasRecipe = recipe.hasRecipe;
+        if (!hasRecipe) {
+            if (recipe.id.equals("recipe_1") || recipe.id.equals("recipe_10")) {
+                hasRecipe = gp.player.inventory.getItemCount(recipe.id) > 0;
+            } else if (recipe.id.equals("recipe_3")) {
+                hasRecipe = gp.player.fishCaught >= 10;
+            } else if (recipe.id.equals("recipe_4")) {
+                hasRecipe = gp.player.hasFishingPuerfish;
+            } else if (recipe.id.equals("recipe_7")) {
+                hasRecipe = gp.player.hasHarvested;
+            } else if (recipe.id.equals("recipe_8")) {
+                hasRecipe = gp.player.inventory.getItemCount("hotpepper") > 0;
+            } else if (recipe.id.equals("recipe_11")) {
+                hasRecipe = gp.player.hasFishingLegend;
+            }
+        }
+        return hasRecipe;
     }
 }

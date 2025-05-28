@@ -10,10 +10,8 @@ import controller.InventoryController;
 import interactable.Interactable;
 import main.GamePanel;
 import main.KeyHandler;
-
 import object.IItem;
 import object.NoItem;
-import object.SuperObj; // Pastikan SuperObj di-import
 
 public class Player extends Character {
 
@@ -30,7 +28,7 @@ public class Player extends Character {
 
     public InventoryController inventory;
     public static final int MAX_ENERGY = 100;
-    public static final int MIN_ENERGY_BEFORE_SLEEP  = -20;
+    public static final int MIN_ENERGY_BEFORE_SLEEP = -20;
 
     private String name;
     private String gender;
@@ -40,6 +38,11 @@ public class Player extends Character {
     // private NPC partner;
     private NPC fiance = null;
     private NPC spouse = null;
+    public int fishCaught = 0;
+    public boolean hasHarvested = false;
+    public boolean hasFishingPuerfish = false;
+    public boolean hasFishingLegend = false;
+
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -67,26 +70,25 @@ public class Player extends Character {
         updateInteractionBox();
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public String getFarmMap(){
+    public String getFarmMap() {
         return farmMap;
     }
 
-    public String getGender(){
+    public String getGender() {
         return gender;
     }
 
-    public int getGold(){
+    public int getGold() {
         return gold;
     }
 
-    public int getEnergy(){
+    public int getEnergy() {
         return energy;
     }
-
 
     public void setDefaultValues() {
         wX = gp.tileSize * 23;
@@ -95,7 +97,7 @@ public class Player extends Character {
         direction = "down";
 
         energy = 50;
-        gold = 100;
+        gold = 200;
         name = "bobi";
         farmMap = "anjoy";
         // partner = null;
@@ -123,14 +125,14 @@ public class Player extends Character {
         }
     }
 
-    public void setEnergy(int energy){
+    public void setEnergy(int energy) {
         this.energy = energy;
     }
 
-    public boolean deductEnergy(int amount){
+    public boolean deductEnergy(int amount) {
         this.energy -= amount;
 
-        if (this.energy <= MIN_ENERGY_BEFORE_SLEEP){
+        if (this.energy <= MIN_ENERGY_BEFORE_SLEEP) {
             System.out.println("Energy mencapai " + MIN_ENERGY_BEFORE_SLEEP + "! Player harus tidur.");
             gp.sleepController.forceSleep();
         }
@@ -139,7 +141,7 @@ public class Player extends Character {
     }
 
     // Propose & Marry
-     public NPC getFiance() {
+    public NPC getFiance() {
         return this.fiance;
     }
 
@@ -170,7 +172,6 @@ public class Player extends Character {
     public boolean hasSpouse() {
         return this.spouse != null;
     }
-
 
     public void getPlayerImage() {
         u1 = setup("/player/u1");
@@ -232,7 +233,6 @@ public class Player extends Character {
         return index;
     }
 
-
     public int[] getInteractionTile() {
         updateInteractionBox();
         return new int[]{interactionTileCol, interactionTileRow};
@@ -278,25 +278,23 @@ public class Player extends Character {
                 }
             }
 
-            super.update(); 
+            super.update();
         }
 
         if (keyH.interactPressed) {
             keyH.interactPressed = false; // Reset immediately
 
-            
-            int npcIndex = checkInteraction(convertArrayToArrayList(gp.npc)); 
-            int objIndex = checkInteraction(gp.obj); 
+            int npcIndex = checkInteraction(convertArrayToArrayList(gp.npc));
+            int objIndex = checkInteraction(gp.obj);
 
             if (npcIndex != 999) {
-                gp.npc[npcIndex].onInteract(gp,this); // NPC masih diakses via array
+                gp.npc[npcIndex].onInteract(gp, this); // NPC masih diakses via array
             } else if (objIndex != 999) {
-                gp.obj.get(objIndex).onInteract(gp,this); // OBJEK sekarang diakses via ArrayList
+                gp.obj.get(objIndex).onInteract(gp, this); // OBJEK sekarang diakses via ArrayList
             }
         }
         updateInteractionBox();
     }
-
 
     @Override
     public void draw(Graphics2D g2) {
@@ -316,7 +314,7 @@ public class Player extends Character {
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Arial", Font.BOLD, 10));
         g2.drawString("Tile: " + interactionTileCol + "," + interactionTileRow,
-            screenX + 5, screenY + 15);
+                screenX + 5, screenY + 15);
     }
 
     public Rectangle getInteractionBox() {
@@ -327,7 +325,6 @@ public class Player extends Character {
         return inventory;
     }
 
-   
     private <T extends Interactable> ArrayList<T> convertArrayToArrayList(T[] array) {
         ArrayList<T> list = new ArrayList<>();
         if (array != null) {
