@@ -19,10 +19,6 @@ public class TileManager {
     private String currentMap;
 
     private Map<String, int[]> farmMapTeleportCoords;
-    
-    // // Constants for special tiles
-    // public static final int POND_TILE = 18;
-    // public static final int BED_TILE = 86;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -81,13 +77,6 @@ public class TileManager {
     private void initializeFarmMapTeleportCoords() {
         farmMapTeleportCoords = new HashMap<>();
 
-        // Array order: [house_exit_col_from_farm, house_exit_row_from_farm, 
-        //               river_exit_col_from_farm (any of 4), river_exit_row_from_farm,
-        //               worldmap_exit_col_from_farm, worldmap_exit_row_from_farm,
-        //               house_entry_col_to_farm, house_entry_row_to_farm,
-        //               river_entry_col_to_farm, river_entry_row_to_farm,
-        //               worldmap_entry_col_to_farm, worldmap_entry_row_to_farm]
-        
 
         farmMapTeleportCoords.put("/maps/farmmm.txt", new int[]{
             18, 17, // Exit to Rumah
@@ -121,9 +110,8 @@ public class TileManager {
     }
     
     public void checkTeleport(int checkCol, int checkRow) { 
-        String currentFarmMap = null; // To store which farm map we are coming from
+        String currentFarmMap = null; 
 
-        // --- Teleport from any Farm Map to a static map (Rumah, River, Worldmap) ---
         if (gp.currMap.startsWith("/maps/farmmm")) { // Check if it's one of the farm maps
             int[] coords = farmMapTeleportCoords.get(gp.currMap);
             if (coords != null) {
@@ -192,19 +180,23 @@ public class TileManager {
     }
 
     
-    public void teleportPlayer(String mapPath, int destX, int destY) {
+    public void teleportPlayer(String newMapPath, int destX, int destY) {
+        String mapPathYangAkanDisimpan = gp.currMap; 
 
-        currentMap = mapPath;
-        gp.currMap = mapPath;
-        
+        gp.currMap = newMapPath;        // 2. Baru ubah gp.currMap ke peta BARU
+        this.currentMap = newMapPath;   // (Untuk TileManager sendiri)
 
-        loadMap(mapPath);
-        
+        loadMap(newMapPath);            // Load tile visual peta baru
+
         gp.player.wX = destX * gp.tileSize;
         gp.player.wY = destY * gp.tileSize;
-        
 
-        gp.changeMap();
+        // 3. Panggil metode di GamePanel untuk menangani save lama & load baru
+        gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
+
+
+        gp.player.deductEnergy(10);
+        gp.gameTime.addTime(15);
     }
     
     public void loadMap(String filePath) {

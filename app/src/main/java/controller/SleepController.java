@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.AlphaComposite;
 
+import environment.GameTime;
+
 public class SleepController {
     GamePanel gp;
     Player player;
@@ -68,7 +70,7 @@ public class SleepController {
     private void showCannotSleepMessage() {
         System.out.println("Kamu hanya bisa tidur di malam hari!");
         gp.ui.setDialog("Kamu hanya bisa tidur di malam hari!");
-        gp.gameState = gp.dialogState;
+        gp.gameState = GamePanel.dialogState;
 
         // if (gp.ui != null) {
         //     gp.ui.setDialog("You can only sleep at night!");
@@ -90,6 +92,7 @@ public class SleepController {
                 
                 if (progress >= 1.0f) {
                     skipToNextDay();
+                    gp.farmingController.updatePlantGrowth(); 
                     fadingIn = false;
                     transitionStartTime = currentTime;
                 }
@@ -109,6 +112,7 @@ public class SleepController {
 
         if (gp.eManager.isLightingSetup()) {
             gp.eManager.getLighting().skipDay();
+            gp.gameTime.nextDaySleep();
         }
         int currEnergy = gp.player.getEnergy();
         if (currEnergy <= 0) {
@@ -131,7 +135,7 @@ public class SleepController {
         transitionAlpha = 0f;
         
 
-        gp.gameState = gp.playState;
+        gp.gameState = GamePanel.playState;
         
         System.out.println("Player bangun!");
     }

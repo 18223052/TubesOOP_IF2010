@@ -1,4 +1,3 @@
-// src/ui/panels/CookingMenu.java
 package GUI.panels;
 
 import main.GamePanel;
@@ -9,14 +8,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.List;
+import java.awt.RenderingHints; // Import for antialiasing
 
 public class CookingMenu extends BaseUIPanel {
 
-    // These need to be managed by the UI class or passed in (or handled by controller)
-    // For now, they'll still be manipulated by the main UI.java and KeyHandler,
-    // but the drawing logic is here.
-    public int cookingMenuSelection = 0; 
-    public int selectRecipe = 0; // 0 for list, 1+ for specific recipe details, -1 for failed
+    public int cookingMenuSelection = 0;
+    public int selectRecipe = 0;
     public boolean doneCooking = false;
     public boolean hasIngradients = true;
 
@@ -26,6 +23,10 @@ public class CookingMenu extends BaseUIPanel {
     }
 
     public void draw(Graphics2D g2) {
+        // Enable antialiasing for smoother graphics
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
         String text;
         List<Recipe> allRecipes = Recipe.getRecipeList();
         List<Recipe> cookableRecipes = gp.cookingController.getCookableRecipe();
@@ -35,10 +36,11 @@ public class CookingMenu extends BaseUIPanel {
         int frameWidth = gp.screenWidth / 2 - gp.tileSize;
         int frameHeight = gp.screenHeight - (gp.tileSize * 2);
 
-        drawSubWindow(g2, frameX, frameY, frameWidth, frameHeight); // Use utility
+        // Use the enhanced drawSubWindow from BaseUIPanel
+        drawSubWindow(g2, frameX, frameY, frameWidth, frameHeight);
 
         g2.setFont(uiFont);
-        g2.setColor(Color.WHITE);
+        g2.setColor(TEXT_PRIMARY); // Use theme primary text color
 
         int textX = frameX + gp.tileSize / 2;
         int textY = frameY + gp.tileSize;
@@ -46,76 +48,77 @@ public class CookingMenu extends BaseUIPanel {
 
         if (doneCooking) {
             g2.setFont(uiFont.deriveFont(Font.BOLD, 24f));
-            text = "Congratulations!";
-            drawCenteredString(g2, text, frameX, textY, frameWidth); // Use utility
+            text = "Selamat!"; // Updated text
+            drawCenteredString(g2, text, frameX, textY, frameWidth);
             textY += lineHeight * 2;
 
             g2.setFont(uiFont);
-            text = "You succeeded in cooking:";
+            text = "Anda berhasil memasak:"; // Updated text
             g2.drawString(text, textX, textY);
             textY += lineHeight;
 
             if (selectRecipe > 0 && selectRecipe <= allRecipes.size()) {
-                g2.setColor(Color.CYAN);
+                g2.setColor(SELECTED_SLOT_COLOR); // Use theme color for highlight
                 g2.drawString(allRecipes.get(selectRecipe - 1).title, textX + gp.tileSize, textY);
-                g2.setColor(Color.WHITE);
+                g2.setColor(TEXT_PRIMARY); // Reset to theme primary text color
             } else {
-                g2.drawString("a delicious meal!", textX + gp.tileSize, textY);
+                g2.drawString("hidangan lezat!", textX + gp.tileSize, textY); // Updated text
             }
 
             textY += lineHeight * 2;
-            g2.drawString("Press ENTER to return.", textX, textY);
+            g2.drawString("Tekan ENTER untuk kembali.", textX, textY); // Updated text
 
         } else if (selectRecipe == 0) { // Recipe List View
             g2.setFont(uiFont.deriveFont(Font.BOLD, 24f));
-            text = "RECIPE LIST";
-            drawCenteredString(g2, text, frameX, textY, frameWidth); // Use utility
+            text = "DAFTAR RESEP"; // Updated text
+            drawCenteredString(g2, text, frameX, textY, frameWidth);
             textY += lineHeight * 1.5;
 
             g2.setFont(uiFont);
             if (allRecipes.isEmpty()) {
-                g2.drawString("No recipes available in the game.", textX, textY);
+                g2.drawString("Tidak ada resep yang tersedia.", textX, textY); // Updated text
             } else {
                 for (int i = 0; i < allRecipes.size(); i++) {
                     Recipe currentListedRecipe = allRecipes.get(i);
                     String recipeTitleText = (i + 1) + ". " + currentListedRecipe.title;
 
                     if (i == cookingMenuSelection) {
-                        g2.setColor(Color.YELLOW);
+                        g2.setColor(SELECTED_SLOT_COLOR); // Use theme color for selection
                         g2.drawString(">" + recipeTitleText, textX - 10, textY);
                     } else {
                         if (cookableRecipes.contains(currentListedRecipe)) {
-                            g2.setColor(Color.GREEN);
+                            g2.setColor(new Color(120, 255, 120)); // Green for cookable
                         } else {
-                            g2.setColor(Color.LIGHT_GRAY); // Cannot cook
+                            g2.setColor(TEXT_SECONDARY); // Light gray for cannot cook
                         }
                         g2.drawString(recipeTitleText, textX, textY);
                     }
                     textY += lineHeight * 0.9;
-                    g2.setColor(Color.WHITE);
+                    g2.setColor(TEXT_PRIMARY); // Reset to theme primary text color
                 }
             }
             textY += lineHeight * 1.5;
-            g2.drawString("W/S or UP/DOWN: Select", textX, textY);
+            g2.drawString("W/S atau ATAS/BAWAH: Pilih", textX, textY); // Updated text
             textY += lineHeight * 0.9;
-            g2.drawString("ENTER: View Details", textX, textY);
+            g2.drawString("ENTER: Lihat Detail", textX, textY); // Updated text
             textY += lineHeight * 0.9;
-            g2.drawString("K or ESC: Exit", textX, textY); // K is not defined in KeyHandler
+            g2.drawString("K atau ESC: Keluar", textX, textY); // Updated text
+
         } else if (selectRecipe == -1) { // Not enough ingredients
             g2.setFont(uiFont.deriveFont(Font.BOLD, 24f));
-            text = "Failed to Cook!";
-            drawCenteredString(g2, text, frameX, textY, frameWidth); // Use utility
+            text = "Gagal Memasak!"; // Updated text
+            drawCenteredString(g2, text, frameX, textY, frameWidth);
             textY += lineHeight * 2;
 
             g2.setFont(uiFont);
-            g2.setColor(Color.ORANGE);
-            g2.drawString("You don't have enough", textX, textY);
+            g2.setColor(new Color(255, 180, 0)); // Orange for warning
+            g2.drawString("Anda tidak memiliki cukup", textX, textY); // Updated text
             textY += lineHeight;
-            g2.drawString("ingredients for this recipe.", textX, textY);
-            g2.setColor(Color.WHITE);
+            g2.drawString("bahan untuk resep ini.", textX, textY); // Updated text
+            g2.setColor(TEXT_PRIMARY); // Reset to theme primary text color
 
             textY += lineHeight * 2;
-            g2.drawString("Press ENTER to return.", textX, textY);
+            g2.drawString("Tekan ENTER untuk kembali.", textX, textY); // Updated text
 
         } else { // Recipe Details View
             if (selectRecipe <= 0 || selectRecipe > allRecipes.size()) {
@@ -126,31 +129,30 @@ public class CookingMenu extends BaseUIPanel {
 
             g2.setFont(uiFont.deriveFont(Font.BOLD, 24f));
             text = currentRecipeToDisplay.title;
-            drawCenteredString(g2, text, frameX, textY, frameWidth); // Use utility
+            drawCenteredString(g2, text, frameX, textY, frameWidth);
             textY += lineHeight * 1.5;
 
             boolean canViewRecipeDetails = true;
-            // Special condition example: "Spakbor Salad" needs "Hot Pepper" to view details
             if (currentRecipeToDisplay.title.equals("Spakbor Salad") && !gp.inventoryController.hasItem("Hot Pepper")) {
                 canViewRecipeDetails = false;
             }
 
             if (!canViewRecipeDetails) {
                 g2.setFont(uiFont);
-                g2.setColor(Color.PINK);
+                g2.setColor(new Color(255, 100, 100)); // Red for missing condition
                 textY += lineHeight;
-                g2.drawString("You need a 'Hot Pepper' in your", textX, textY);
+                g2.drawString("Anda memerlukan 'Hot Pepper' di", textX, textY); // Updated text
                 textY += lineHeight;
-                g2.drawString("inventory to view this recipe's details.", textX, textY);
-                g2.setColor(Color.WHITE);
+                g2.drawString("inventaris Anda untuk melihat detail resep ini.", textX, textY); // Updated text
+                g2.setColor(TEXT_PRIMARY); // Reset to theme primary text color
             } else {
                 // Display Ingredients
                 g2.setFont(uiFont.deriveFont(Font.BOLD));
-                g2.drawString("Ingredients:", textX, textY);
+                g2.drawString("Bahan-bahan:", textX, textY); // Updated text
                 textY += lineHeight;
                 g2.setFont(uiFont);
 
-                boolean hasAllIngredientsForThisRecipe = true; // Flag for "Cook" button state
+                boolean hasAllIngredientsForThisRecipe = true;
                 for (Ingredient ingredient : currentRecipeToDisplay.ingredients) {
                     String ingredientName = ingredient.name;
                     int requiredAmount = ingredient.amount;
@@ -162,51 +164,49 @@ public class CookingMenu extends BaseUIPanel {
                         ownedAmount = gp.inventoryController.getItemCount(ingredientName);
                     }
 
-                    String ingredientLine = "- " + ingredientName + " " + requiredAmount + "x (Have: " + ownedAmount + ")";
+                    String ingredientLine = "- " + ingredientName + " " + requiredAmount + "x (Milik: " + ownedAmount + ")"; // Updated text
 
                     if (ownedAmount < requiredAmount) {
-                        g2.setColor(Color.RED); // Not enough ingredients
+                        g2.setColor(new Color(255, 120, 120)); // Red for insufficient
                         hasAllIngredientsForThisRecipe = false;
                     } else {
-                        g2.setColor(Color.WHITE); // Enough ingredients
+                        g2.setColor(TEXT_PRIMARY); // Primary text color
                     }
                     g2.drawString(ingredientLine, textX + 15, textY);
                     textY += lineHeight * 0.9;
                 }
-                g2.setColor(Color.WHITE); // Reset color
+                g2.setColor(TEXT_PRIMARY); // Reset color
 
                 textY += lineHeight * 0.5;
                 g2.setFont(uiFont.deriveFont(Font.BOLD));
-                g2.drawString("Produces:", textX, textY);
+                g2.drawString("Menghasilkan:", textX, textY); // Updated text
                 textY += lineHeight * 0.9;
                 g2.setFont(uiFont);
-                g2.setColor(Color.CYAN);
+                g2.setColor(new Color(180, 220, 255)); // Light blue for product name
 
                 String outputName = currentRecipeToDisplay.getOutputItemName();
                 g2.drawString(outputName, textX + 15, textY);
-                g2.setColor(Color.WHITE);
+                g2.setColor(TEXT_PRIMARY);
                 textY += lineHeight * 0.9;
 
                 textY += lineHeight * 1.5;
                 if (hasAllIngredientsForThisRecipe) {
-                    g2.setColor(Color.GREEN);
-                    g2.drawString("ENTER: Cook", textX, textY);
+                    g2.setColor(new Color(100, 255, 100)); // Green for cookable action
+                    g2.drawString("ENTER: Masak", textX, textY); // Updated text
                 } else {
-                    g2.setColor(Color.GRAY); // Gray out if cannot cook
-                    g2.drawString("ENTER: Cook (Not enough ingredients)", textX, textY);
+                    g2.setColor(TEXT_SECONDARY); // Gray out if cannot cook
+                    g2.drawString("ENTER: Masak (Bahan tidak cukup)", textX, textY); // Updated text
                 }
-                g2.setColor(Color.WHITE);
+                g2.setColor(TEXT_PRIMARY);
             }
 
             textY += lineHeight * 0.9;
-            g2.drawString("0 or BACKSPACE: Back to List", textX, textY);
+            g2.drawString("0 atau BACKSPACE: Kembali ke Daftar", textX, textY); // Updated text
             textY += lineHeight * 0.9;
-            g2.drawString("K or ESC: Exit Menu", textX, textY); // K is not defined in KeyHandler
+            g2.drawString("K atau ESC: Keluar Menu", textX, textY); // Updated text
         }
     }
 
-    // These methods should be controlled by KeyHandler, not the UI's draw logic
-    // but the variables are public, so they can be set externally.
     public void moveSelectionUp() {
         List<Recipe> allRecipes = Recipe.getRecipeList();
         if (allRecipes.isEmpty()) {

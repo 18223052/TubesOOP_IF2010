@@ -26,6 +26,15 @@ public abstract class NPC extends Character implements Interactable {
 
     protected boolean hatesAllUnlistedItems;
 
+    public static final String STATUS_SINGLE = "Single";
+    public static final String STATUS_FIANCE = "Fiance";
+    public static final String STATUS_MARRIED = "Married";
+
+    // Gender
+    protected String gender;
+    public static final String gender_male = "Male";
+    public static final String gender_female = "Female";
+
 
     public NPC(GamePanel gp){
         super(gp);
@@ -34,10 +43,12 @@ public abstract class NPC extends Character implements Interactable {
         this.lovedItems = new ArrayList<>();
         this.likedItems = new ArrayList<>();
         this.hatedItems = new ArrayList<>();
-        this.relationshipStatus = "Neutral";
+        this.relationshipStatus = STATUS_SINGLE;
         this.dayBecameFiance = -1;
         this.hatesAllUnlistedItems = false;
         // setDialogue();
+        this.heartPoints = 0;
+        this.dayBecameFiance = -1;
     }
 
     public abstract void setDialogue();
@@ -53,13 +64,13 @@ public abstract class NPC extends Character implements Interactable {
             dialogIndex =0;
             if (dialogues[dialogIndex] == null){
                 gp.ui.currentDialog = "Hmmm..";
-                gp.gameState = GamePanel.dialogState;
+                gp.setGameState(GamePanel.dialogState);
                 return;
             }
         }
         gp.ui.currentDialog = dialogues[dialogIndex];
         dialogIndex ++;
-        gp.gameState = GamePanel.dialogState;
+        gp.setGameState(GamePanel.dialogState);
     }
 
     @Override
@@ -130,6 +141,11 @@ public abstract class NPC extends Character implements Interactable {
         System.out.println(name + " now has " + heartPoints + " heart points.");
     }
 
+    
+    public String getGender(){
+        return this.gender;
+    }
+
     public boolean hasStore() {
         return false; 
     }
@@ -153,6 +169,55 @@ public abstract class NPC extends Character implements Interactable {
 
     public boolean isExplicitlyHatedItem(IItem item) {
         return checkItemInList(this.hatedItems, item);
+    }
+
+    public boolean isProposable(Player player){
+        if (player == null) return false;
+        return this.heartPoints >= MAX_HEART_POINTS && this.relationshipStatus.equals(STATUS_SINGLE) && !player.hasFiance() && !player.hasSpouse() && this.gender == gender_female;  // Pemain tidak sedang menikah dengan orang lain
+    }
+
+    public void becomeFiance(Player player, int currentDay) {
+        this.relationshipStatus = NPC.STATUS_FIANCE;
+        this.dayBecameFiance = currentDay;
+        // player.setFiance(this); // Ini akan diatur dari sisi controller/player untuk menghindari circular dependency langsung
+    }
+
+    public boolean canMarryPlayer(Player player, int currentDay) {
+        if (player == null) return false;
+        return this.relationshipStatus.equals(STATUS_FIANCE) &&
+            player.getFiance() == this && // Memastikan pemain bertunangan DENGAN NPC INI
+            currentDay > this.dayBecameFiance; // Sudah lewat minimal 1 hari
+    }
+
+    public void marryPlayer(Player player) {
+        this.relationshipStatus = STATUS_MARRIED;
+        // dayBecameFiance bisa dibiarkan sebagai catatan atau direset
+        // player.setSpouse(this); // Ini akan diatur dari sisi controller/player
+    }
+
+    public String getProposalDeclineMessage() {
+        // Logika default berdasarkan kondisi umum penolakan
+        if (this.getHeartPoints() < this.getMaxHeartPoint()) {
+            // Jika heart points belum cukup
+            return getName() + " berkata, 'Aku belum siap untuk komitmen sebesar itu. Kita butuh lebih banyak waktu bersama.'";
+        } else if (!STATUS_SINGLE.equals(this.getRelationshipStatus())) {
+            // Jika sudah terikat dengan orang lain (meskipun di game Anda mungkin hanya "single")
+            return getName() + " berkata, 'Maaf, aku sudah terikat dengan orang lain.'";
+        } else if (!gender_female.equals(this.getGender())) {
+            // Contoh penolakan berdasarkan gender jika proposal hanya untuk wanita
+            return getName() + " berkata, 'Aku menghargai perasaanmu, tapi aku tidak bisa menerimanya. Aku bukan tipe mu.'";
+        } else {
+            // Pesan default lainnya jika tidak ada kondisi di atas yang cocok
+            return getName() + " berkata, 'Aku menghargai tawaranmu, tapi aku rasa kita lebih baik sebagai teman saja.'";
+        }
+    }
+
+    public int getMaxHeartPoint(){
+        return MAX_HEART_POINTS;
+    }
+    
+    public String getRelationshipStatus(){
+        return this.relationshipStatus;
     }
     
 }

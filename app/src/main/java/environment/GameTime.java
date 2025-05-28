@@ -1,7 +1,5 @@
 package environment;
 
-import org.checkerframework.checker.units.qual.t;
-
 public class GameTime implements Runnable {
     private int gameMinute = 0;
     private int gameHour = 6;
@@ -9,11 +7,14 @@ public class GameTime implements Runnable {
 
     // Season
     private final int totalDaysPerSeason = 10;
-    // private Season currentSeason = Season.SPRING;
+    private Season currentSeason = Season.SPRING;
     // private Season lastSeason = Season.SPRING;
 
     private boolean paused = false;
     private final Object pauseLock = new Object();
+
+    private long totalGameMillis = 0;
+    private long lastUpdateTimeMillis = System.nanoTime() / 1_000_000;
 
     private Thread thread;
     private boolean isTimePointOnly = false;
@@ -24,6 +25,7 @@ public class GameTime implements Runnable {
         this.gameHour = 6;
         this.gameMinute = 0;
         this.gameDay = 1;
+        updateTotalGameMillis();
         thread = new Thread(this);
         thread.start();
     }
@@ -39,6 +41,8 @@ public class GameTime implements Runnable {
         if (isTimePointOnly){
             return;
         }
+
+        long lastGameMinuteUpdate = getTotalGameMinutes();
         while (true) {
             try {
                 Thread.sleep(1000);  // 1 detik = 5 menit game (atur sesuai kebutuhan)
@@ -59,8 +63,19 @@ public class GameTime implements Runnable {
                 }
             }
             if(!paused){
-            addTime(5);}
+            addTime(5);
+            if (getTotalGameMinutes() != lastGameMinuteUpdate){
+                updateTotalGameMillis();
+                lastGameMinuteUpdate = getTotalGameMinutes();
+            }
+            }
         }
+    }
+
+    private void updateTotalGameMillis(){
+        this.totalGameMillis = (long) gameDay * 24 * 60 * 60 * 1000 + // Total hari ke milidetik
+                               (long) gameHour * 60 * 60 * 1000 +     // Total jam ke milidetik
+                               (long) gameMinute * 60 * 1000;  
     }
 
     public synchronized void addTime(int minutes) {
@@ -80,6 +95,10 @@ public class GameTime implements Runnable {
 
     public int getGameMinute() {
         return gameMinute;
+    }
+
+    public boolean getIsTimePointOnly() {
+        return isTimePointOnly;
     }
 
     public int getGameHour() {
@@ -108,6 +127,7 @@ public class GameTime implements Runnable {
     public synchronized void setTime(int hour, int minute) {
         this.gameHour = hour;
         this.gameMinute = minute;
+        updateTotalGameMillis();
     }
 
     public synchronized void setGameDay(int day) {
@@ -118,18 +138,23 @@ public class GameTime implements Runnable {
 
     public void add1Day(){
         this.gameDay += 1;
+        this.gameHour = 6;
+        this.gameMinute = 0;
+        updateTotalGameMillis();
     }
 
     public void nextDay() {
         gameDay++;
         gameHour = 0;   
         gameMinute = 0;
+        updateTotalGameMillis();
     }
 
     public void nextDaySleep() {
         gameDay++;
         gameHour = 6;      
         gameMinute = 0;
+        updateTotalGameMillis();
     }
 
 
@@ -152,5 +177,9 @@ public class GameTime implements Runnable {
 
     public synchronized long getTotalGameMinutes(){
         return (long)(gameDay -1) *24*60 + (long)gameHour *60 +gameMinute;
+    }
+
+    public synchronized long getCurrentGameTime(){
+        return totalGameMillis;
     }
 }

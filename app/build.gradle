@@ -24,6 +24,7 @@ dependencies {
     // This dependency is used by the application.
     implementation libs.guava
     implementation 'org.luaj:luaj-jse:3.0.1' // Menambahkan dependensi LuaJ
+    implementation 'com.google.code.gson:gson:2.10.1'
     
 }
 

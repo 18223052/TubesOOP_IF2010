@@ -43,13 +43,13 @@ public class InventorySlot {
         return quantity <= 0;
     }
 
-    // You might want to add an equals method if comparing slots directly
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InventorySlot that = (InventorySlot) o;
-        return item.getName().equals(that.item.getName()); // Compare by item name
+        return item.getName().equals(that.item.getName());
     }
 
     @Override

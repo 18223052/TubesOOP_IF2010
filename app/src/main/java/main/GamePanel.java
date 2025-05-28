@@ -6,10 +6,12 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.Random;
+import java.util.ArrayList; // Import ArrayList jika Anda memutuskan untuk menggunakannya
 
 import javax.swing.JPanel;
 
 import controller.CookingController;
+import controller.FarmingController;
 import controller.InventoryController;
 import controller.ShippingBinController;
 import controller.SleepController;
@@ -27,6 +29,8 @@ import environment.WeatherManager;
 import environment.WeatherType;
 import object.ItemFactory;
 import object.SuperObj;
+import object.TileState;
+import object.LandTile; // Tambahkan import ini untuk LandTile
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -95,6 +99,7 @@ public class GamePanel extends JPanel implements Runnable {
     public ShippingBinController shippingBinController;
     public StoreController storeController;
     public NPCController npcController;
+    public FarmingController farmingController;
     public boolean isGifting = false;
 
     public ItemFactory itemFactory;
@@ -102,13 +107,16 @@ public class GamePanel extends JPanel implements Runnable {
     public int interactionTileCol;
     public int interactionTileRow;
     
-    // Arrays for game objects and NPCs
-    public SuperObj obj[] = new SuperObj[100];
-    public NPC npc[] = new NPC[6];
+    // Arrays/List for game objects and NPCs
+    // REVISI: Ubah ini menjadi ArrayList untuk fleksibilitas yang lebih baik
+    public ArrayList<SuperObj> obj = new ArrayList<>(); // Ganti dari SuperObj[]
+    public NPC npc[] = new NPC[6]; // NPC bisa tetap array jika jumlahnya tetap
     
     // Current interactive objects
     public SuperObj currObj;
     public NPC currNPC;
+
+    public SaveManager saveManger; // Perhatikan nama variabel, konsistenkan jadi 'saveManager' (huruf kecil 'm')
     
     // Game thread
     private Thread gameThread;
@@ -117,7 +125,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     private boolean isComplete = false;
     public GamePanel() {
- 
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
@@ -128,11 +135,13 @@ public class GamePanel extends JPanel implements Runnable {
         storeController = new StoreController(this);
         npcController = new NPCController(this);
 
+        // Inisialisasi SaveManager di constructor
+        saveManger = new SaveManager(this); // Perhatikan nama variabel 'saveManger'
+        
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
         this.setFocusable(true);
         
-
         gameState = playState;
 
         int randIndex = random.nextInt(farmMapVariations.length);
@@ -144,7 +153,6 @@ public class GamePanel extends JPanel implements Runnable {
     
 
     public void setup() {
-
         colCheck = new Collision(this);
         aSetter = new AssetSetter(this);
         ui = new UI(this);
@@ -154,41 +162,88 @@ public class GamePanel extends JPanel implements Runnable {
         itemFactory = new ItemFactory(this);
         sleepController = new SleepController(this, player);
         watchingController = new WatchingController(this);
+        farmingController = new FarmingController(this, gameTime);
 
         // Weather
         weatherManager = new WeatherManager();
         currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
 
-        
         player.inventory = inventoryController;
     
-        tileM.setup();  
-        setupMap();     
+        tileM.setup();
+        setupMap(); 
         addStartingItems();
         addStoreItems();
         eManager.setup();
 
         isComplete = true;
+
+        // MUAT GAME STATE DI SINI SETELAH SEMUA OBJEK DI INISIALISASI
+        // Ini akan menimpa state awal LandTile yang di-set oleh setupMap() jika ada save data
+        saveManger.loadGameState(); 
     }
     
     // Setup objects dan NPC's
     public void setupMap() {
-        aSetter.clearObjects();
+        aSetter.clearObjects(); // Pastikan method ini membersihkan 'obj' ArrayList
         aSetter.clearNPCs();
-        aSetter.setObj();
+        aSetter.setObj(); // Pastikan method ini mengisi 'obj' ArrayList dengan objek baru
         aSetter.setNPC();
     }
-    
 
-    public void changeMap() {
-        setupMap();
+    // Method untuk menyimpan game
+    public void saveGame(){
+        saveManger.saveGameState();
+    }
+    
+    public void debugCurrentObjects() {
+        System.out.println("=== CURRENT OBJECTS DEBUG ===");
+        System.out.println("Current map: " + currMap);
+        System.out.println("Total objects: " + obj.size());
+        int landTileCount = 0;
+        for (SuperObj o : obj) {
+            if (o instanceof LandTile) {
+                landTileCount++;
+                LandTile lt = (LandTile) o;
+                if (lt.getCurrentState() != TileState.LAND) {
+                    System.out.println("Modified LandTile at " + lt.wX + "," + lt.wY + " - " + lt.getCurrentState());
+                }
+            }
+        }
+        System.out.println("LandTile count: " + landTileCount);
+        System.out.println("=== END DEBUG ===");
+    }
+
+
+    // Ganti nama dari public void changeMap()
+    public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) {
+        // A. Simpan state untuk peta LAMA
+        String cacheCurrMapSaatIni = this.currMap; // Simpan currMap (seharusnya petaBaruUntukDimuat)
+        this.currMap = petaLamaUntukDisimpan;      // Set SEMENTARA currMap ke peta LAMA agar SaveManager pakai nama file yg benar
+        System.out.println("DEBUG: Akan menyimpan state untuk PETA LAMA: " + petaLamaUntukDisimpan);
+        saveGame(); // Ini akan menggunakan this.currMap (petaLamaUntukDisimpan)
+        this.currMap = cacheCurrMapSaatIni;        // KEMBALIKAN currMap ke peta BARU (petaBaruUntukDimuat)
+        System.out.println("DEBUG: Selesai menyimpan data untuk PETA LAMA: " + petaLamaUntukDisimpan);
+
+        // B. Pastikan this.currMap adalah peta BARU (seharusnya sudah dari TileManager)
+        // System.out.println("DEBUG: Peta saat ini diset ke: " + this.currMap + " (Harusnya sama dengan petaBaruUntukDimuat: " + petaBaruUntukDimuat + ")");
+
+        // C. Setup objek untuk peta BARU
+        System.out.println("DEBUG: Melakukan setupMap() untuk PETA BARU: " + this.currMap);
+        setupMap(); // AssetSetter akan menggunakan this.currMap (petaBaruUntukDimuat)
+
+        // D. Load state untuk peta BARU
+        System.out.println("DEBUG: Akan memuat state untuk PETA BARU: " + this.currMap);
+        saveManger.loadGameState(); // SaveManager akan menggunakan this.currMap (petaBaruUntukDimuat)
+        System.out.println("DEBUG: Selesai memuat state untuk PETA BARU: " + this.currMap);
+
+        debugCurrentObjects(); // Untuk melihat objek di peta baru setelah load
     }
     
     // starting item buat item awal
     private void addStartingItems() {
         inventoryController.addItem(itemFactory.createTool("hoe"));
         inventoryController.addItem(itemFactory.createTool("wateringcan"));
-        inventoryController.addItem(itemFactory.createTool("fishingpole"));
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
         inventoryController.addItem(itemFactory.createFood("salmon"));
         inventoryController.addItem(itemFactory.createFood("veggiesoup"));
@@ -196,28 +251,25 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createMiscItem("coal"));
-
+        inventoryController.addItem(itemFactory.createSeed("tomato"));
+        inventoryController.addItem(itemFactory.createMiscItem("ring"));
     }
-  
+ 
     // starting item buat item awal
     private void addStoreItems() {
         storeController.addItem(itemFactory.createTool("hoe"));
         storeController.addItem(itemFactory.createTool("hoe"));
         storeController.addItem(itemFactory.createTool("wateringcan"));
         storeController.addItem(itemFactory.createTool("wateringcan"));
-        storeController.addItem(itemFactory.createTool("fishingpole"));
-        storeController.addItem(itemFactory.createTool("fishingpole"));
         storeController.addItem(itemFactory.createTool("pickaxe"));
         storeController.addItem(itemFactory.createTool("pickaxe"));
         storeController.addItem(itemFactory.createFood("veggiesoup"));
         storeController.addItem(itemFactory.createFood("veggiesoup"));
         storeController.addItem(itemFactory.createFood("salmon"));
         storeController.addItem(itemFactory.createFood("salmon"));
-
     }
 
     public void startGameThread() {
-
         setup();
         
         // game loop in action gas gas
@@ -295,6 +347,27 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    // Optional: Method to check if game is currently paused
+    public boolean isGamePaused() {
+        synchronized (pauseLock) {
+            return isTimePaused;
+        }
+    }
+
+    // Optional: Force pause from external sources
+    public void forceGamePause() {
+        synchronized (pauseLock) {
+            pauseGameThread();
+        }
+    }
+
+    // Optional: Force resume from external sources  
+    public void forceGameResume() {
+        synchronized (pauseLock) {
+            resumeGameThread();
+        }
+    }
+
     public void update() {
         if (gameState == playState) {
             player.update();
@@ -303,6 +376,9 @@ public class GamePanel extends JPanel implements Runnable {
             tileM.checkTeleport(interactionTileCol, interactionTileRow);
             eManager.update();
             cookingController.update();
+            
+           
+            farmingController.updatePlantGrowth(); 
 
             // Game time update every n frames
             currentMinute = gameTime.getGameMinute();
@@ -347,9 +423,10 @@ public class GamePanel extends JPanel implements Runnable {
                 tileM.draw(g2);
                 
                 // Draw objects
-                for (int i = 0; i < obj.length; i++) {
-                    if (obj[i] != null) {
-                        obj[i].draw(g2, this);
+                // Iterasi obj menggunakan ArrayList
+                for (SuperObj objInstance : obj) { 
+                    if (objInstance != null) {
+                        objInstance.draw(g2, this);
                     }
                 }
                 
@@ -366,8 +443,6 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 
                 // Draw UI elements
-
-
                 if (eManager != null) {
                     eManager.draw(g2);
                 }
@@ -381,7 +456,6 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 
             } catch (Exception e) {
-
                 g2.setColor(Color.WHITE);
                 g2.setFont(new Font("Arial", Font.BOLD, 20));
                 g2.drawString("Rendering error: " + e.getMessage(), 50, 50);
@@ -392,17 +466,27 @@ public class GamePanel extends JPanel implements Runnable {
         g2.dispose();
     }
 
-    public void nextDay() {
-        gameTime.nextDay(); // kamu harus buat method ini di GameTime.java
-        currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
+    // public void nextDay() {
+    //     gameTime.nextDay();
+    //     currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
 
-        if (currentWeather == WeatherType.RAINY) {
-            // tileManager.waterAllSoilTiles(); // kamu juga buat ini di TileManager.java
-        }
+    //     if (currentWeather == WeatherType.RAINY) {
+    //         // tileManager.waterAllSoilTiles(); // Anda bisa memanggil ini di sini jika diperlukan
+    //     }
 
-        // Tambahkan hal lain yang perlu dilakukan setiap hari
-        // Misalnya: update tanaman, reset status karakter, dsb.
-    }
+    //     // --- PENTING UNTUK STATE TANAMAN SAAT BERPINDAH HARI ---
+    //     // Setelah gameTime.nextDay(), panggil saveGame() dan loadGameState()
+    //     // Ini memastikan bahwa perubahan hari (yang mungkin memicu pertumbuhan tanaman)
+    //     // akan disimpan dan kemudian dimuat ulang untuk memperbarui visual.
+    //     // Atau, pastikan grow() di farmingController.updatePlantGrowth() sudah cukup
+    //     // untuk menangani visual tanpa perlu load/save di sini.
+    //     // Jika pertumbuhan tanaman sudah dihandle oleh updatePlantGrowth() berdasarkan waktu,
+    //     // maka Anda tidak perlu save/load di sini, cukup pastikan grow() selalu dipanggil.
+
+    //     // Jika Anda ingin efek save/load di setiap hari baru, maka:
+    //     saveGame(); 
+    //     saveManger.loadGameState(); // Muat kembali state setelah hari berganti
+    // }
 
 
     private void drawLoadingScreen(Graphics2D g2) {
@@ -490,6 +574,8 @@ public class GamePanel extends JPanel implements Runnable {
 
             if (valid) {
                 System.out.println("Cheat berhasil diterapkan.");
+                saveGame(); // Simpan state dengan waktu baru
+                saveManger.loadGameState(); // Muat kembali state untuk memperbarui visual dan logika
             }
 
             isTimePaused = false;
@@ -497,20 +583,54 @@ public class GamePanel extends JPanel implements Runnable {
         });
     }
 
-    public void setGameState(int newState){
+    public void setGameState(int newState) {
+        int oldState = this.gameState;
         this.gameState = newState;
-
-        if (newState == npcContextMenuState){
-            
-        } else if (newState == inventoryState){
-            if (ui != null && inventoryController != null){
-                if (inventoryController != null){
-                    inventoryController.setSelectedSlot(0);
+        
+        // Debug logging
+        System.out.println("Game State Changed: " + getStateName(oldState) + " -> " + getStateName(newState));
+        
+        // Handle state-specific logic
+        switch (newState) {
+            case dialogState:
+                // Ensure dialog state is properly set
+                if (isTimePaused) {
+                    resumeGameThread();
                 }
-            }
+                break;
+            case npcContextMenuState:
+                // Pause when entering NPC context menu
+                if (!isTimePaused) {
+                    pauseGameThread();
+                }
+                break;
+            case playState:
+                // Resume when returning to play state
+                if (isTimePaused) {
+                    resumeGameThread();
+                }
+                currNPC = null; // Clear current NPC when returning to play
+                isGifting = false; // Clear gifting mode
+                break;
         }
     }
 
+    // Helper method untuk debug
+    private String getStateName(int state) {
+        switch (state) {
+            case playState: return "PLAY";
+            case pauseState: return "PAUSE";
+            case dialogState: return "DIALOG";
+            case inventoryState: return "INVENTORY";
+            case statsState: return "STATS";
+            case cookingState: return "COOKING";
+            case shippingBinState: return "SHIPPING";
+            case storeState: return "STORE";
+            case npcContextMenuState: return "NPC_CONTEXT";
+            case sleepState: return "SLEEP";
+            default: return "UNKNOWN(" + state + ")";
+        }
+    }
 
     private class EmptyTileManager extends TileManager {
 
@@ -532,6 +652,5 @@ public class GamePanel extends JPanel implements Runnable {
         public void loadMap(String filePath) {
             // Do nothing
         }
-
     }
 }

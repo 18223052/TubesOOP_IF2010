@@ -16,12 +16,10 @@ import java.util.Queue;
 
 public class CookingController {
     private GamePanel gp;
-    private ItemFactory itemFactory;
     private Queue<CookingQueueEntry> cookingQueue;
 
     public CookingController(GamePanel gp) {
         this.gp = gp;
-        this.itemFactory = new ItemFactory(gp);
         this.cookingQueue = new LinkedList<>();
     }
 
@@ -68,14 +66,13 @@ public class CookingController {
     public boolean hasEnoughFuel(InventoryController playerInventory, int fuelAmountNeeded) {
         int totalFuelCapacity = 0;
 
-        // Iterate through InventorySlot objects
         for (InventorySlot slot : playerInventory.getInventorySlots()) {
             IItem item = slot.getItem();
             if (item.getCategory().equalsIgnoreCase("fuel")) {
                 if (item.getName().equalsIgnoreCase("coal")) {
-                    totalFuelCapacity += (slot.getQuantity() * 2); // Coal gives 2 fuel capacity per item
+                    totalFuelCapacity += (slot.getQuantity() * 2);
                 } else if (item.getName().equalsIgnoreCase("firewood")) {
-                    totalFuelCapacity += (slot.getQuantity() * 1); // Firewood gives 1 fuel capacity per item
+                    totalFuelCapacity += (slot.getQuantity() * 1); 
                 }
             }
         }
