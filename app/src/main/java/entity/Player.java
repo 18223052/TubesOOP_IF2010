@@ -148,40 +148,6 @@ public class Player extends Character {
         return true;
     }
 
-    // Propose & Marry
-     public NPC getFiance() {
-        return this.fiance;
-    }
-
-    public void setFiance(NPC npc) {
-        this.fiance = npc;
-        if (npc != null) { // Jika menetapkan tunangan baru
-            this.spouse = null; // Pastikan tidak bisa memiliki pasangan dan tunangan sekaligus
-        }
-    }
-
-    public boolean hasFiance() {
-        return this.fiance != null;
-    }
-
-    public NPC getSpouse() {
-        return this.spouse;
-    }
-
-    public void setSpouse(NPC npc) {
-        this.spouse = npc;
-        if (npc != null) { // Jika menetapkan pasangan baru
-            if (this.fiance == npc) { // Jika menikah dengan tunangan saat ini
-                this.fiance = null; // Hapus status tunangan
-            }
-        }
-    }
-
-    public boolean hasSpouse() {
-        return this.spouse != null;
-    }
-
-
     public void getPlayerImage() {
         u1 = setup("/player/u1");
         u2 = setup("/player/u2");

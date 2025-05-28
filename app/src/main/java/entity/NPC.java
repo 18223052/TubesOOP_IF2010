@@ -35,15 +35,6 @@ public abstract class NPC extends Character implements Interactable {
     public static final String gender_male = "Male";
     public static final String gender_female = "Female";
 
-    public static final String STATUS_SINGLE = "Single";
-    public static final String STATUS_FIANCE = "Fiance";
-    public static final String STATUS_MARRIED = "Married";
-
-    // Gender
-    protected String gender;
-    public static final String gender_male = "Male";
-    public static final String gender_female = "Female";
-
     public NPC(GamePanel gp){
         super(gp);
         this.direction = "down";
@@ -214,9 +205,5 @@ public abstract class NPC extends Character implements Interactable {
     
     public String getRelationshipStatus(){
         return this.relationshipStatus;
-    }
-
-    public String getGender(){
-        return this.gender;
     }
 }
