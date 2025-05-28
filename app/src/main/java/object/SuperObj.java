@@ -37,6 +37,10 @@ public abstract class SuperObj implements Interactable {
         this.solidArea = new Rectangle(0, 0, width * gp.tileSize, height * gp.tileSize);
     }
 
+    public String getName(){
+        return name;
+    }
+
     public void draw(Graphics2D g2, GamePanel gp) {
         int screenX = wX - gp.player.wX + gp.player.screenX;
         int screenY = wY - gp.player.wY + gp.player.screenY;
@@ -96,7 +100,7 @@ public abstract class SuperObj implements Interactable {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         String fullPath = imagePath + ".png"; 
-        System.out.println("Attempting to load image: " + fullPath); 
+
         try {
             InputStream is = getClass().getResourceAsStream(fullPath);
             if (is == null) {

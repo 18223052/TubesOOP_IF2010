@@ -146,10 +146,10 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT:
                 gp.inventoryController.moveSelectionRight();
                 break;
-            case KeyEvent.VK_F:
-                toggleFilter();
-                filterPressed = true; // Set flag if needed for UI feedback
-                break;
+            // case KeyEvent.VK_F:
+            //     toggleFilter();
+            //     filterPressed = true; // Set flag if needed for UI feedback
+            //     break;
         }
     }
 
@@ -167,10 +167,10 @@ public class KeyHandler implements KeyListener {
                 }
                 useItemPressed = true; // Set flag if needed for UI feedback
             }
-            case KeyEvent.VK_F -> {
-                toggleFilter();
-                filterPressed = true; // Set flag if needed for UI feedback
-            }
+            // case KeyEvent.VK_F -> {
+            //     toggleFilter();
+            //     filterPressed = true; // Set flag if needed for UI feedback
+            // }
             case KeyEvent.VK_DELETE -> {
                 // Ensure a slot is selected before attempting to discard
                 if (gp.inventoryController.getSelectedSlotItem() != null) {
@@ -240,11 +240,11 @@ public class KeyHandler implements KeyListener {
                 gp.inventoryController.moveSelectionRight();
                 gp.repaint();
             }
-            case KeyEvent.VK_F -> {
-                toggleFilter();
-                filterPressed = true;
-                gp.repaint(); // Trigger a screen update after changing the filter
-            }
+            // case KeyEvent.VK_F -> {
+            //     toggleFilter();
+            //     filterPressed = true;
+            //     gp.repaint(); // Trigger a screen update after changing the filter
+            // }
             case KeyEvent.VK_ENTER -> {
                 // Ensure a slot is selected before attempting to sell
                 if (gp.inventoryController.getSelectedSlotItem() != null) {
@@ -265,10 +265,10 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S, KeyEvent.VK_DOWN -> gp.storeController.moveSelectionDown();
             case KeyEvent.VK_A, KeyEvent.VK_LEFT -> gp.storeController.moveSelectionLeft();
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> gp.storeController.moveSelectionRight();
-            case KeyEvent.VK_F -> {
-                toggleFilter(); 
-                filterPressed = true;
-            }
+            // case KeyEvent.VK_F -> {
+            //     toggleFilter(); 
+            //     filterPressed = true;
+            // }
             case KeyEvent.VK_ENTER -> {
                 if (gp.storeController.getSelectedItem() != null) { 
                     gp.storeController.sellItem(gp.storeController.getSelectedSlot()); 
@@ -317,11 +317,11 @@ public class KeyHandler implements KeyListener {
         // inventoryPressed = true; // This flag is still ambiguously named
     }
 
-    private void toggleFilter() {
-        currentFilterIndex = (currentFilterIndex + 1) % filters.length;
-        gp.inventoryController.setFilter(filters[currentFilterIndex]);
-        // No repaint here, as handleInventoryState/handleShippingBinState/handleStoreState call it.
-    }
+    // private void toggleFilter() {
+    //     currentFilterIndex = (currentFilterIndex + 1) % filters.length;
+    //     gp.inventoryController.setFilter(filters[currentFilterIndex]);
+    //     // No repaint here, as handleInventoryState/handleShippingBinState/handleStoreState call it.
+    // }
 
     public void handleCookingState(int code) {
         boolean stateChanged = false;

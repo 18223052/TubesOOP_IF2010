@@ -1,11 +1,12 @@
 package GUI.panels;
 
 import main.GamePanel;
-import entity.NPC_mayortadi; 
+import entity.NPC_mayortadi;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints; // Import for antialiasing
 
 public class DialogBox extends BaseUIPanel {
 
@@ -14,24 +15,29 @@ public class DialogBox extends BaseUIPanel {
     }
 
     public void draw(Graphics2D g2, String currentDialog, String speakerName, boolean hasStore) {
+        // Enable antialiasing for smoother graphics
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
         int x = gp.tileSize * 2;
         int y = gp.tileSize * 8;
         int width = gp.screenWidth - (gp.tileSize * 4);
         int height = gp.tileSize * 3;
 
-        drawSubWindow(g2, x, y, width, height); 
+        // Use the enhanced drawSubWindow from BaseUIPanel
+        drawSubWindow(g2, x, y, width, height);
 
         g2.setFont(uiFont.deriveFont(20f));
-        g2.setColor(Color.WHITE);
+        g2.setColor(TEXT_PRIMARY); // Use theme primary text color
 
         int textX = x + 20;
         int textY = y + 30;
         int lineHeight = 30;
 
         if (speakerName != null && !speakerName.isEmpty()) {
-            g2.setColor(new Color(255, 255, 150)); // Yellowish color for name
+            g2.setColor(SELECTED_SLOT_COLOR); // Use theme goldish color for speaker name
             g2.drawString(speakerName, textX, textY);
-            g2.setColor(Color.WHITE); // Reset color for dialog text
+            g2.setColor(TEXT_PRIMARY); // Reset color for dialog text
             textY += lineHeight;
         }
 
@@ -73,12 +79,14 @@ public class DialogBox extends BaseUIPanel {
                 textY += 5;
             }
             g2.setFont(uiFont.deriveFont(Font.ITALIC, 16f));
-            g2.drawString("Press [E] to continue", x + width - 180, y + height - 20);
+            g2.setColor(new Color(100, 255, 100)); // Green for action prompt
+            g2.drawString("Tekan [E] untuk melanjutkan", x + width - 210, y + height - 20); // Updated text
 
         } else {
             g2.drawString("...", textX, textY);
             g2.setFont(uiFont.deriveFont(Font.ITALIC, 16f));
-            g2.drawString("Press [E] to exit", x + width - 180, y + height - 20);
+            g2.setColor(new Color(255, 150, 150)); // Red for exit prompt
+            g2.drawString("Tekan [ESC] untuk keluar", x + width - 210, y + height - 20); // Updated text
         }
     }
 }
