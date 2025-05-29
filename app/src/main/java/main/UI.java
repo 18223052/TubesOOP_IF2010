@@ -49,11 +49,11 @@ public class UI {
             Font baseMaruMonica = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(inputStream));
 
             // Inisialisasi setiap font dengan ukuran yang berbeda
-            this.generalFont = baseMaruMonica.deriveFont(Font.PLAIN, 30f); // Contoh: Font umum untuk HUD, menu utama
-            this.dialogFont = baseMaruMonica.deriveFont(Font.PLAIN, 28f);  // Contoh: Font untuk kotak dialog
-            this.inventoryFont = baseMaruMonica.deriveFont(Font.PLAIN, 26f); // Contoh: Font untuk inventori
-            this.cookingFont = baseMaruMonica.deriveFont(Font.PLAIN, 20f);  // Sesuai permintaan: Font untuk CookingMenu
-            this.smallFont = baseMaruMonica.deriveFont(Font.PLAIN, 18f);   // Contoh: Font yang sangat kecil untuk detail
+            this.generalFont = baseMaruMonica.deriveFont(Font.PLAIN, 30f);
+            this.dialogFont = baseMaruMonica.deriveFont(Font.PLAIN, 28f);  
+            this.inventoryFont = baseMaruMonica.deriveFont(Font.PLAIN, 26f); 
+            this.cookingFont = baseMaruMonica.deriveFont(Font.PLAIN, 20f); 
+            this.smallFont = baseMaruMonica.deriveFont(Font.PLAIN, 18f);   
 
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
@@ -88,8 +88,6 @@ public class UI {
         this.g2 = g2;
         setupDefaultGraphics(g2); // Tetap panggil ini untuk pengaturan global (anti-aliasing, warna)
 
-        // Delegasi drawing berdasarkan game state
-        // Setiap panel akan menggambar dengan font yang sudah mereka terima saat inisialisasi
         switch (gp.gameState) {
             case GamePanel.playState:
                 hud.draw(g2);
@@ -111,7 +109,7 @@ public class UI {
                 break;
             case GamePanel.shippingBinState:
                 shippingBinMenu.draw(g2);
-                inventoryScreen.draw(g2, false); // Inventori juga harus menggunakan inventoryFont-nya
+                inventoryScreen.draw(g2, false);
                 break;
             case GamePanel.storeState:
                 storeMenu.draw(g2);
