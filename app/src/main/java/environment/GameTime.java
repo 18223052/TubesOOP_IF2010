@@ -60,12 +60,10 @@ public class GameTime implements Runnable {
                     }
                 }
             }
-            if(!paused){
             addTime(5);
             if (getTotalGameMinutes() != lastGameMinuteUpdate){
                 updateTotalGameMillis();
                 lastGameMinuteUpdate = getTotalGameMinutes();
-            }
             }
         }
     }

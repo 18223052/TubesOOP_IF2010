@@ -15,7 +15,7 @@ import object.FishItem;
 import object.FishItem.FishCategory;
 import object.FishLocation;
 
-import controller.InventoryController;
+
 
 public class FishingController {
     GamePanel gp;
@@ -41,6 +41,7 @@ public class FishingController {
             System.out.println("hmm tidak ada ikan yang tertarik dengan umpan mu");
             gp.ui.setDialog("hmm tidak ada ikan yang tertarik dengan umpan mu");
             gp.setGameState(GamePanel.dialogState);
+            gp.ui.clearDialog();
             endFishing(false);
             return;
         }
@@ -49,7 +50,7 @@ public class FishingController {
         System.out.println("A " + currentFish.getName() + " is on the hook");
         gp.ui.setDialog("A " + currentFish.getName() + " is on the hook");
         gp.setGameState(GamePanel.dialogState);
-
+        gp.repaint();
         setupGuessingGame(currentFish.getFishCategory());
 
         promptForGuess();
@@ -115,6 +116,7 @@ public class FishingController {
                 } catch (NumberFormatException e) {
                     gp.ui.setDialog("Invalid input. Masukkan angka.");
                     gp.setGameState(GamePanel.dialogState);
+                    gp.repaint();
                     if (attemptsLeft > 0) {
                         promptForGuess();
                     } else {
@@ -124,6 +126,7 @@ public class FishingController {
             } else {
                 gp.ui.setDialog("Memancing dibatalkan. Ikannya maburr!");
                 gp.setGameState(GamePanel.dialogState);
+                gp.repaint();
                 endFishing(false);
             }
         });
@@ -138,19 +141,23 @@ public class FishingController {
         if (guess == targetNumber) {
             gp.ui.setDialog("Kamu menebak dengan benar! Kamu berhasi menangkap " + currentFish.getName() + "!");
             gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
             gp.player.getInventory().addItem(currentFish);
             endFishing(true);
         } else if (attemptsLeft <= 0) {
             gp.ui.setDialog("Gabisa main lagi! kesempatan kamu sudah habis " + currentFish.getName() + " maburrrr.");
             gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
             endFishing(false);
         } else {
             if (guess < targetNumber) {
                 gp.ui.setDialog("Terlalu rendah cooo! Kesempatan tersisa: " + attemptsLeft);
                 gp.setGameState(GamePanel.dialogState);
+                gp.repaint();
             } else {
                 gp.ui.setDialog("Nah kalo ini terlalu tinggi! Kesempatan tersisa: " + attemptsLeft);
                 gp.setGameState(GamePanel.dialogState);
+                gp.repaint();
             }
 
             promptForGuess();
@@ -158,7 +165,6 @@ public class FishingController {
     }
 
     private void endFishing(boolean success) {
-        gp.gameTime.resume(); 
         gp.gameTime.addTime(15);  
         // gp.ui.setDialog("Fishing action ended.");
         // gp.setGameState(GamePanel.dialogState);

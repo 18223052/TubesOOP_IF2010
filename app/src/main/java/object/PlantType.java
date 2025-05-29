@@ -7,10 +7,10 @@ import environment.Season;
 public enum PlantType {
     NONE(Collections.emptySet(), 0, 0, 0), 
     TOMATO(EnumSet.of(Season.SPRING, Season.FALL), 1 * 60 * 1000L, 4320 * 60 * 1000L, 24 * 60 * 60 * 1000L), 
-    POTATO(EnumSet.of(Season.SPRING), 4 * 60 * 1000, 8 * 60 * 1000, 24 * 60 * 60 * 1000), 
+    POTATO(EnumSet.of(Season.SPRING), 1 * 60 * 1000L, 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L), 
     PARSNIP(EnumSet.of(Season.SPRING), 3 * 60 * 1000, 6 * 60 * 1000, 24 * 60 * 60 * 1000),
     CAULIFLOWER(EnumSet.of(Season.SPRING), 7 * 60 * 1000, 14 * 60 * 1000, 24 * 60 * 60 * 1000),
-    WHEAT(EnumSet.of(Season.SUMMER, Season.FALL), 2 * 60 * 1000, 4 * 60 * 1000, 24 * 60 * 60 * 1000),
+    WHEAT(EnumSet.of(Season.SUMMER, Season.FALL), 1 * 60 * 1000, 1440* 60 * 1000, 24 * 60 * 60 * 1000),
     BLUEBERRY(EnumSet.of(Season.SUMMER), 8 * 60 * 1000, 16 * 60 * 1000, 24 * 60 * 60 * 1000),
     HOT_PEPPER(EnumSet.of(Season.SUMMER), 5 * 60 * 1000, 10 * 60 * 1000, 24 * 60 * 60 * 1000),
     MELON(EnumSet.of(Season.SUMMER), 9 * 60 * 1000, 18 * 60 * 1000, 24 * 60 * 60 * 1000),

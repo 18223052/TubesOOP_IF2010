@@ -301,7 +301,8 @@ public class Player extends Character {
 
     @Override
     public void draw(Graphics2D g2) {
-        super.draw(g2);
+        super.draw(g2); // Memanggil draw method dari superclass
+
         if (activeItem != null && !(activeItem instanceof NoItem) && activeItem.getImage() != null) {
             BufferedImage itemImage = activeItem.getImage();
 
@@ -310,33 +311,59 @@ public class Player extends Character {
 
             int itemOffsetX = 0;
             int itemOffsetY = 0;
-            int itemWidth = (int)(gp.tileSize*0.55);
-            int itemHeight = (int)(gp.tileSize*0.55);
+            int itemWidth = (int)(gp.tileSize * 0.55); // Lebar default item
+            int itemHeight = (int)(gp.tileSize * 0.55); // Tinggi default item
+
+
+            int drawX = currentScreenX;
+            int drawY = currentScreenY;
+            int drawWidth = itemWidth;
+            int drawHeight = itemHeight;
+
+            int sizeDifferenceX = gp.tileSize - itemWidth;
+            int sizeDifferenceY = gp.tileSize - itemHeight;
+            int centerOffsetX = sizeDifferenceX / 2;
+            int centerOffsetY = sizeDifferenceY / 2;
+
 
             switch (direction) {
                 case "up":
-                    itemOffsetX = 0;
-                    itemOffsetY = -gp.tileSize / 4;
+
+                    itemOffsetX = -gp.tileSize / 4; // Geser sedikit ke kiri
+                    itemOffsetY = -gp.tileSize / 2; // Geser lebih jauh ke atas
+
                     break;
                 case "down":
+
                     itemOffsetX = 0;
-                    itemOffsetY = gp.tileSize / 4;
+                    itemOffsetY = gp.tileSize / 2;
                     break;
                 case "left":
-                    itemOffsetX = -gp.tileSize / 4;
+                    itemOffsetX = -gp.tileSize / 2;
                     itemOffsetY = 0;
+
                     break;
                 case "right":
                     itemOffsetX = gp.tileSize / 4;
                     itemOffsetY = 0;
+                    drawX = currentScreenX + itemOffsetX + itemWidth; 
+                    drawWidth = -itemWidth; 
                     break;
             }
-            int sizeDifferenceX = gp.tileSize - itemWidth;
-            int sizeDifferenceY = gp.tileSize - itemHeight;
-            itemOffsetX += sizeDifferenceX /2;
-            itemOffsetY += sizeDifferenceY /2;
 
-            g2.drawImage(itemImage, currentScreenX + itemOffsetX, currentScreenY + itemOffsetY, itemWidth, itemHeight, null);
+            int finalDrawX = drawX + itemOffsetX + centerOffsetX;
+            int finalDrawY = drawY + itemOffsetY + centerOffsetY;
+
+            g2.drawImage(itemImage,
+                        finalDrawX,       
+                        finalDrawY,     
+                        finalDrawX + drawWidth,
+                        finalDrawY + drawHeight, 
+                        0,                         
+                        0,                        
+                        itemImage.getWidth(),     
+                        itemImage.getHeight(),     
+                        null);
         }
         drawInteractionBox(g2);
     }

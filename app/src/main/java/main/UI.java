@@ -118,10 +118,17 @@ public class UI {
             case GamePanel.npcContextMenuState:
                 npcContextMenu.draw(g2, gp.currNPC);
                 break;
+            case GamePanel.fishingState:
+                dialogBox.draw(g2, currentDialog, null, false);
+                break;
         }
     }
 
     public void setDialog(String dialog) {
         this.currentDialog = dialog;
+    }
+
+    public void clearDialog() {
+        this.currentDialog = "";
     }
 }

@@ -31,7 +31,6 @@ public class TileManager {
 
     }
     
-    // Call this after all components are initialized
     public void setup() {
         loadMap(currentMap);
     }
@@ -114,13 +113,13 @@ public class TileManager {
     public void checkTeleport(int checkCol, int checkRow) { 
         String currentFarmMap = null; 
 
-        if (gp.currMap.startsWith("/maps/farmmm")) { // Check if it's one of the farm maps
+        if (gp.currMap.startsWith("/maps/farmmm")) {
             int[] coords = farmMapTeleportCoords.get(gp.currMap);
             if (coords != null) {
                 // To Rumah
                 if (checkCol == coords[0] && checkRow == coords[1]) {
-                    gp.prevFarmMap = gp.currMap; // Store the current farm map before teleporting
-                    teleportPlayer("/maps/rumah.txt", 26, 36); // Fixed entry point for Rumah
+                    gp.prevFarmMap = gp.currMap; 
+                    teleportPlayer("/maps/rumah.txt", 26, 36); 
                     return;
                 }
                 // To River
@@ -132,7 +131,7 @@ public class TileManager {
                 }
                 // To Worldmap
                 if (checkCol == coords[4] && checkRow == coords[5]) {
-                    gp.prevFarmMap = gp.currMap; // Store the current farm map
+                    gp.prevFarmMap = gp.currMap; 
                     teleportPlayer("/maps/worldmap.txt", 1, 30); // Fixed entry point for Worldmap
                     return;
                 }
@@ -179,6 +178,8 @@ public class TileManager {
                 return;
             }
         }
+
+        // if (currentMap.equals(""))
     }
 
     

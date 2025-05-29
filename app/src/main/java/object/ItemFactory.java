@@ -119,50 +119,50 @@ public class ItemFactory {
                 buyPrice = 90;
                 sellPrice = 60;
                 break;
-            // case "potato":
-            //     buyPrice = 0; 
-            //     sellPrice = 80;
-            //     break;
-            // case "parsnip":
-            //     buyPrice = 50;
-            //     sellPrice = 35;
-            //     break;
-            // case "cauliflower":
-            //     buyPrice = 200;
-            //     sellPrice = 150;
-            //     break;
-            // case "wheat":
-            //     buyPrice = 50;
-            //     sellPrice = 30;
-            //     break;
-            // case "blueberry":
-            //     buyPrice = 150;
-            //     sellPrice = 40;
-            //     break;
+            case "potato":
+                buyPrice = 0; 
+                sellPrice = 80;
+                break;
+            case "parsnip":
+                buyPrice = 50;
+                sellPrice = 35;
+                break;
+            case "cauliflower":
+                buyPrice = 200;
+                sellPrice = 150;
+                break;
+            case "wheat":
+                buyPrice = 50;
+                sellPrice = 30;
+                break;
+            case "blueberry":
+                buyPrice = 150;
+                sellPrice = 40;
+                break;
             case "hotpepper":
                 buyPrice = 0;
                 sellPrice = 40;
                 break;
-            // case "melon":
-            //     buyPrice = 0;
-            //     sellPrice = 250;
-            //     break;
-            // case "cranberry":
-            //     buyPrice = 0;
-            //     sellPrice = 25;
-            //     break;
-            // case "pumpkin":
-            //     buyPrice = 300;
-            //     sellPrice = 250;
-            //     break;
+            case "melon":
+                buyPrice = 0;
+                sellPrice = 250;
+                break;
+            case "cranberry":
+                buyPrice = 0;
+                sellPrice = 25;
+                break;
+            case "pumpkin":
+                buyPrice = 300;
+                sellPrice = 250;
+                break;
             case "grape":
                 buyPrice = 100;
                 sellPrice = 10;
                 break;
-            // default:
-            //     buyPrice = 50;
-            //     sellPrice = 25;
-            //     break;
+            default:
+                buyPrice = 50;
+                sellPrice = 25;
+                break;
         }
         
         return new CropItem(cropName, buyPrice, sellPrice, gp);

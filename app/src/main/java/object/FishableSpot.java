@@ -21,12 +21,10 @@ public class FishableSpot extends SuperObj {
         if (player.getActiveItem() == null || !player.getActiveItem().getName().equals("fishingpole")){
             gp.ui.setDialog("Kamu membutuhkan Fishing pole");
             gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
             return;
         }
-
-        gp.gameTime.pause();
         player.deductEnergy(5);
-
         gp.setGameState(GamePanel.fishingState);
         gp.fishingController.startFishing(getFishingLocationType());
     }

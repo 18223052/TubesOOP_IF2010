@@ -12,7 +12,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
-import com.google.common.collect.Maps;
+
 
 import controller.CookingController;
 import controller.FarmingController;
@@ -279,16 +279,16 @@ public class GamePanel extends JPanel implements Runnable {
         // inventoryController.addItem(itemFactory.createFish("salmon"));
         // inventoryController.addItem(itemFactory.createFish("salmon"));
         // inventoryController.addItem(itemFactory.createMiscItem("coal"));
-        // inventoryController.addItem(itemFactory.createSeed("tomato"));
-        // inventoryController.addItem(itemFactory.createSeed("parsnip"));
-        // inventoryController.addItem(itemFactory.createSeed("potato"));
-        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
-        // inventoryController.addItem(itemFactory.createSeed("wheat"));
-        // inventoryController.addItem(itemFactory.createSeed("pumpkin"));
+        inventoryController.addItem(itemFactory.createSeed("tomato"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("potato"));
+        inventoryController.addItem(itemFactory.createSeed("cauliflower"));
+        inventoryController.addItem(itemFactory.createSeed("wheat"));
+        inventoryController.addItem(itemFactory.createSeed("pumpkin"));
         // inventoryController.addItem(itemFactory.createSeed("hotpepper"));
         // inventoryController.addItem(itemFactory.createSeed("melon"));
-        // inventoryController.addItem(itemFactory.createSeed("potato"));
-        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
+        inventoryController.addItem(itemFactory.createSeed("potato"));
+        inventoryController.addItem(itemFactory.createSeed("cauliflower"));
         inventoryController.addItem(itemFactory.createFood("sashimi"));
         inventoryController.addItem(itemFactory.createCrop("hotpepper"));
         // inventoryController.addItem(itemFactory.createFood("hotpepper"));
@@ -639,29 +639,31 @@ public class GamePanel extends JPanel implements Runnable {
     public void setGameState(int newState) {
         int oldState = this.gameState;
         this.gameState = newState;
-        
+
         System.out.println("Game State Changed: " + getStateName(oldState) + " -> " + getStateName(newState));
-        
+
         switch (newState) {
             case dialogState:
-                if (isTimePaused) {
-                    resumeGameThread();
-                }
-                break;
+            case inventoryState: 
+            case statsState:
+            case cookingState:
+            case shippingBinState:
+            case storeState:
             case npcContextMenuState:
-                if (!isTimePaused) {
+            case fishingState:
+                if (!isTimePaused) { 
                     pauseGameThread();
                 }
                 break;
             case playState:
-
-                if (isTimePaused) {
+            case sleepState: 
+                if (isTimePaused) { 
                     resumeGameThread();
                 }
                 currNPC = null;
                 isGifting = false; 
                 break;
-        }
+            }
     }
 
     // Helper method untuk debug

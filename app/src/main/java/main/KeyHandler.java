@@ -3,9 +3,7 @@ package main;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import object.BaseItem;
 import object.IItem;
-import object.InventorySlot; // Import InventorySlot if you need to access its properties directly
 
 public class KeyHandler implements KeyListener {
 
@@ -15,9 +13,10 @@ public class KeyHandler implements KeyListener {
     public boolean inventoryPressed; // This boolean seems to be used as a flag for state transitions.
     public boolean useItemPressed, discardItemPressed, sellItemPressed;
     public boolean filterPressed;
-    public int singleNumPress; // Seems unused, consider removing if not in use.
-    public String multiNumPress = ""; // Seems unused, consider removing if not in use.
-    public boolean giftKeyPressed; // This boolean also seems to be used as a flag for state transitions.
+    public int singleNumPress; 
+    public String multiNumPress = ""; 
+    public boolean giftKeyPressed; 
+    
 
 
     public KeyHandler(GamePanel gp) {
@@ -26,33 +25,33 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Not used for game actions, typically for text input
+        // Tidak terpakai
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
 
-        // Use GamePanel.STATE_NAME for clarity
+
         if (gp.gameState == GamePanel.playState) {
             gp.isTimePaused = false;
             handlePlayState(code);
-        } else if (gp.gameState == GamePanel.pauseState) {
+        } else if (gp.gameState == GamePanel.pauseState) { // klik P
             gp.isTimePaused = true;
             handlePauseState(code);
-        } else if (gp.gameState == GamePanel.dialogState) {
+        } else if (gp.gameState == GamePanel.dialogState) { // interact based
             handleDialogState(code);
-        } else if (gp.gameState == GamePanel.statsState) {
+        } else if (gp.gameState == GamePanel.statsState) { // klik C
             handleStatsState(code);
-        } else if (gp.gameState == GamePanel.inventoryState) {
+        } else if (gp.gameState == GamePanel.inventoryState) { // klik I
             handleInventoryState(code);
-        } else if (gp.gameState == GamePanel.cookingState) {
+        } else if (gp.gameState == GamePanel.cookingState) { // interact based ke objek "stove"
             handleCookingState(code);
-        } else if (gp.gameState == GamePanel.shippingBinState) {
+        } else if (gp.gameState == GamePanel.shippingBinState) { // interact based ke objek "shippingbin"
             handleShippingBinState(code);
-        } else if (gp.gameState == GamePanel.storeState) {
+        } else if (gp.gameState == GamePanel.storeState) { // interact based ke objek "store"
             handleStoreState(code);
-        } else if (gp.gameState == GamePanel.npcContextMenuState) {
+        } else if (gp.gameState == GamePanel.npcContextMenuState) { // interact based ke objek "npc"
             handleNpcContextMenuState(code);
         }
     }
@@ -74,8 +73,6 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ENTER -> enterPressed = true;
             case KeyEvent.VK_SLASH -> {
                 gp.openTimeCheatDialog();
-                // No break needed here due to the return in openTimeCheatDialog()
-                // If it doesn't return, add a break;
             }
         }
     }
@@ -119,9 +116,11 @@ public class KeyHandler implements KeyListener {
                 } else {
                     gp.ui.setDialog("No item selected to gift.");
                     gp.setGameState(GamePanel.dialogState);
+                    gp.repaint();
                 }
                 gp.isGifting = false;
                 gp.setGameState(GamePanel.dialogState);
+                gp.repaint();
                 gp.resumeGameThread();
                 break;
             case KeyEvent.VK_ESCAPE:
@@ -146,13 +145,13 @@ public class KeyHandler implements KeyListener {
 
     private void handleNormalInventoryState(int code) {
         switch (code) {
-            case KeyEvent.VK_I -> toggleInventoryState(); // Close inventory
+            case KeyEvent.VK_I -> toggleInventoryState();
             case KeyEvent.VK_W, KeyEvent.VK_UP -> gp.inventoryController.moveSelectionUp();
             case KeyEvent.VK_S, KeyEvent.VK_DOWN -> gp.inventoryController.moveSelectionDown();
             case KeyEvent.VK_A, KeyEvent.VK_LEFT -> gp.inventoryController.moveSelectionLeft();
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> gp.inventoryController.moveSelectionRight();
             case KeyEvent.VK_E -> {
-                // Ensure a slot is selected before attempting to use it
+
                 if (gp.inventoryController.getSelectedSlotItem() != null) {
                     gp.inventoryController.useItem(gp.inventoryController.getSelectedSlotIndex());
                 }
@@ -178,16 +177,13 @@ public class KeyHandler implements KeyListener {
     }
 
     private void toggleShippingBinState() {
-        // This method seems to toggle between playState and shippingBinState
-        // The original code implies that pressing 'E' might also *open* it from playState.
-        // Re-evaluate if this should strictly be for closing the shipping bin.
         if (gp.gameState == GamePanel.playState) {
             gp.setGameState(GamePanel.shippingBinState);
         } else if (gp.gameState == GamePanel.shippingBinState) {
             gp.setGameState(GamePanel.playState);
             gp.resumeGameThread();
         }
-        // inventoryPressed = true; // This flag name is confusing here, maybe a more generic 'uiToggled'
+
     }
 
     public void handleShippingBinState(int code) {
