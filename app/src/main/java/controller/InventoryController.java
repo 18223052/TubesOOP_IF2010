@@ -8,7 +8,7 @@ import object.IConsumable;
 import object.IItem;
 import object.IUsable;
 import object.InventorySlot;
-import object.NoItem; // Import the NoItem class
+import object.NoItem;
 import GUI.panels.InventoryScreen;
 
 public class InventoryController {
@@ -29,8 +29,6 @@ public class InventoryController {
         this.inventory = new ArrayList<>();
         this.selectedSlot = 0;
         this.eatingController = new EatingController(gp);
-        // Ensure the player's active item is set to NoItem initially if the inventory is empty or no item is active.
-        // This is typically handled during Player initialization, but a fallback here is good.
         if (gp.player != null && gp.player.getActiveItem() == null) {
             gp.player.setActiveItem(new NoItem(gp));
         }
@@ -298,7 +296,6 @@ public class InventoryController {
         return inventory;
     }
 
-    // Revised useItem to handle active item logic more robustly
     public void useItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             InventorySlot slot = inventory.get(index);

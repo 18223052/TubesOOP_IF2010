@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.AlphaComposite;
 
-import environment.GameTime;
 
 public class SleepController {
     GamePanel gp;
@@ -26,6 +25,9 @@ public class SleepController {
     // Alpha untuk efek blackout
     private float transitionAlpha = 0f;
     private boolean fadingIn = true; 
+
+    // State apabila pingsan
+    boolean isFainted = false;
     
     public SleepController(GamePanel gp, Player player) {
         this.gp = gp;
@@ -41,6 +43,7 @@ public class SleepController {
                 fadingIn = true;
                 transitionStartTime = System.nanoTime();
                 transitionAlpha = 0f;
+                isFainted = false;
                 gp.gameState = GamePanel.sleepState;
             } else {
                 showCannotSleepMessage();
@@ -50,12 +53,13 @@ public class SleepController {
 
     public void forceSleep() {
         if (!isSleeping) {
-            System.out.println("Player akan tidur...");
+            System.out.println("Player pingsan...");
             isSleeping = true;
             inTransition = true;
             fadingIn = true;
             transitionStartTime = System.nanoTime();
             transitionAlpha = 0f;
+            isFainted = true;
             gp.gameState = GamePanel.sleepState;
         }
     }
@@ -70,14 +74,8 @@ public class SleepController {
     private void showCannotSleepMessage() {
         System.out.println("Kamu hanya bisa tidur di malam hari!");
         gp.ui.setDialog("Kamu hanya bisa tidur di malam hari!");
-        gp.gameState = GamePanel.dialogState;
-
-        // if (gp.ui != null) {
-        //     gp.ui.setDialog("You can only sleep at night!");
-        //     gp.gameState = gp.dialogState;
-        // }
-        // gp.ui.setDialog("You can only sleep at night!");
-        // gp.gameState = gp.dialogState;
+        gp.setGameState(GamePanel.dialogState);
+    
     }
     
     public void update() {
@@ -115,6 +113,7 @@ public class SleepController {
             gp.gameTime.nextDaySleep();
         }
         int currEnergy = gp.player.getEnergy();
+        
         if (currEnergy <= 0) {
             gp.player.addEnergy(30); 
             System.out.println("Energi sangat rendah, ditambahkan 10. Energi sekarang: " + gp.player.getEnergy());
@@ -151,7 +150,7 @@ public class SleepController {
             if (transitionAlpha > 0.5f) {
                 g2.setColor(Color.WHITE);
                 g2.setFont(new Font("Arial", Font.BOLD, 30));
-                String sleepText = "Tidur...";
+                String sleepText = isFainted? "Pingsan..." : "Tidur...";
                 int textWidth = g2.getFontMetrics().stringWidth(sleepText);
                 g2.drawString(sleepText, (gp.screenWidth - textWidth) / 2, gp.screenHeight / 2);
             }

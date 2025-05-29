@@ -60,10 +60,14 @@ public class FarmingController {
             harvest(player, targetTile);
         } else {
             System.out.println("Tidak ada yang bisa dilakukan " + targetTile.name + " menggunakan tangan.");
+            gp.ui.setDialog("Tidak ada yang bisa dilakukan " + targetTile.name + " menggunakan tangan.");
+            gp.setGameState(GamePanel.dialogState);
             System.out.println("Farming: Hand interaction on non-harvestable tile.");
         }
     } else {
         System.out.println("Player tidak bisa menggunakan " + activeItem.getName() + " disini.");
+        gp.ui.setDialog("Player tidak bisa menggunakan " + activeItem.getName() + " disini.");
+        gp.setGameState(GamePanel.dialogState);
         System.out.println("Farming: Tidak bisa menggunakan " + activeItem.getName() + " di " + targetTile.name);
     }
 }
@@ -75,16 +79,22 @@ public class FarmingController {
     public void tillage(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof Hoe)) {
             System.out.println("Kamu butuh Hoe untuk menggarap tanah.");
+            gp.ui.setDialog("Kamu butuh Hoe untuk menggarap tanah.");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
         if (targetTile.getCurrentState() != TileState.LAND) {
             System.out.println("Tile ini bukan tanah polos.");
+            gp.ui.setDialog("Tile ini bukan tanah polos.");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
         if (player.getEnergy() < ENERGY_COST_PER_TILE) {
             System.out.println("Energi tidak cukup untuk menggarap tanah!");
+            gp.ui.setDialog("Energi tidak cukup untuk menggarap tanah!");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
@@ -104,17 +114,23 @@ public class FarmingController {
     public void recoverLand(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof Pickaxe)) {
             System.out.println("Kamu butuh pickaxe untuk memulihkan tanah.");
+            gp.ui.setDialog("Kamu butuh pickaxe untuk memulihkan tanah.");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
         // Recovery can be done on soil, planted, watered, or harvestable tile
         if (targetTile.getCurrentState() == TileState.LAND) {
             System.out.println("Tile ini merupakan tanah polos.");
+            gp.ui.setDialog("Tile ini merupakan tanah polos.");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
         if (player.getEnergy() < ENERGY_COST_PER_TILE) {
             System.out.println("Energi tidak cukup untuk memulihkan tanah!");
+            gp.ui.setDialog("Energi tidak cukup untuk memulihkan tanah!");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
@@ -135,21 +151,29 @@ public class FarmingController {
         if (!(player.getActiveItem() instanceof SeedItem) ||
              !((SeedItem)player.getActiveItem()).getCropType().equals(seed.getCropType())) {
             System.out.println("Pilih benih yang tepat untuk bercocok tanam.");
+            gp.ui.setDialog("Pilih benih yang tepat untuk bercocok tanam.");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
         if (targetTile.getCurrentState() != TileState.SOIL) {
             System.out.println("Kamu bisa menanam hanya di tanah yang sudah digarap.");
+            gp.ui.setDialog("Kamu bisa menanam hanya di tanah yang sudah digarap.");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
         if (!player.getInventory().hasItem(seed.getName())) {
             System.out.println("Kamu tidak memiliki benih ini!");
+            gp.ui.setDialog("Kamu tidak memiliki benih ini!");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
         if (player.getEnergy() < ENERGY_COST_PER_TILE) {
             System.out.println("Energi tidak cukup untuk menanam!");
+            gp.ui.setDialog("Energi tidak cukup untuk menanam!");
+            gp.setGameState(GamePanel.dialogState);
             return;
         }
 
