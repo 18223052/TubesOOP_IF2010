@@ -15,9 +15,6 @@ public class KeyHandler implements KeyListener {
     public boolean inventoryPressed; // This boolean seems to be used as a flag for state transitions.
     public boolean useItemPressed, discardItemPressed, sellItemPressed;
     public boolean filterPressed;
-    private int currentFilterIndex = 0;
-    private String[] filters = {"all", "tools", "consumables", "crops", "fish", "seeds", "fuel"};
-    StringBuilder inputBuffer = new StringBuilder();
     public int singleNumPress; // Seems unused, consider removing if not in use.
     public String multiNumPress = ""; // Seems unused, consider removing if not in use.
     public boolean giftKeyPressed; // This boolean also seems to be used as a flag for state transitions.
@@ -70,7 +67,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_E -> interactPressed = true;
             case KeyEvent.VK_I -> {
                 gp.setGameState(GamePanel.inventoryState);
-                gp.isGifting = false; // Ensure gifting mode is off when opening inventory normally
+                gp.isGifting = false;
                 gp.resumeGameThread();
             }
             case KeyEvent.VK_C -> gp.gameState = GamePanel.statsState;
@@ -107,19 +104,17 @@ public class KeyHandler implements KeyListener {
     public void handleInventoryState(int code) {
         if (gp.isGifting) {
             handleGiftingInventoryState(code);
-        } else { // Normal inventory navigation and actions
+        } else { 
             handleNormalInventoryState(code);
         }
-        gp.repaint(); // Always repaint after an inventory action to show changes
+        gp.repaint(); 
     }
 
     private void handleGiftingInventoryState(int code) {
         switch (code) {
             case KeyEvent.VK_E:
-                // Get the IItem directly from the selected slot in the inventory controller
                 IItem selectedItem = gp.inventoryController.getSelectedItem();
-                if (selectedItem != null) { // Ensure an item is actually selected
-                    // The giftItemToNPC method probably expects an IItem, not necessarily a BaseItem
+                if (selectedItem != null) { 
                     gp.npcController.giftItemToNPC(selectedItem);
                 } else {
                     gp.ui.setDialog("No item selected to gift.");
@@ -146,10 +141,6 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT:
                 gp.inventoryController.moveSelectionRight();
                 break;
-            // case KeyEvent.VK_F:
-            //     toggleFilter();
-            //     filterPressed = true; // Set flag if needed for UI feedback
-            //     break;
         }
     }
 
@@ -165,18 +156,13 @@ public class KeyHandler implements KeyListener {
                 if (gp.inventoryController.getSelectedSlotItem() != null) {
                     gp.inventoryController.useItem(gp.inventoryController.getSelectedSlotIndex());
                 }
-                useItemPressed = true; // Set flag if needed for UI feedback
+                useItemPressed = true; 
             }
-            // case KeyEvent.VK_F -> {
-            //     toggleFilter();
-            //     filterPressed = true; // Set flag if needed for UI feedback
-            // }
             case KeyEvent.VK_DELETE -> {
-                // Ensure a slot is selected before attempting to discard
                 if (gp.inventoryController.getSelectedSlotItem() != null) {
                     gp.inventoryController.discardItem(gp.inventoryController.getSelectedSlotIndex());
                 }
-                discardItemPressed = true; // Set flag if needed for UI feedback
+                discardItemPressed = true; 
             }
         }
     }

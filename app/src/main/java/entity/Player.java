@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList; // Import ArrayList
 
 import controller.InventoryController;
@@ -13,7 +14,6 @@ import main.KeyHandler;
 
 import object.IItem;
 import object.NoItem;
-import object.SuperObj; // Pastikan SuperObj di-import
 
 public class Player extends Character {
 
@@ -24,7 +24,6 @@ public class Player extends Character {
     public int hasKey = 0;
 
     public Rectangle interactionBox;
-    private int interactionDistance;
     private int interactionTileRow;
     private int interactionTileCol;
 
@@ -56,14 +55,13 @@ public class Player extends Character {
         interactionBox = new Rectangle();
         interactionBox.width = gp.tileSize;
         interactionBox.height = gp.tileSize;
-        interactionDistance = gp.tileSize;
 
         inventory = new InventoryController(gp);
 
         setActiveItem(new NoItem(gp));
 
         setDefaultValues();
-        getPlayerImage();
+        getCharacterImage();
         updateInteractionBox();
     }
 
@@ -145,8 +143,8 @@ public class Player extends Character {
 
     public void setFiance(NPC npc) {
         this.fiance = npc;
-        if (npc != null) { // Jika menetapkan tunangan baru
-            this.spouse = null; // Pastikan tidak bisa memiliki pasangan dan tunangan sekaligus
+        if (npc != null) { 
+            this.spouse = null;
         }
     }
 
@@ -160,9 +158,9 @@ public class Player extends Character {
 
     public void setSpouse(NPC npc) {
         this.spouse = npc;
-        if (npc != null) { // Jika menetapkan pasangan baru
-            if (this.fiance == npc) { // Jika menikah dengan tunangan saat ini
-                this.fiance = null; // Hapus status tunangan
+        if (npc != null) { 
+            if (this.fiance == npc) { 
+                this.fiance = null; 
             }
         }
     }
@@ -172,7 +170,9 @@ public class Player extends Character {
     }
 
 
-    public void getPlayerImage() {
+    @Override 
+    public void getCharacterImage() {
+        
         u1 = setup("/player/u1");
         u2 = setup("/player/u2");
         r1 = setup("/player/r1");
@@ -181,6 +181,8 @@ public class Player extends Character {
         l2 = setup("/player/l2");
         d1 = setup("/player/d1");
         d2 = setup("/player/d2");
+
+        defaultImage = d1;
     }
 
     private void calculatePlayerTilePosition() {
@@ -215,17 +217,16 @@ public class Player extends Character {
         interactionBox.height = gp.tileSize;
     }
 
-    // REVISI: Ubah parameter agar menerima ArrayList
     public <T extends Interactable> int checkInteraction(ArrayList<T> interactables) {
         int index = 999;
-        // Iterasi menggunakan for-each loop karena ini adalah ArrayList
+
         for (int i = 0; i < interactables.size(); i++) {
-            T obj = interactables.get(i); // Ambil objek dari ArrayList
+            T obj = interactables.get(i); 
             if (obj != null) {
-                updateInteractionBox(); // Ensure interactionBox is up-to-date
+                updateInteractionBox();
                 if (obj.isInteractable(interactionBox)) {
-                    index = i; // Simpan indeks dari ArrayList
-                    break; // Found an interaction, no need to check further
+                    index = i; 
+                    break; 
                 }
             }
         }
@@ -261,7 +262,7 @@ public class Player extends Character {
             iscollision = false;
             gp.colCheck.checkTile(this);
 
-            if (!iscollision) { // Simplified from iscollision == false
+            if (!iscollision) { 
                 switch (direction) {
                     case "up":
                         wY -= speed;
@@ -282,16 +283,16 @@ public class Player extends Character {
         }
 
         if (keyH.interactPressed) {
-            keyH.interactPressed = false; // Reset immediately
+            keyH.interactPressed = false; 
 
             
             int npcIndex = checkInteraction(convertArrayToArrayList(gp.npc)); 
             int objIndex = checkInteraction(gp.obj); 
 
             if (npcIndex != 999) {
-                gp.npc[npcIndex].onInteract(gp,this); // NPC masih diakses via array
+                gp.npc[npcIndex].onInteract(gp,this);
             } else if (objIndex != 999) {
-                gp.obj.get(objIndex).onInteract(gp,this); // OBJEK sekarang diakses via ArrayList
+                gp.obj.get(objIndex).onInteract(gp,this);
             }
         }
         updateInteractionBox();
@@ -300,8 +301,43 @@ public class Player extends Character {
 
     @Override
     public void draw(Graphics2D g2) {
-        super.draw(g2); // Use the Character's draw for animation
+        super.draw(g2);
+        if (activeItem != null && !(activeItem instanceof NoItem) && activeItem.getImage() != null) {
+            BufferedImage itemImage = activeItem.getImage();
 
+            int currentScreenX = wX - gp.player.wX + gp.player.screenX;
+            int currentScreenY = wY - gp.player.wY + gp.player.screenY;
+
+            int itemOffsetX = 0;
+            int itemOffsetY = 0;
+            int itemWidth = (int)(gp.tileSize*0.55);
+            int itemHeight = (int)(gp.tileSize*0.55);
+
+            switch (direction) {
+                case "up":
+                    itemOffsetX = 0;
+                    itemOffsetY = -gp.tileSize / 4;
+                    break;
+                case "down":
+                    itemOffsetX = 0;
+                    itemOffsetY = gp.tileSize / 4;
+                    break;
+                case "left":
+                    itemOffsetX = -gp.tileSize / 4;
+                    itemOffsetY = 0;
+                    break;
+                case "right":
+                    itemOffsetX = gp.tileSize / 4;
+                    itemOffsetY = 0;
+                    break;
+            }
+            int sizeDifferenceX = gp.tileSize - itemWidth;
+            int sizeDifferenceY = gp.tileSize - itemHeight;
+            itemOffsetX += sizeDifferenceX /2;
+            itemOffsetY += sizeDifferenceY /2;
+
+            g2.drawImage(itemImage, currentScreenX + itemOffsetX, currentScreenY + itemOffsetY, itemWidth, itemHeight, null);
+        }
         drawInteractionBox(g2);
     }
 
