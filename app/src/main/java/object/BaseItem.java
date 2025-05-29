@@ -2,6 +2,8 @@ package object;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
@@ -9,10 +11,7 @@ import main.UtilityTool;
 
 import java.util.Objects;
 
-/**
- * Base abstract class for all items in the game
- * Implements common functionality for all items
- */
+
 public abstract class BaseItem implements IItem {
     protected String name;
     protected int buyPrice;
@@ -64,6 +63,7 @@ public abstract class BaseItem implements IItem {
     public void setStackable(boolean stackable) {
         this.stackable = stackable;
     }
+
     
     @Override
     public BufferedImage getImage() {
@@ -74,11 +74,38 @@ public abstract class BaseItem implements IItem {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         
+        // Construct the image path
+        String imagePath = "/items/" + name.toLowerCase().replace(" ", "_") + ".png";
+        
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("/items/" + name.toLowerCase().replace(" ", "_") + ".png"));
+
+            // DEBUG
+            System.out.println("Attempting to load image: " + imagePath);
+        
+            InputStream is = getClass().getResourceAsStream(imagePath);
+            
+            if (is == null) {
+                System.err.println("ERROR: Image file not found (InputStream is null) at path: " + imagePath + " for item: " + name);
+                return null; 
+            }
+            
+            image = ImageIO.read(is); 
+            is.close(); 
+            
+            if (image == null) {
+                System.err.println("ERROR: Image could not be decoded from path: " + imagePath + " for item: " + name + ". Check file format.");
+                return null;
+            }
+
             image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
         } catch(IOException e) {
+            System.err.println("IOException while loading image " + imagePath + " for item " + name + ": " + e.getMessage());
             e.printStackTrace();
+            return null; 
+        } catch (Exception e) { 
+            System.err.println("An unexpected error occurred while loading image " + imagePath + " for item " + name + ": " + e.getMessage());
+            e.printStackTrace();
+            return null; 
         }
         
         return image;

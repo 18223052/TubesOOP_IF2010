@@ -3,9 +3,7 @@ package object;
 import entity.Player;
 import main.GamePanel;
 
-/**
- * Implementation for a seed item
- */
+
 public class SeedItem extends BaseItem implements IUsable {
     private String cropType;
     
@@ -14,9 +12,7 @@ public class SeedItem extends BaseItem implements IUsable {
         this.cropType = cropType;
     }
     
-    /**
-     * Returns the type of crop this seed will produce
-     */
+
     public String getCropType() {
         return cropType;
     }
@@ -41,7 +37,7 @@ public class SeedItem extends BaseItem implements IUsable {
         }
 
         if (targetLandTile != null) {
-            gp.farmingController.plant(player, targetLandTile, this); // Kirim instance SeedItem ini
+            gp.farmingController.plant(player, targetLandTile, this); 
         } else {
             gp.ui.setDialog("You can only plant on farmable land.");
             System.out.println("Farming: No LandTile found at interaction point for planting.");

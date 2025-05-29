@@ -58,6 +58,8 @@ public class TileManager {
         tile[146].collision = true;
         tile[169].collision = true;
         tile[170].collision = true;
+        tile[200].collision = true;
+
 
     }
 
@@ -183,15 +185,15 @@ public class TileManager {
     public void teleportPlayer(String newMapPath, int destX, int destY) {
         String mapPathYangAkanDisimpan = gp.currMap; 
 
-        gp.currMap = newMapPath;        // 2. Baru ubah gp.currMap ke peta BARU
-        this.currentMap = newMapPath;   // (Untuk TileManager sendiri)
+        gp.currMap = newMapPath;        
+        this.currentMap = newMapPath;   
 
-        loadMap(newMapPath);            // Load tile visual peta baru
+        loadMap(newMapPath);            
 
         gp.player.wX = destX * gp.tileSize;
         gp.player.wY = destY * gp.tileSize;
 
-        // 3. Panggil metode di GamePanel untuk menangani save lama & load baru
+        
         gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
 
 

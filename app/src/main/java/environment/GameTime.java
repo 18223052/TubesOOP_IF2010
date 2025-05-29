@@ -7,8 +7,6 @@ public class GameTime implements Runnable {
 
     // Season
     private final int totalDaysPerSeason = 10;
-    private Season currentSeason = Season.SPRING;
-    // private Season lastSeason = Season.SPRING;
 
     private boolean paused = false;
     private final Object pauseLock = new Object();
@@ -181,6 +179,10 @@ public class GameTime implements Runnable {
 
     public synchronized long getCurrentGameTime(){
         return totalGameMillis;
+    }
+
+    public GameTime getCurrentTime(){
+        return this;
     }
 
     public synchronized boolean isNewDay(long previousTimeMillis){
