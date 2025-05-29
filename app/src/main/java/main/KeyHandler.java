@@ -71,7 +71,10 @@ public class KeyHandler implements KeyListener {
             handleStoreState(code);
         } else if (gp.gameState == GamePanel.npcContextMenuState) { 
             handleNpcContextMenuState(code);
+        } else if (gp.gameState == GamePanel.fishingState) { // <<< TAMBAHKAN INI
+            handleFishingState(code);
         }
+
     }
 
     // --- TAMBAH METODE BARU INI ---
@@ -125,9 +128,8 @@ public class KeyHandler implements KeyListener {
             }
             case KeyEvent.VK_C -> gp.setGameState(GamePanel.statsState); // Gunakan setGameState
             case KeyEvent.VK_ENTER -> enterPressed = true;
-            case KeyEvent.VK_SLASH -> {
-                gp.openTimeCheatDialog();
-            }
+            case KeyEvent.VK_M -> { gp.toggleFishingDebugMode();}
+            case KeyEvent.VK_SLASH -> { gp.openTimeCheatDialog();}
         }
     }
 
@@ -389,6 +391,12 @@ public class KeyHandler implements KeyListener {
 
         if (stateChanged && gp.gameState == GamePanel.cookingState) {
             gp.repaint();
+        }
+    }
+
+    public void handleFishingState(int code) {
+        if (code == KeyEvent.VK_ESCAPE) {
+                gp.ui.setDialog("Memancing dibatalkan.");
         }
     }
 

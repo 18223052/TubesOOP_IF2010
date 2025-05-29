@@ -169,6 +169,11 @@ public class GamePanel extends JPanel implements Runnable {
         this.prevFarmMap = this.currMap;
         System.out.println("Starting map: " + currMap);
         tileM = new EmptyTileManager(this);
+
+        ui = new UI(this); 
+        itemFactory = new ItemFactory(this);
+        // Inisialisasi WeatherManager di constructor agar selalu tersedia
+        weatherManager = new WeatherManager(); 
     }
     
 
@@ -186,7 +191,6 @@ public class GamePanel extends JPanel implements Runnable {
         fishingController = new FishingController(this);
 
         // Weather
-        weatherManager = new WeatherManager();
         currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
 
         player.inventory = inventoryController;
@@ -733,4 +737,16 @@ public class GamePanel extends JPanel implements Runnable {
         saveManger.loadGameState(); // Load game state setelah player dibuat
         setGameState(playState); // Ubah ke playState
     }
+    // Inside GamePanel.java
+
+public void toggleFishingDebugMode() {
+    boolean currentDebugMode = fishingController.getDebugMode(); // Mengakses langsung jika debugMode private, atau melalui getter
+    fishingController.setDebugMode(!currentDebugMode);
+    if (!currentDebugMode) {
+        ui.setDialog("Fishing cheat mode activated!");
+    } else {
+        ui.setDialog("Fishing cheat mode deactivated!");
+    }
+    setGameState(GamePanel.dialogState); // Tampilkan pesan konfirmasi
+}
 }

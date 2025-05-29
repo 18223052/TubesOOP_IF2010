@@ -25,11 +25,37 @@ public class FishingController {
     private int attemptsLeft;
     private int maxAttempts;
     private int maxNumber;
+    
 
     private String fishingMessage = "";
+    private boolean debugMode = false;
 
     public FishingController(GamePanel gp){
         this.gp = gp;
+    }
+
+    public boolean getDebugMode() {
+        return debugMode;
+    }
+
+    // Method untuk mengaktifkan/menonaktifkan debug mode
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
+        if (debugMode) {
+            System.out.println("Fishing cheat mode activated!");
+        } else {
+            System.out.println("Fishing cheat mode deactivated.");
+        }
+    }
+
+    // Method untuk mendapatkan target number (cheat)
+    public int getTargetNumber() {
+        return targetNumber;
+    }
+
+    // Method untuk mendapatkan current fish (cheat)
+    public FishItem getCurrentFish() {
+        return currentFish;
     }
 
     public void startFishing(FishLocation location){
@@ -50,32 +76,8 @@ public class FishingController {
         System.out.println("A " + currentFish.getName() + " is on the hook");
         gp.ui.setDialog("A " + currentFish.getName() + " is on the hook");
         gp.setGameState(GamePanel.dialogState);
-        gp.repaint();
-        setupGuessingGame(currentFish.getFishCategory());
-
-        promptForGuess();
-    }
-
-    private List<FishItem> getCatchableFish(FishLocation curreLocation){
-        List<FishItem> allPossibleFish = gp.itemFactory.getAllFishItems();
-        List<FishItem> catchableNow = new ArrayList<>();
-
-        
-        Season currentSeason = gp.gameTime.getCurrentSeason();
-        int currentDayInSeason = gp.gameTime.getDayInCurrentSeason();
-        WeatherType currentWeather = gp.weatherManager.getWeatherForDay(currentDayInSeason);
-        GameTime currentGlobGameTime = gp.gameTime.getCurrentTime();
-
-        for (FishItem fish : allPossibleFish){
-            if (fish.isCatchable(currentSeason, currentWeather, currentGlobGameTime, curreLocation)){
-                catchableNow.add(fish);
-            }
-        }
-        return catchableNow;
-    }
-
-    private void setupGuessingGame(FishCategory category) {
-        switch (category) {
+    
+        switch (currentFish.getFishCategory()){
             case COMMON:
                 maxNumber = 10;
                 maxAttempts = 10;
@@ -93,8 +95,43 @@ public class FishingController {
                 maxAttempts = 5;
                 break;
         }
-        targetNumber = random.nextInt(maxNumber) + 1; 
+        targetNumber = random.nextInt(maxNumber) + 1;
         attemptsLeft = maxAttempts;
+        
+        if (debugMode) {
+            System.out.println("[CHEAT] Target Number for " + currentFish.getName() + ": " + targetNumber);
+            gp.ui.setDialog("A " + currentFish.getName() + " is on the hook" + "\n[CHEAT] Target: " + targetNumber);
+        }
+
+        promptForGuess();
+    }
+
+    private List<FishItem> getCatchableFish(FishLocation curreLocation){
+        if (gp.itemFactory == null) {
+            System.err.println("Error: gp.itemFactory is not initialized!");
+            return new ArrayList<>();
+        }
+
+        List<FishItem> allPossibleFish = gp.itemFactory.getAllFishItems();
+        List<FishItem> catchableNow = new ArrayList<>();
+
+        Season currentSeason = gp.gameTime.getCurrentSeason();
+        int currentDayInSeason = gp.gameTime.getDayInCurrentSeason();
+
+        if (gp.weatherManager == null) {
+            System.err.println("Error: gp.weatherManager is not initialized!");
+            return new ArrayList<>();
+        }
+        
+        WeatherType currentWeather = gp.weatherManager.getWeatherForDay(currentDayInSeason);
+        GameTime currentGlobGameTime = gp.gameTime.getCurrentTime();
+
+        for (FishItem fish : allPossibleFish){
+            if (fish.isCatchable(currentSeason, currentWeather, currentGlobGameTime, curreLocation)){
+                catchableNow.add(fish);
+            }
+        }
+        return catchableNow;
     }
 
     private void promptForGuess(){
@@ -160,7 +197,11 @@ public class FishingController {
                 gp.repaint();
             }
 
-            promptForGuess();
+            if (attemptsLeft > 0) { 
+                promptForGuess();
+            } else {
+                endFishing(false); 
+            }
         }
     }
 
@@ -176,4 +217,5 @@ public class FishingController {
         return fishingMessage;
     }
     
+
 }

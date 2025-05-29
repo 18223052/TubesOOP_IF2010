@@ -205,5 +205,22 @@ public class FishItem extends BaseItem implements IFishAttributes, IConsumable {
         }
         return timeMatch;
     }
+    
+    public int getSpawnTimeEnd() {
+        if (timeRanges != null && !timeRanges.isEmpty()) {
+            return timeRanges.get(0).end.getGameHour();
+        }
+        return -1; 
+    }
+
+    public Season getSpawnSeason() {
+        return (availSeason != null && availSeason.length > 0) ? availSeason[0] : null;
+    }
+
+    public WeatherType getSpawnWeather() {
+        return (catchableWeather != null && catchableWeather.length > 0) ? catchableWeather[0] : null;
+    }
 }
+
+
 
