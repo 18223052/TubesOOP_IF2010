@@ -132,35 +132,35 @@ public class TileManager {
                 // To Worldmap
                 if (checkCol == coords[4] && checkRow == coords[5]) {
                     gp.prevFarmMap = gp.currMap; 
-                    teleportPlayer("/maps/worldmap.txt", 1, 30); // Fixed entry point for Worldmap
+                    teleportPlayer("/maps/worldmap.txt", 1, 30); 
                     return;
                 }
             }
         }
 
-        // --- Teleport from Static Maps (Rumah, River, Worldmap) back to the original Farm Map ---
         if (currentMap.equals("/maps/rumah.txt")) {
-            if ((checkCol >= 24 && checkCol <= 27) && checkRow == 38) { // Rumah exit trigger (common to all houses)
+            if ((checkCol >= 24 && checkCol <= 27) && checkRow == 38) { 
                 int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
                 if (coords != null) {
-                    teleportPlayer(gp.prevFarmMap, coords[6], coords[7]); // Use stored entry point for specific farm map
+                    teleportPlayer(gp.prevFarmMap, coords[6], coords[7]); 
                 } else {
                     // Fallback in case prevFarmMap is not set or invalid
                     System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
-                    teleportPlayer("/maps/farmmm.txt", 18, 20); // Default to original farmmm exit
+                    teleportPlayer("/maps/farmmm.txt", 18, 20);
                 }
                 return;
             }
+
         } 
         
         if (currentMap.equals("/maps/river.txt")) {
-            if ((checkCol >= 21 && checkCol <= 24) && checkRow == 0) { // River exit trigger (common to all rivers)
+            if ((checkCol >= 21 && checkCol <= 24) && checkRow == 0) { 
                 int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
                 if (coords != null) {
                     teleportPlayer(gp.prevFarmMap, coords[8], coords[9]); // Use stored entry point for specific farm map
                 } else {
                     System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
-                    teleportPlayer("/maps/farmmm.txt", 31, 48); // Default to original farmmm river entry
+                    teleportPlayer("/maps/farmmm.txt", 31, 48); 
                 }
                 return;
             }
@@ -177,9 +177,20 @@ public class TileManager {
                 }
                 return;
             }
+
+            if ((checkCol == 24 || checkCol == 25) && checkRow == 50){
+                teleportPlayer("/maps/lake.txt", 25, 1);
+                return;
+            }
         }
 
-        // if (currentMap.equals(""))
+        if (currentMap.equals("/maps/lake.txt")){
+            if ((checkCol == 25 || checkCol == 26) && checkRow == 0){
+                teleportPlayer("/maps/worldmap.txt", 24 , 48);
+                return;
+            }
+        }
+
     }
 
     
