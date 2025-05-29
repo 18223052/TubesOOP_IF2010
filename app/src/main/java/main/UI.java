@@ -18,7 +18,9 @@ import GUI.panels.CharacterScreen;
 import GUI.panels.CookingMenu;
 import GUI.panels.ShippingBinMenu;
 import GUI.panels.StoreMenu;
+import GUI.panels.TitleScreen;
 import GUI.panels.NPCContextMenu;
+import GUI.panels.NameInputScreen;
 
 public class UI {
 
@@ -38,6 +40,8 @@ public class UI {
     private ShippingBinMenu shippingBinMenu;
     private StoreMenu storeMenu;
     private NPCContextMenu npcContextMenu;
+    public TitleScreen titleScreen;
+    private NameInputScreen nameInputScreen;
 
     public String currentDialog = "";
 
@@ -75,6 +79,8 @@ public class UI {
         shippingBinMenu = new ShippingBinMenu(gp, inventoryFont);
         storeMenu = new StoreMenu(gp, inventoryFont); 
         npcContextMenu = new NPCContextMenu(gp, generalFont); 
+        titleScreen = new TitleScreen(gp, generalFont);
+        nameInputScreen = new NameInputScreen(gp, generalFont);
     }
 
     private void setupDefaultGraphics(Graphics2D g2) {
@@ -89,6 +95,12 @@ public class UI {
         setupDefaultGraphics(g2); // Tetap panggil ini untuk pengaturan global (anti-aliasing, warna)
 
         switch (gp.gameState) {
+            case GamePanel.titleState: // Tambahkan case untuk titleState
+                titleScreen.draw(g2);
+                break;
+            case GamePanel.nameInputState: // Tambahkan case untuk nameInputState
+                nameInputScreen.draw(g2);
+                break;
             case GamePanel.playState:
                 hud.draw(g2);
                 break;
@@ -130,5 +142,18 @@ public class UI {
 
     public void clearDialog() {
         this.currentDialog = "";
+    }
+
+    public int getCommandNum() {
+        if (titleScreen != null) {
+            return titleScreen.commandNum;
+        }
+        return -1;
+    }
+
+    public void setCommandNum(int num) {
+        if (titleScreen != null) {
+            titleScreen.commandNum = num;
+        }
     }
 }

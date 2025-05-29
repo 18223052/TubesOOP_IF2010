@@ -69,8 +69,16 @@ public class Player extends Character {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getFarmMap(){
         return farmMap;
+    }
+
+    public void setFarmMap(String farmMap) {
+        this.farmMap = farmMap;
     }
 
     public String getGender(){
@@ -92,10 +100,10 @@ public class Player extends Character {
         speed = 4;
         direction = "down";
 
-        energy = 50;
+        energy = 100;
         gold = 100;
-        name = "bobi";
-        farmMap = "anjoy";
+        // name = "bobi";
+        // farmMap = "anjoy";
         // partner = null;
     }
 

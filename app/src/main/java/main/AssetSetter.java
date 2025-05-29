@@ -3,6 +3,7 @@ import entity.NPC_abigail;
 import entity.NPC_mayortadi;
 
 import object.Bed;
+import object.LakeFishingSpot;
 import object.LandTile;
 import object.OceanFishingSpot;
 import object.PondFishingSpot;
@@ -176,6 +177,13 @@ public class AssetSetter {
             RiverFishingSpot river4 = new RiverFishingSpot(gp, 23*gp.tileSize, 7*gp.tileSize);
             gp.obj.add(river4);
             
+        }
+
+        else if (gp.currMap.equals("/maps/lake.txt")){
+            LakeFishingSpot lake1 =  new LakeFishingSpot(gp, 26*gp.tileSize, 8*gp.tileSize);
+            gp.obj.add(lake1);
+            LakeFishingSpot lake2 = new LakeFishingSpot(gp, 25*gp.tileSize, 8*gp.tileSize);
+            gp.obj.add(lake2);
         }
     }
 

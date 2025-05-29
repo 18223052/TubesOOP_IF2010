@@ -76,6 +76,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Random random = new Random();
 
     // Game state constants
+    public static final int titleState = 0;
     public static final int playState = 1;
     public static final int pauseState = 2;
     public static final int dialogState = 3;
@@ -87,6 +88,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int storeState = 9;
     public static final int npcContextMenuState = 10;
     public static final int fishingState = 11;
+    public static final int nameInputState = 12;
 
     public int gameState;
     private final Object pauseLock = new Object();
@@ -127,6 +129,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public SaveManager saveManger; // Perhatikan nama variabel, konsistenkan jadi 'saveManager' (huruf kecil 'm')
     
+    public String playerNameInput = "";
+    public boolean requestingNameInput = false;
+
     // Game thread
     private Thread gameThread;
     private int fps = 60;
@@ -157,7 +162,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyH);
         this.setFocusable(true);
         
-        gameState = playState;
+        gameState = titleState;
 
         int randIndex = random.nextInt(farmMapVariations.length);
         this.currMap = farmMapVariations[randIndex];
@@ -187,13 +192,13 @@ public class GamePanel extends JPanel implements Runnable {
         player.inventory = inventoryController;
     
         tileM.setup();
-        setupMap(); 
-        addStartingItems();
-        addStoreItems();
+        // setupMap(); 
+        // addStartingItems();
+        // addStoreItems();
         eManager.setup();
 
         isComplete = true;
-        saveManger.loadGameState(); 
+        // saveManger.loadGameState(); 
     }
     
     // Setup objects dan NPC's
@@ -328,6 +333,7 @@ public class GamePanel extends JPanel implements Runnable {
         long currTime;
         long timer = 0;
         
+        // setup();
 
         while (gameThread != null) {
             currTime = System.nanoTime();
@@ -389,7 +395,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    // Optional: Method to check if game is currently paused
     public boolean isGamePaused() {
         synchronized (pauseLock) {
             return isTimePaused;
@@ -462,7 +467,6 @@ public class GamePanel extends JPanel implements Runnable {
     private void handleNewDayEvents() {
         System.out.println("New Day! Game Day: " + gameTime.getGameDay());
 
-        // Iterate through all game objects (assuming gp.obj holds them)
         for (SuperObj obj : obj) {
             if (obj instanceof LandTile) {
                 LandTile tile = (LandTile) obj;
@@ -485,9 +489,13 @@ public class GamePanel extends JPanel implements Runnable {
         
         if (!isComplete) {
             drawLoadingScreen(g2);
+            
         } else {
 
-            try {
+            if (gameState == titleState || gameState == nameInputState){
+                ui.draw(g2);
+            } else {
+                try {
                 tileM.draw(g2);
                 
                 for (SuperObj objInstance : obj) { 
@@ -526,7 +534,8 @@ public class GamePanel extends JPanel implements Runnable {
                 g2.setFont(new Font("Arial", Font.BOLD, 20));
                 g2.drawString("Rendering error: " + e.getMessage(), 50, 50);
                 e.printStackTrace();
-            }
+                }
+            }   
         }
         
         g2.dispose();
@@ -651,12 +660,14 @@ public class GamePanel extends JPanel implements Runnable {
             case storeState:
             case npcContextMenuState:
             case fishingState:
+            case nameInputState:
                 if (!isTimePaused) { 
                     pauseGameThread();
                 }
                 break;
             case playState:
-            case sleepState: 
+            case sleepState:
+            case titleState: 
                 if (isTimePaused) { 
                     resumeGameThread();
                 }
@@ -703,5 +714,23 @@ public class GamePanel extends JPanel implements Runnable {
         public void loadMap(String filePath) {
             // Do nothing
         }
+    }
+
+    public void startGame() {
+        // Inisialisasi player dengan nama yang diinput
+        player.setName(playerNameInput);
+        System.out.println("Player Name: " + player.getName());
+
+        // Lanjutkan dengan setup map dan item awal
+        int randIndex = random.nextInt(farmMapVariations.length);
+        this.currMap = farmMapVariations[randIndex];
+        this.prevFarmMap = this.currMap;
+        System.out.println("Starting map: " + currMap);
+        tileM.loadMap(this.currMap); // Load map pertama
+        setupMap();
+        addStartingItems();
+        addStoreItems();
+        saveManger.loadGameState(); // Load game state setelah player dibuat
+        setGameState(playState); // Ubah ke playState
     }
 }
