@@ -10,23 +10,23 @@ public class NPC_abigail extends NPC {
     public NPC_abigail(GamePanel gp,ItemFactory itemFactory) {
         super(gp);
         name = "Abigail";
+        direction = "down";
         gender = gender_female;
         setHatesAllUnlistedItems(true);
-        getImage();
+        getCharacterImage();
         initializeGiftPreference(itemFactory);
         setDialogue();
     }
 
-    public void getImage() {
-        u1 = setup("/player/abigail_diem");
-        u2 = setup("/player/abigail_diem");
-        r1 = setup("/player/abigail_diem");
-        r2 = setup("/player/abigail_diem");
-        l1 = setup("/player/abigail_diem");
-        l2 = setup("/player/abigail_diem");
+    @Override
+    public void getCharacterImage() {
         d1 = setup("/player/abigail_diem");
-        d2 = setup("/player/abigail_diem");
+        u1 = d1; u2 = d1; l1 = d1; l2 = d1; r1 = d1; r2 = d1; d2 = d1;
+        defaultImage = d1;
     }
+    
+    @Override
+    public void update(){}
     
 
     @Override

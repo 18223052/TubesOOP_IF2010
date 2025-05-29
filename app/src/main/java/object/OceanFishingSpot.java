@@ -6,11 +6,10 @@ import javax.imageio.ImageIO;
 
 import main.GamePanel;
 
-public class PondFishingSpot extends FishableSpot {
-    
-    public PondFishingSpot(GamePanel gp, int wX, int wY){
-        super(gp, 1, 1, FishLocation.POND);
-        this.name = "pond";
+public class OceanFishingSpot extends FishableSpot {
+    public OceanFishingSpot(GamePanel gp, int wX, int wY){
+        super(gp, 1, 1, FishLocation.OCEAN);
+        this.name = "ocean";
         this.wX = wX;
         this.wY = wY;
         collision = true;
@@ -27,4 +26,5 @@ public class PondFishingSpot extends FishableSpot {
             e.printStackTrace();
         }
     }
+    
 }
