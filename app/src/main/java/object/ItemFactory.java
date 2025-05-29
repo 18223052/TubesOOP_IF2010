@@ -155,10 +155,10 @@ public class ItemFactory {
             //     buyPrice = 300;
             //     sellPrice = 250;
             //     break;
-            // case "grape":
-            //     buyPrice = 100;
-            //     sellPrice = 10;
-            //     break;
+            case "grape":
+                buyPrice = 100;
+                sellPrice = 10;
+                break;
             // default:
             //     buyPrice = 50;
             //     sellPrice = 25;

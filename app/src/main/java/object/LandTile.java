@@ -61,70 +61,70 @@ public class LandTile extends SuperObj {
         tomatoWatered[2] = setup("/seeds/kedua_basah");
         wateredImagesMap.put(PlantType.TOMATO, tomatoWatered);
 
-        // POTATO
-        BufferedImage[] potatoPlanted = new BufferedImage[3];
-        potatoPlanted[0] = setup("/seeds/awal");
-        potatoPlanted[1] = setup("/seeds/ketiga");
-        potatoPlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.POTATO, potatoPlanted);
+        // // POTATO
+        // BufferedImage[] potatoPlanted = new BufferedImage[3];
+        // potatoPlanted[0] = setup("/seeds/awal");
+        // potatoPlanted[1] = setup("/seeds/ketiga");
+        // potatoPlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.POTATO, potatoPlanted);
 
-        BufferedImage[] potatoWatered = new BufferedImage[3];
-        potatoWatered[0] = setup("/seeds/awal_basah");
-        potatoWatered[1] = setup("/seeds/ketiga_basah");
-        potatoWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.POTATO, potatoWatered);
+        // BufferedImage[] potatoWatered = new BufferedImage[3];
+        // potatoWatered[0] = setup("/seeds/awal_basah");
+        // potatoWatered[1] = setup("/seeds/ketiga_basah");
+        // potatoWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.POTATO, potatoWatered);
 
-        // PARSNIP
-        BufferedImage[] parsnipPlanted = new BufferedImage[3];
-        parsnipPlanted[0] = setup("/seeds/awal");
-        parsnipPlanted[1] = setup("/seeds/ketiga");
-        parsnipPlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.PARSNIP, parsnipPlanted);
+        // // PARSNIP
+        // BufferedImage[] parsnipPlanted = new BufferedImage[3];
+        // parsnipPlanted[0] = setup("/seeds/awal");
+        // parsnipPlanted[1] = setup("/seeds/ketiga");
+        // parsnipPlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.PARSNIP, parsnipPlanted);
 
-        BufferedImage[] parsnipWatered = new BufferedImage[3];
-        parsnipWatered[0] = setup("/seeds/awal_basah");
-        parsnipWatered[1] = setup("/seeds/ketiga_basah");
-        parsnipWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.PARSNIP, parsnipWatered);
+        // BufferedImage[] parsnipWatered = new BufferedImage[3];
+        // parsnipWatered[0] = setup("/seeds/awal_basah");
+        // parsnipWatered[1] = setup("/seeds/ketiga_basah");
+        // parsnipWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.PARSNIP, parsnipWatered);
 
-        // CAULIFLOWER
-        BufferedImage[] cauliflowerPlanted = new BufferedImage[3];
-        cauliflowerPlanted[0] = setup("/seeds/awal");
-        cauliflowerPlanted[1] = setup("/seeds/ketiga");
-        cauliflowerPlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.CAULIFLOWER, cauliflowerPlanted);
+        // // CAULIFLOWER
+        // BufferedImage[] cauliflowerPlanted = new BufferedImage[3];
+        // cauliflowerPlanted[0] = setup("/seeds/awal");
+        // cauliflowerPlanted[1] = setup("/seeds/ketiga");
+        // cauliflowerPlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.CAULIFLOWER, cauliflowerPlanted);
 
-        BufferedImage[] cauliflowerWatered = new BufferedImage[3];
-        cauliflowerWatered[0] = setup("/seeds/awal_basah");
-        cauliflowerWatered[1] = setup("/seeds/ketiga_basah");
-        cauliflowerWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.CAULIFLOWER, cauliflowerWatered);
+        // BufferedImage[] cauliflowerWatered = new BufferedImage[3];
+        // cauliflowerWatered[0] = setup("/seeds/awal_basah");
+        // cauliflowerWatered[1] = setup("/seeds/ketiga_basah");
+        // cauliflowerWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.CAULIFLOWER, cauliflowerWatered);
 
-        // WHEAT
-        BufferedImage[] wheatPlanted = new BufferedImage[3];
-        wheatPlanted[0] = setup("/seeds/awal");
-        wheatPlanted[1] = setup("/seeds/ketiga");
-        wheatPlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.WHEAT, wheatPlanted);
+        // // WHEAT
+        // BufferedImage[] wheatPlanted = new BufferedImage[3];
+        // wheatPlanted[0] = setup("/seeds/awal");
+        // wheatPlanted[1] = setup("/seeds/ketiga");
+        // wheatPlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.WHEAT, wheatPlanted);
 
-        BufferedImage[] wheatWatered = new BufferedImage[3];
-        wheatWatered[0] = setup("/seeds/awal_basah");
-        wheatWatered[1] = setup("/seeds/ketiga_basah");
-        wheatWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.WHEAT, wheatWatered);
+        // BufferedImage[] wheatWatered = new BufferedImage[3];
+        // wheatWatered[0] = setup("/seeds/awal_basah");
+        // wheatWatered[1] = setup("/seeds/ketiga_basah");
+        // wheatWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.WHEAT, wheatWatered);
 
-        // BLUEBERRY
-        BufferedImage[] blueberryPlanted = new BufferedImage[3];
-        blueberryPlanted[0] = setup("/seeds/awal");
-        blueberryPlanted[1] = setup("/seeds/ketiga");
-        blueberryPlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.BLUEBERRY, blueberryPlanted);
+        // // BLUEBERRY
+        // BufferedImage[] blueberryPlanted = new BufferedImage[3];
+        // blueberryPlanted[0] = setup("/seeds/awal");
+        // blueberryPlanted[1] = setup(" /seeds/ketiga");
+        // blueberryPlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.BLUEBERRY, blueberryPlanted);
 
-        BufferedImage[] blueberryWatered = new BufferedImage[3];
-        blueberryWatered[0] = setup("/seeds/awal_basah");
-        blueberryWatered[1] = setup("/seeds/ketiga_basah");
-        blueberryWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.BLUEBERRY, blueberryWatered);
+        // BufferedImage[] blueberryWatered = new BufferedImage[3];
+        // blueberryWatered[0] = setup("/seeds/awal_basah");
+        // blueberryWatered[1] = setup("/seeds/ketiga_basah");
+        // blueberryWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.BLUEBERRY, blueberryWatered);
 
         // HOT_PEPPER
         BufferedImage[] hotPepperPlanted = new BufferedImage[3];
@@ -139,57 +139,57 @@ public class LandTile extends SuperObj {
         hotPepperWatered[2] = setup("/seeds/hotpepper_ketiga_basah");
         wateredImagesMap.put(PlantType.HOT_PEPPER, hotPepperWatered);
 
-        // MELON
-        BufferedImage[] melonPlanted = new BufferedImage[3];
-        melonPlanted[0] = setup("/seeds/awal");
-        melonPlanted[1] = setup("/seeds/ketiga");
-        melonPlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.MELON, melonPlanted);
+        // // MELON
+        // BufferedImage[] melonPlanted = new BufferedImage[3];
+        // melonPlanted[0] = setup("/seeds/awal");
+        // melonPlanted[1] = setup("/seeds/ketiga");
+        // melonPlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.MELON, melonPlanted);
 
-        BufferedImage[] melonWatered = new BufferedImage[3];
-        melonWatered[0] = setup("/seeds/awal_basah");
-        melonWatered[1] = setup("/seeds/ketiga_basah");
-        melonWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.MELON, melonWatered);
+        // BufferedImage[] melonWatered = new BufferedImage[3];
+        // melonWatered[0] = setup("/seeds/awal_basah");
+        // melonWatered[1] = setup("/seeds/ketiga_basah");
+        // melonWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.MELON, melonWatered);
 
-        // CRANBERRY
-        BufferedImage[] cranberryPlanted = new BufferedImage[3];
-        cranberryPlanted[0] = setup("/seeds/awal");
-        cranberryPlanted[1] = setup("/seeds/ketiga");
-        cranberryPlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.CRANBERRY, cranberryPlanted);
+        // // CRANBERRY
+        // BufferedImage[] cranberryPlanted = new BufferedImage[3];
+        // cranberryPlanted[0] = setup("/seeds/awal");
+        // cranberryPlanted[1] = setup("/seeds/ketiga");
+        // cranberryPlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.CRANBERRY, cranberryPlanted);
 
-        BufferedImage[] cranberryWatered = new BufferedImage[3];
-        cranberryWatered[0] = setup("/seeds/awal_basah");
-        cranberryWatered[1] = setup("/seeds/ketiga_basah");
-        cranberryWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.CRANBERRY, cranberryWatered);
+        // BufferedImage[] cranberryWatered = new BufferedImage[3];
+        // cranberryWatered[0] = setup("/seeds/awal_basah");
+        // cranberryWatered[1] = setup("/seeds/ketiga_basah");
+        // cranberryWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.CRANBERRY, cranberryWatered);
 
-        // PUMPKIN
-        BufferedImage[] pumpkinPlanted = new BufferedImage[3];
-        pumpkinPlanted[0] = setup("/seeds/awal");
-        pumpkinPlanted[1] = setup("/seeds/ketiga");
-        pumpkinPlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.PUMPKIN, pumpkinPlanted);
+        // // PUMPKIN
+        // BufferedImage[] pumpkinPlanted = new BufferedImage[3];
+        // pumpkinPlanted[0] = setup("/seeds/awal");
+        // pumpkinPlanted[1] = setup("/seeds/ketiga");
+        // pumpkinPlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.PUMPKIN, pumpkinPlanted);
 
-        BufferedImage[] pumpkinWatered = new BufferedImage[3];
-        pumpkinWatered[0] = setup("/seeds/awal_basah");
-        pumpkinWatered[1] = setup("/seeds/ketiga_basah");
-        pumpkinWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.PUMPKIN, pumpkinWatered);
+        // BufferedImage[] pumpkinWatered = new BufferedImage[3];
+        // pumpkinWatered[0] = setup("/seeds/awal_basah");
+        // pumpkinWatered[1] = setup("/seeds/ketiga_basah");
+        // pumpkinWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.PUMPKIN, pumpkinWatered);
 
-        // GRAPE
-        BufferedImage[] grapePlanted = new BufferedImage[3];
-        grapePlanted[0] = setup("/seeds/awal");
-        grapePlanted[1] = setup("/seeds/ketiga");
-        grapePlanted[2] = setup("/seeds/kedua");
-        plantedImagesMap.put(PlantType.GRAPE, grapePlanted);
+        // // GRAPE
+        // BufferedImage[] grapePlanted = new BufferedImage[3];
+        // grapePlanted[0] = setup("/seeds/awal");
+        // grapePlanted[1] = setup("/seeds/ketiga");
+        // grapePlanted[2] = setup("/seeds/kedua");
+        // plantedImagesMap.put(PlantType.GRAPE, grapePlanted);
 
-        BufferedImage[] grapeWatered = new BufferedImage[3];
-        grapeWatered[0] = setup("/seeds/awal_basah");
-        grapeWatered[1] = setup("/seeds/ketiga_basah");
-        grapeWatered[2] = setup("/seeds/kedua_basah");
-        wateredImagesMap.put(PlantType.GRAPE, grapeWatered);
+        // BufferedImage[] grapeWatered = new BufferedImage[3];
+        // grapeWatered[0] = setup("/seeds/awal_basah");
+        // grapeWatered[1] = setup("/seeds/ketiga_basah");
+        // grapeWatered[2] = setup("/seeds/kedua_basah");
+        // wateredImagesMap.put(PlantType.GRAPE, grapeWatered);
 
     } catch (Exception e){
         System.err.println("Error loading LandTile images: " + e.getMessage());
