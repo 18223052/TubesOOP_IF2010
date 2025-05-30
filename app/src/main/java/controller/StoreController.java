@@ -28,19 +28,6 @@ public class StoreController {
         System.out.println("Added item: " + item.getName() + "(" + getItemCount(item.getName()) + ") to storeItems");
     }
 
-    public void removeItem(int index) {
-        if (index >= 0 && index < storeItems.size()) {
-            IItem removed = storeItems.remove(index);
-            System.out.println("Removed item: " + removed.getName() + " from storeItems");
-
-            if (selectedSlot >= storeItems.size() && storeItems.size() > 0) {
-                selectedSlot = storeItems.size() - 1;
-            } else if (storeItems.isEmpty()) {
-                selectedSlot = 0;
-            }
-        }
-    }
-
     /**
      * Mendapatkan jumlah total item dalam kategori tertentu. Berguna untuk "Any
      * Fish".
@@ -100,7 +87,6 @@ public class StoreController {
                 gp.player.addGold(-item.getBuyPrice());
                 goldSpent += item.getBuyPrice();
                 selectedSlot = 0;
-                removeItem(index);
             } else {
                 System.out.println("your money is not enough to buy " + item.getName());
             }

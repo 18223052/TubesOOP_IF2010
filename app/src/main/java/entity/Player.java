@@ -31,6 +31,7 @@ public class Player extends Character {
     public InventoryController inventory;
     public static final int MAX_ENERGY = 100;
     public static final int MIN_ENERGY_BEFORE_SLEEP  = -20;
+    public static final int MIN_ENERGY_FOR_ACTION  = -20;
 
     private String name;
     private String gender;
@@ -92,6 +93,10 @@ public class Player extends Character {
 
     public int getEnergy(){
         return energy;
+    }
+
+    public int getMaxEnergy(){
+        return MAX_ENERGY;
     }
 
 

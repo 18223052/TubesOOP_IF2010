@@ -10,6 +10,7 @@ import object.IUsable;
 import object.InventorySlot;
 import object.NoItem;
 import object.RecipeItem;
+import object.SeedItem;
 import object.ToolItem;
 import GUI.panels.InventoryScreen;
 
@@ -304,7 +305,6 @@ public class InventoryController {
         IItem item = slot.getItem();
 
         if (item instanceof ToolItem) {
-
             if (gp.player.getActiveItem() == item) {
                 gp.player.setActiveItem(new NoItem(gp)); 
                 gp.ui.setDialog("Unequipped " + item.getName() + "."); 
@@ -332,7 +332,17 @@ public class InventoryController {
                 gp.player.setActiveItem(new NoItem(gp));
             }
             removeItem(index); 
-        } else {
+        } else if (item instanceof SeedItem){
+            if (gp.player.getActiveItem() == item) {
+                gp.player.setActiveItem(new NoItem(gp)); 
+                gp.ui.setDialog("Unequipped " + item.getName() + "."); 
+                System.out.println("Melepas equip: " + item.getName());
+            } else {
+            System.out.println("Menggunakan: " + item.getName());
+                gp.player.setActiveItem(item); 
+                gp.ui.setDialog("Equipped " + item.getName() + "."); }
+        }
+        else {
             gp.ui.setDialog("You can't use " + item.getName() + " this way.");
             System.out.println("Item ini bisa dijual: " + item.getName());
         }
