@@ -11,7 +11,8 @@ public class NPC_mayortadi extends NPC {
         super(gp);
         name = "Mayor Tadi";
         direction = "down";
-        gender = gender_male;
+        gender = NPC.gender_male;
+        heartPoints = MAX_HEART_POINTS; //Debug
         setHatesAllUnlistedItems(true);
         getCharacterImage();
         initializeGiftPreference(itemFactory);

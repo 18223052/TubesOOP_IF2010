@@ -321,12 +321,63 @@ public class KeyHandler implements KeyListener {
                 gp.isGifting = false;
                 // gp.resumeGameThread(); // setGameState sudah handle resume/pause
                 break;
+            case KeyEvent.VK_P: // Propose
+                if (gp.npcController != null) { //
+                    if (gp.currNPC.isProposable(gp.player)){
+                        System.out.println("DEBUG PROPOSAL: Bisa dilamar");
+                    } else {
+                        System.out.println("DEBUG PROPOSAL: Gabisa dilamar");
+                    }
+                    // Syarat utama untuk *mencoba* melamar adalah pemain memiliki "Proposal Ring".
+                    if (gp.player.hasItem("ring")) { // hasItem() di Player
+                        if (gp.currNPC.isProposable(gp.player)){
+                            gp.npcController.attemptPropose(gp.currNPC); // Panggil NPCController
+                            System.out.println("Melamar...");
+                        } 
+                    } else {
+                        // Pemain tidak punya cincin, berikan pesan.
+                        if (gp.ui != null) { //
+                            gp.ui.setDialog("You need a Ring to propose."); //
+                            // Setelah pesan ini, GamePanel akan menggambar dialog jika state adalah dialogState
+                            gp.setGameState(gp.dialogState); //
+                            // gp.currNPC tetap untuk konteks dialog.
+                        }
+                    }
+                }
+                break;
+
+            case KeyEvent.VK_M: // Marry
+                if (gp.npcController != null) { //
+                    // Validasi awal apakah pemain bisa *mencoba* menikahi NPC ini
+                    boolean canTryToMarry = gp.player.getFiance() == gp.currNPC && //
+                                            gp.player.hasItem("ring"); //
+                                            // Pengecekan canMarryPlayer akan dilakukan di dalam attemptMarry
+
+                    if (canTryToMarry) {
+                        gp.npcController.attemptMarry();
+                    } else {
+                        if (gp.ui != null) { //
+                            String message = "Cannot marry " + gp.currNPC.getName() + " at this time."; //
+                            if (gp.player.getFiance() != gp.currNPC) { //
+                                message = "This is not your fiance!";
+                            } else if (!gp.player.hasItem("ring")) { //
+                                message = "You need the Proposal Ring for the ceremony!";
+                            }
+                            // Tidak perlu cek canMarryPlayer di sini karena itu urusan attemptMarry.
+                            // UI hanya menampilkan opsi jika canMarryPlayer true.
+                            // Jika pemain menekan M meskipun UI tidak menampilkan, pesan ini akan muncul.
+                            gp.ui.setDialog(message); //
+                            gp.setGameState(gp.dialogState); //
+                        }
+                    }
+                }
+                break;
             case KeyEvent.VK_S:
                 if (gp.currNPC != null && gp.currNPC.hasStore()) {
                     gp.setGameState(GamePanel.storeState);
                 }
                 break;
-        }
+        }    
     }
 
     private void toggleStoreState() {

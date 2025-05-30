@@ -1,6 +1,6 @@
 package main;
 import entity.NPC_abigail;
-import entity.NPC_mayortadi;
+import entity.*;
 
 import object.Bed;
 import object.LakeFishingSpot;

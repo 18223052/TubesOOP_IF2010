@@ -10,8 +10,8 @@ public class NPC_abigail extends NPC {
     public NPC_abigail(GamePanel gp,ItemFactory itemFactory) {
         super(gp);
         name = "Abigail";
-        direction = "down";
-        gender = gender_female;
+        gender = NPC.gender_female;
+        heartPoints = MAX_HEART_POINTS;
         setHatesAllUnlistedItems(true);
         getCharacterImage();
         initializeGiftPreference(itemFactory);

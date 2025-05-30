@@ -46,42 +46,53 @@ public class NPCContextMenu extends BaseUIPanel {
             g2.drawString("[G] Beri Hadiah", textX, textY); // Updated text
             textY += lineHeight;
 
-            if (gp.player != null && gp.player.inventory.hasItem("ring")) {
-                // if (currentSelection == optionIndex) g2.setColor(Color.YELLOW);
+            boolean canDisplayProposeOption = gp.player.inventory.hasItem("ring") && // Akses InventoryController langsung dari Player
+                                            gp.currNPC.getGender().equals(NPC.gender_female) && // Asumsi ada getGender() di NPC
+                                            gp.player.getFiance() != gp.currNPC && //
+                                            !gp.player.hasSpouse(); //
 
-
-                if (gp.currNPC.isProposable(gp.player)) {
-                    g2.setColor(Color.PINK); // Warna jika NPC kemungkinan besar menerima
+            if (canDisplayProposeOption) {
+                if (gp.currNPC.isProposable(gp.player)) { // isProposable mengecek hati, status NPC, dan status pemain
+                    g2.setColor(Color.PINK);
                     g2.drawString("[P] Propose", textX, textY);
                 } else {
-                    g2.setColor(Color.ORANGE); 
-                    g2.drawString("[P] Propose (?)", textX, textY); // Tambahkan (?) sebagai petunjuk
+                    g2.setColor(Color.ORANGE);
+                    // Beri petunjuk yang lebih spesifik jika memungkinkan
+                    String proposeHint = "[P] Propose (?)";
+                    if (!gp.currNPC.getRelationshipStatus().equals(NPC.STATUS_SINGLE) && !"neutral".equals(gp.currNPC.getRelationshipStatus())) { // Asumsi ada getRelationshipStatus dan STATUS_SINGLE
+                        proposeHint = "[P] Propose (Not Single)";
+                    } else if (gp.currNPC.getHeartPoints() < gp.currNPC.getMaxHeartPoint()) { //
+                        proposeHint = "[P] Propose (Low Hearts)";
+                    }
+                    g2.drawString(proposeHint, textX, textY);
                 }
-                g2.setColor(Color.WHITE); // Reset warna
-                // optionIndex++;
+                g2.setColor(Color.WHITE);
                 textY += lineHeight;
-            } else if (gp.player != null && !gp.player.inventory.hasItem("ring")) {
-                // Jika tidak punya cincin, tampilkan sebagai tidak aktif
-                // if (currentSelection == optionIndex) g2.setColor(Color.YELLOW); // Mungkin tidak bisa dipilih
+            } else if (gp.player != null && !gp.player.inventory.hasItem("ring") && //
+                    gp.currNPC.getGender().equals(NPC.gender_female) && //
+                    gp.player.getFiance() != gp.currNPC && //
+                    !gp.player.hasSpouse()) { //
+                // Tidak punya cincin, tapi kondisi lain untuk propose terpenuhi
                 g2.setColor(Color.GRAY);
                 g2.drawString("[P] Propose (Need Ring)", textX, textY);
                 g2.setColor(Color.WHITE);
-                // optionIndex++; // Atau lewati opsi ini dari seleksi
                 textY += lineHeight;
             }
 
-            if (gp.player != null && gp.player.getFiance() == gp.currNPC &&
-                gp.currNPC.canMarryPlayer(gp.player, gp.gameTime.getGameDay())) {
-                // if (currentSelection == optionIndex) g2.setColor(Color.YELLOW);
-                if (gp.player.inventory.hasItem("ring")) { // Cek apakah pemain punya cincin (untuk upacara)
-                    g2.setColor(Color.CYAN); 
+
+            // --- Opsi Marry ---
+            // Syarat: NPC adalah tunangan, bisa menikah hari ini, dan pemain punya cincin
+            if (gp.player.getFiance() == gp.currNPC && //
+                gp.currNPC.canMarryPlayer(gp.player, gp.gameTime.getGameDay())) { //
+
+                if (gp.player.inventory.hasItem("ring")) { // Akses InventoryController dari Player
+                    g2.setColor(Color.CYAN);
                     g2.drawString("[M] Marry", textX, textY);
                 } else {
                     g2.setColor(Color.GRAY);
                     g2.drawString("[M] Marry (Need Ring)", textX, textY);
                 }
                 g2.setColor(Color.WHITE);
-                // optionIndex++;
                 textY += lineHeight;
             }
 

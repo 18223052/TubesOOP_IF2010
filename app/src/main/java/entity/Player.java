@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.io.StringBufferInputStream;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList; // Import ArrayList
 import java.util.List;
@@ -12,7 +13,7 @@ import controller.InventoryController;
 import interactable.Interactable;
 import main.GamePanel;
 import main.KeyHandler;
-
+import object.BaseItem;
 import object.IItem;
 import object.NoItem;
 
@@ -57,6 +58,9 @@ public class Player extends Character {
         interactionBox = new Rectangle();
         interactionBox.width = gp.tileSize;
         interactionBox.height = gp.tileSize;
+        interactionDistance = gp.tileSize;
+
+        this.gender = "Male";
 
         inventory = new InventoryController(gp);
 
@@ -124,6 +128,17 @@ public class Player extends Character {
         return activeItem;
     }
 
+    public String getPartner(){
+        if (this.fiance != null || this.spouse != null){
+            if (this.fiance == null){
+                return this.spouse.getName();
+            } else {
+                return this.fiance.getName();
+            }
+        }
+        return null;
+    }
+
     public void addGold(int amount) {
         this.gold += amount;
     }
@@ -137,6 +152,16 @@ public class Player extends Character {
 
     public void setEnergy(int energy){
         this.energy = energy;
+        if (this.energy > MAX_ENERGY){
+            this.energy = MAX_ENERGY;
+        }
+    }
+
+    public void changeEnergy(int amount) {
+        this.energy += amount;
+        if (this.energy > MAX_ENERGY) {
+            this.energy = MAX_ENERGY;
+        }
     }
 
     public boolean deductEnergy(int amount){
@@ -150,38 +175,38 @@ public class Player extends Character {
         return true;
     }
 
-    // Propose & Marry
-     public NPC getFiance() {
-        return this.fiance;
-    }
+    // // Propose & Marry
+    //  public NPC getFiance() {
+    //     return this.fiance;
+    // }
 
-    public void setFiance(NPC npc) {
-        this.fiance = npc;
-        if (npc != null) { 
-            this.spouse = null;
-        }
-    }
+    // public void setFiance(NPC npc) {
+    //     this.fiance = npc;
+    //     if (npc != null) { 
+    //         this.spouse = null;
+    //     }
+    // }
 
-    public boolean hasFiance() {
-        return this.fiance != null;
-    }
+    // public boolean hasFiance() {
+    //     return this.fiance != null;
+    // }
 
-    public NPC getSpouse() {
-        return this.spouse;
-    }
+    // public NPC getSpouse() {
+    //     return this.spouse;
+    // }
 
-    public void setSpouse(NPC npc) {
-        this.spouse = npc;
-        if (npc != null) { 
-            if (this.fiance == npc) { 
-                this.fiance = null; 
-            }
-        }
-    }
+    // public void setSpouse(NPC npc) {
+    //     this.spouse = npc;
+    //     if (npc != null) { 
+    //         if (this.fiance == npc) { 
+    //             this.fiance = null; 
+    //         }
+    //     }
+    // }
 
-    public boolean hasSpouse() {
-        return this.spouse != null;
-    }
+    // public boolean hasSpouse() {
+    //     return this.spouse != null;
+    // }
 
 
     // untuk masak
@@ -363,7 +388,7 @@ public class Player extends Character {
 
     @Override
     public void draw(Graphics2D g2) {
-        super.draw(g2); // Memanggil draw method dari superclass
+        super.draw(g2);
 
         if (activeItem != null && !(activeItem instanceof NoItem) && activeItem.getImage() != null) {
             BufferedImage itemImage = activeItem.getImage();
@@ -463,5 +488,47 @@ public class Player extends Character {
             }
         }
         return list;
+    }
+
+    // Propose & Marry
+
+    public NPC getFiance() {
+        return this.fiance;
+    }
+
+    public void setFiance(NPC npc) {
+        this.fiance = npc;
+        if (npc != null) { // Jika menetapkan tunangan baru
+            this.spouse = null; // Pastikan tidak bisa memiliki pasangan dan tunangan sekaligus
+        }
+    }
+
+    public boolean hasFiance() {
+        return this.fiance != null;
+    }
+
+    public NPC getSpouse() {
+        return this.spouse;
+    }
+
+    public void setSpouse(NPC npc) {
+        this.spouse = npc;
+        if (npc != null) { // Jika menetapkan pasangan baru
+            if (this.fiance == npc) { // Jika menikah dengan tunangan saat ini
+                this.fiance = null; // Hapus status tunangan
+            }
+        }
+    }
+
+    public boolean hasSpouse() {
+        return this.spouse != null;
+    }
+
+    public boolean hasItem(String itemName) {
+        if (this.inventory != null) { 
+            return this.inventory.hasItem(itemName);
+        }
+        System.err.println("Peringatan: InventoryController adalah null di Player.hasItem()");
+        return false;
     }
 }
