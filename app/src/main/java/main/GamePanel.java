@@ -249,8 +249,15 @@ public class GamePanel extends JPanel implements Runnable {
             loadMapStateFromCache(mapCache.get(petaBaruUntukDimuat));
             System.out.println("DEBUG: State peta baru dimuat dari cache: " + petaBaruUntukDimuat);
         } else {
-            setupMap();
+            aSetter.setObj();
+            // setupMap();
             System.out.println("DEBUG: Melakukan setupMap() untuk PETA BARU: " + petaBaruUntukDimuat);
+            // mapCache.put(petaBaruUntukDimuat, saveCurrentMapState());
+        }
+
+        aSetter.setNPC();
+
+        if (!mapCache.containsKey(petaBaruUntukDimuat)) { // Check if it was just set up
             mapCache.put(petaBaruUntukDimuat, saveCurrentMapState());
         }
 
@@ -261,16 +268,26 @@ public class GamePanel extends JPanel implements Runnable {
     private MapStateData saveCurrentMapState(){
         MapStateData data = new MapStateData();
         data.objects = new ArrayList<>(this.obj);
-        return data;
+
+        data.npcs = new NPC[this.npc.length];
+        for (int i = 0; i < this.npc.length; i++) {
+            data.npcs[i] = this.npc[i]; 
+        }
+    return data;
     }
 
     private void loadMapStateFromCache(MapStateData data){
         this.obj.clear();
         this.obj.addAll(data.objects);
+        this.aSetter.clearNPCs();
+        for (int i = 0; i < data.npcs.length; i++){
+            this.npc[i] = data.npcs[i];
+        }
     }
 
     private static class MapStateData implements java.io.Serializable{
         public ArrayList<SuperObj> objects;
+        public NPC[] npcs;
     }
     
 
