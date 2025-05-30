@@ -79,7 +79,7 @@ public class NPCController {
 
         gp.gameTime.addTime(60); 
 
-        if (!gp.player.hasItem("ring")) { 
+        if (!gp.player.inventory.hasItem("ring")) { 
             gp.ui.setDialog("You need a ring to propose."); 
             gp.player.changeEnergy(-20); 
             if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
@@ -132,7 +132,7 @@ public class NPCController {
 
         NPC fiance = gp.player.getFiance(); 
 
-        if (!gp.player.hasItem("ring")) { 
+        if (!gp.player.inventory.hasItem("ring")) { 
             gp.ui.setDialog("You need the Ring for the wedding ceremony!"); 
             if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
             return;

@@ -14,7 +14,6 @@ import main.GamePanel;
 import main.KeyHandler;
 import object.IItem;
 import object.NoItem;
-import entity.*;
 
 public class Player extends Character {
 
@@ -41,10 +40,6 @@ public class Player extends Character {
     // private NPC partner;
     private NPC fiance = null;
     private NPC spouse = null;
-    public int fishCaught = 0;
-    public boolean hasFishingPuerfish = false;
-    public boolean hasFishingLegend = false;
-
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -73,7 +68,7 @@ public class Player extends Character {
         updateInteractionBox();
     }
 
-    public String getName() {
+    public String getName(){
         return name;
     }
 
@@ -85,15 +80,19 @@ public class Player extends Character {
         return farmMap;
     }
 
+    public void setFarmMap(String farmMap) {
+        this.farmMap = farmMap;
+    }
+
     public String getGender(){
         return gender;
     }
 
-    public int getGold() {
+    public int getGold(){
         return gold;
     }
 
-    public int getEnergy() {
+    public int getEnergy(){
         return energy;
     }
 
@@ -148,7 +147,7 @@ public class Player extends Character {
         }
     }
 
-    public void setEnergy(int energy) {
+    public void setEnergy(int energy){
         this.energy = energy;
         if (this.energy > MAX_ENERGY){
             this.energy = MAX_ENERGY;
@@ -162,10 +161,10 @@ public class Player extends Character {
         }
     }
 
-    public boolean deductEnergy(int amount) {
+    public boolean deductEnergy(int amount){
         this.energy -= amount;
 
-        if (this.energy <= MIN_ENERGY_BEFORE_SLEEP) {
+        if (this.energy <= MIN_ENERGY_BEFORE_SLEEP){
             System.out.println("Energy mencapai " + MIN_ENERGY_BEFORE_SLEEP + "! Player harus tidur.");
             gp.sleepController.forceSleep();
         }
@@ -318,6 +317,7 @@ public class Player extends Character {
         return index;
     }
 
+
     public int[] getInteractionTile() {
         updateInteractionBox();
         return new int[]{interactionTileCol, interactionTileRow};
@@ -363,7 +363,7 @@ public class Player extends Character {
                 }
             }
 
-            super.update();
+            super.update(); 
         }
 
         if (keyH.interactPressed) {
@@ -381,6 +381,7 @@ public class Player extends Character {
         }
         updateInteractionBox();
     }
+
 
     @Override
     public void draw(Graphics2D g2) {
@@ -462,7 +463,7 @@ public class Player extends Character {
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Arial", Font.BOLD, 10));
         g2.drawString("Tile: " + interactionTileCol + "," + interactionTileRow,
-                screenX + 5, screenY + 15);
+            screenX + 5, screenY + 15);
     }
 
     public Rectangle getInteractionBox() {
@@ -473,6 +474,7 @@ public class Player extends Character {
         return inventory;
     }
 
+   
     private <T extends Interactable> ArrayList<T> convertArrayToArrayList(T[] array) {
         ArrayList<T> list = new ArrayList<>();
         if (array != null) {
@@ -485,7 +487,39 @@ public class Player extends Character {
         return list;
     }
 
-   
+    // Propose & Marry
+
+    public NPC getFiance() {
+        return this.fiance;
+    }
+
+    public void setFiance(NPC npc) {
+        this.fiance = npc;
+        if (npc != null) { // Jika menetapkan tunangan baru
+            this.spouse = null; // Pastikan tidak bisa memiliki pasangan dan tunangan sekaligus
+        }
+    }
+
+    public boolean hasFiance() {
+        return this.fiance != null;
+    }
+
+    public NPC getSpouse() {
+        return this.spouse;
+    }
+
+    public void setSpouse(NPC npc) {
+        this.spouse = npc;
+        if (npc != null) { // Jika menetapkan pasangan baru
+            if (this.fiance == npc) { // Jika menikah dengan tunangan saat ini
+                this.fiance = null; // Hapus status tunangan
+            }
+        }
+    }
+
+    public boolean hasSpouse() {
+        return this.spouse != null;
+    }
 
     // public boolean hasItem(String itemName) {
     //     if (this.inventory != null) { 
