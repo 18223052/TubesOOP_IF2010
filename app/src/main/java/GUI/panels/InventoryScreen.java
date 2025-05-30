@@ -25,7 +25,6 @@ public class InventoryScreen extends BaseUIPanel {
     private final int INV_SLOT_SIZE;
     private final int INV_SLOT_PADDING = 8;
     private final int INV_COLS = 4;
-    // CORNER_RADIUS is now inherited from BaseUIPanel
 
     // private final Color BACKGROUND_COLOR = new Color(25, 25, 35, 240);
     // private final Color FRAME_BORDER_COLOR = new Color(100, 120, 150, 200);

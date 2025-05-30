@@ -209,8 +209,11 @@ public class TileManager {
         gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
 
 
-        gp.player.deductEnergy(10);
-        gp.gameTime.addTime(15);
+        if (!mapPathYangAkanDisimpan.equals("/maps/rumah.txt") && !newMapPath.equals("/maps/rumah.txt")) {
+            gp.player.deductEnergy(10);
+            gp.gameTime.addTime(15);
+        }
+        
     }
     
     public void loadMap(String filePath) {
