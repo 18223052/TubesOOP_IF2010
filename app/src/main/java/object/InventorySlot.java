@@ -1,10 +1,10 @@
-// In a new file: object/InventorySlot.java
+
 package object;
 
 public class InventorySlot {
     private IItem item;
     private int quantity;
-    private final int maxStackSize = 10; // Define max stack size here
+    private final int maxStackSize = 10;
 
     public InventorySlot(IItem item, int quantity) {
         this.item = item;

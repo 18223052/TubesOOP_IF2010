@@ -5,7 +5,7 @@ import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {
-        // Create and set up the window
+
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);

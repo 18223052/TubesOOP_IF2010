@@ -13,6 +13,7 @@ public class PondFishingSpot extends FishableSpot {
         this.name = "pond";
         this.wX = wX;
         this.wY = wY;
+        collision = true;
         getImages();
     }
 

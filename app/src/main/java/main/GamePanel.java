@@ -5,19 +5,27 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Random;
 import java.util.ArrayList;
-import java.util.Random; // Import ArrayList jika Anda memutuskan untuk menggunakannya
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
+
+
 import controller.CookingController;
 import controller.FarmingController;
-import controller.InventoryController;
-import controller.NPCController;
 import controller.ShippingBinController;
 import controller.SleepController;
 import controller.StoreController;
 import controller.WatchingController;
+import controller.FishingController;
+import controller.InventoryController;
+import controller.NPCController;
+
+
+import controller.StoreController;
 import entity.NPC;
 import entity.Player;
 import environment.EnvironmentManager;
@@ -28,7 +36,9 @@ import environment.WeatherType;
 import object.ItemFactory;
 import object.LandTile;
 import object.SuperObj;
-import object.TileState; // Tambahkan import ini untuk LandTile
+import object.TileState;
+import object.LandTile; 
+import object.PlantType;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -68,6 +78,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Random random = new Random();
 
     // Game state constants
+    public static final int titleState = 0;
     public static final int playState = 1;
     public static final int pauseState = 2;
     public static final int dialogState = 3;
@@ -78,6 +89,9 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int shippingBinState = 8;
     public static final int storeState = 9;
     public static final int npcContextMenuState = 10;
+    public static final int fishingState = 11;
+    public static final int nameInputState = 12;
+
     public int gameState;
     private final Object pauseLock = new Object();
 
@@ -98,6 +112,7 @@ public class GamePanel extends JPanel implements Runnable {
     public StoreController storeController;
     public NPCController npcController;
     public FarmingController farmingController;
+    public FishingController fishingController;
     public boolean isGifting = false;
 
     public ItemFactory itemFactory;
@@ -116,12 +131,21 @@ public class GamePanel extends JPanel implements Runnable {
 
     public SaveManager saveManger; // Perhatikan nama variabel, konsistenkan jadi 'saveManager' (huruf kecil 'm')
     
+    public String playerNameInput = "";
+    public boolean requestingNameInput = false;
+
     // Game thread
     private Thread gameThread;
     private int fps = 60;
     
 
     private boolean isComplete = false;
+    private int lastCheckedGameDay = -1;
+
+    private Map<String, MapStateData> mapCache = new HashMap<>();
+
+
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -140,7 +164,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyH);
         this.setFocusable(true);
         
-        gameState = playState;
+        gameState = titleState;
 
         int randIndex = random.nextInt(farmMapVariations.length);
         this.currMap = farmMapVariations[randIndex];
@@ -161,6 +185,7 @@ public class GamePanel extends JPanel implements Runnable {
         sleepController = new SleepController(this, player);
         watchingController = new WatchingController(this);
         farmingController = new FarmingController(this, gameTime);
+        fishingController = new FishingController(this);
 
         // Weather
         weatherManager = new WeatherManager();
@@ -169,27 +194,23 @@ public class GamePanel extends JPanel implements Runnable {
         player.inventory = inventoryController;
     
         tileM.setup();
-        setupMap(); 
-        addStartingItems();
-        addStoreItems();
+        // setupMap(); 
+        // addStartingItems();
+        // addStoreItems();
         eManager.setup();
 
         isComplete = true;
-
-        // MUAT GAME STATE DI SINI SETELAH SEMUA OBJEK DI INISIALISASI
-        // Ini akan menimpa state awal LandTile yang di-set oleh setupMap() jika ada save data
-        saveManger.loadGameState(); 
+        // saveManger.loadGameState(); 
     }
     
     // Setup objects dan NPC's
     public void setupMap() {
-        aSetter.clearObjects(); // Pastikan method ini membersihkan 'obj' ArrayList
+        aSetter.clearObjects(); 
         aSetter.clearNPCs();
-        aSetter.setObj(); // Pastikan method ini mengisi 'obj' ArrayList dengan objek baru
+        aSetter.setObj(); 
         aSetter.setNPC();
     }
 
-    // Method untuk menyimpan game
     public void saveGame(){
         saveManger.saveGameState();
     }
@@ -213,55 +234,80 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
-    // Ganti nama dari public void changeMap()
+
     public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) {
-        // A. Simpan state untuk peta LAMA
-        String cacheCurrMapSaatIni = this.currMap; // Simpan currMap (seharusnya petaBaruUntukDimuat)
-        this.currMap = petaLamaUntukDisimpan;      // Set SEMENTARA currMap ke peta LAMA agar SaveManager pakai nama file yg benar
-        System.out.println("DEBUG: Akan menyimpan state untuk PETA LAMA: " + petaLamaUntukDisimpan);
-        saveGame(); // Ini akan menggunakan this.currMap (petaLamaUntukDisimpan)
-        this.currMap = cacheCurrMapSaatIni;        // KEMBALIKAN currMap ke peta BARU (petaBaruUntukDimuat)
-        System.out.println("DEBUG: Selesai menyimpan data untuk PETA LAMA: " + petaLamaUntukDisimpan);
 
-        // B. Pastikan this.currMap adalah peta BARU (seharusnya sudah dari TileManager)
-        // System.out.println("DEBUG: Peta saat ini diset ke: " + this.currMap + " (Harusnya sama dengan petaBaruUntukDimuat: " + petaBaruUntukDimuat + ")");
+        mapCache.put(petaLamaUntukDisimpan, saveCurrentMapState());
+        System.out.println("DEBUG: State Peta lama disimpan ke cache: " + petaLamaUntukDisimpan);
 
-        // C. Setup objek untuk peta BARU
-        System.out.println("DEBUG: Melakukan setupMap() untuk PETA BARU: " + this.currMap);
-        setupMap(); // AssetSetter akan menggunakan this.currMap (petaBaruUntukDimuat)
+        obj.clear();
+        aSetter.clearNPCs();
 
-        // D. Load state untuk peta BARU
-        System.out.println("DEBUG: Akan memuat state untuk PETA BARU: " + this.currMap);
-        saveManger.loadGameState(); // SaveManager akan menggunakan this.currMap (petaBaruUntukDimuat)
-        System.out.println("DEBUG: Selesai memuat state untuk PETA BARU: " + this.currMap);
+        this.currMap = petaBaruUntukDimuat;
+        this.tileM.loadMap(petaBaruUntukDimuat);
 
-        debugCurrentObjects(); // Untuk melihat objek di peta baru setelah load
+        if (mapCache.containsKey(petaBaruUntukDimuat)){
+            loadMapStateFromCache(mapCache.get(petaBaruUntukDimuat));
+            System.out.println("DEBUG: State peta baru dimuat dari cache: " + petaBaruUntukDimuat);
+        } else {
+            setupMap();
+            System.out.println("DEBUG: Melakukan setupMap() untuk PETA BARU: " + petaBaruUntukDimuat);
+            mapCache.put(petaBaruUntukDimuat, saveCurrentMapState());
+        }
+
+        farmingController.updatePlantGrowth();
+        debugCurrentObjects();
+    }
+
+    private MapStateData saveCurrentMapState(){
+        MapStateData data = new MapStateData();
+        data.objects = new ArrayList<>(this.obj);
+        return data;
+    }
+
+    private void loadMapStateFromCache(MapStateData data){
+        this.obj.clear();
+        this.obj.addAll(data.objects);
+    }
+
+    private static class MapStateData implements java.io.Serializable{
+        public ArrayList<SuperObj> objects;
     }
     
-    // starting item buat item awal
+
     private void addStartingItems() {
         inventoryController.addItem(itemFactory.createTool("hoe"));
         inventoryController.addItem(itemFactory.createTool("wateringcan"));
+        inventoryController.addItem(itemFactory.createTool("fishingpole"));
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
-        inventoryController.addItem(itemFactory.createFood("salmon"));
-        inventoryController.addItem(itemFactory.createFood("veggiesoup"));
         inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createMiscItem("coal"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createSeed("tomato"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("potato"));
+        inventoryController.addItem(itemFactory.createSeed("cauliflower"));
+        inventoryController.addItem(itemFactory.createSeed("wheat"));
+        inventoryController.addItem(itemFactory.createSeed("pumpkin"));
+        inventoryController.addItem(itemFactory.createSeed("potato"));
+        inventoryController.addItem(itemFactory.createSeed("cauliflower"));
+        inventoryController.addItem(itemFactory.createFood("sashimi"));
+        inventoryController.addItem(itemFactory.createCrop("hotpepper"));
+        inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
+
         inventoryController.addItem(itemFactory.createMiscItem("ring"));
+        inventoryController.addItem(itemFactory.createFuelItem("coal"));
     }
  
-    // starting item buat item awal
     private void addStoreItems() {
-        storeController.addItem(itemFactory.createTool("hoe"));
-        storeController.addItem(itemFactory.createTool("wateringcan"));
-        storeController.addItem(itemFactory.createTool("pickaxe"));
+        storeController.addItem(itemFactory.createFood("veggiesoup"));
         storeController.addItem(itemFactory.createFood("veggiesoup"));
         storeController.addItem(itemFactory.createFood("salmon"));
-        storeController.addItem(itemFactory.createMiscItem("recipe_1"));
-        storeController.addItem(itemFactory.createMiscItem("recipe_10"));
+        storeController.addItem(itemFactory.createFood("salmon"));
+        storeController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
     }
 
     public void startGameThread() {
@@ -281,6 +327,7 @@ public class GamePanel extends JPanel implements Runnable {
         long currTime;
         long timer = 0;
         
+        // setup();
 
         while (gameThread != null) {
             currTime = System.nanoTime();
@@ -342,7 +389,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    // Optional: Method to check if game is currently paused
     public boolean isGamePaused() {
         synchronized (pauseLock) {
             return isTimePaused;
@@ -380,6 +426,13 @@ public class GamePanel extends JPanel implements Runnable {
             currentHour = gameTime.getGameHour();
             currentDay = gameTime.getGameDay();
 
+            if (currentDay != lastCheckedGameDay){
+                handleNewDayEvents();
+                lastCheckedGameDay = currentDay;
+            }
+
+
+
             if (eManager != null && eManager.isLightingSetup()) {
                 Lighting lighting = eManager.getLighting();
 
@@ -405,6 +458,24 @@ public class GamePanel extends JPanel implements Runnable {
         // nambah gamestate lain kali
     }
 
+    private void handleNewDayEvents() {
+        System.out.println("New Day! Game Day: " + gameTime.getGameDay());
+
+        for (SuperObj obj : obj) {
+            if (obj instanceof LandTile) {
+                LandTile tile = (LandTile) obj;
+                if (tile.getPlantedCropType() != PlantType.NONE && 
+                    (tile.getCurrentState() == TileState.PLANTED || 
+                    tile.getCurrentState() == TileState.WATERED || 
+                    tile.getCurrentState() == TileState.HARVESTABLE)) {
+                    
+                    tile.setWatered(false); // This will update the image to the 'unwatered' version
+                    System.out.println(tile.getPlantedCropType().name() + " di " + tile.wX/tileSize + "," + tile.wY/tileSize + " butuh disiram.");
+                }
+            }
+        }
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -412,13 +483,15 @@ public class GamePanel extends JPanel implements Runnable {
         
         if (!isComplete) {
             drawLoadingScreen(g2);
+            
         } else {
 
-            try {
+            if (gameState == titleState || gameState == nameInputState){
+                ui.draw(g2);
+            } else {
+                try {
                 tileM.draw(g2);
                 
-                // Draw objects
-                // Iterasi obj menggunakan ArrayList
                 for (SuperObj objInstance : obj) { 
                     if (objInstance != null) {
                         objInstance.draw(g2, this);
@@ -455,33 +528,12 @@ public class GamePanel extends JPanel implements Runnable {
                 g2.setFont(new Font("Arial", Font.BOLD, 20));
                 g2.drawString("Rendering error: " + e.getMessage(), 50, 50);
                 e.printStackTrace();
-            }
+                }
+            }   
         }
         
         g2.dispose();
     }
-
-    // public void nextDay() {
-    //     gameTime.nextDay();
-    //     currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
-
-    //     if (currentWeather == WeatherType.RAINY) {
-    //         // tileManager.waterAllSoilTiles(); // Anda bisa memanggil ini di sini jika diperlukan
-    //     }
-
-    //     // --- PENTING UNTUK STATE TANAMAN SAAT BERPINDAH HARI ---
-    //     // Setelah gameTime.nextDay(), panggil saveGame() dan loadGameState()
-    //     // Ini memastikan bahwa perubahan hari (yang mungkin memicu pertumbuhan tanaman)
-    //     // akan disimpan dan kemudian dimuat ulang untuk memperbarui visual.
-    //     // Atau, pastikan grow() di farmingController.updatePlantGrowth() sudah cukup
-    //     // untuk menangani visual tanpa perlu load/save di sini.
-    //     // Jika pertumbuhan tanaman sudah dihandle oleh updatePlantGrowth() berdasarkan waktu,
-    //     // maka Anda tidak perlu save/load di sini, cukup pastikan grow() selalu dipanggil.
-
-    //     // Jika Anda ingin efek save/load di setiap hari baru, maka:
-    //     saveGame(); 
-    //     saveManger.loadGameState(); // Muat kembali state setelah hari berganti
-    // }
 
 
     private void drawLoadingScreen(Graphics2D g2) {
@@ -520,94 +572,103 @@ public class GamePanel extends JPanel implements Runnable {
 
             // Proses input hari
             if (dayInput != null && !dayInput.trim().isEmpty()) {
+            try {
+                int day = Integer.parseInt(dayInput.trim());
+                if (day > 0) {
+                    // Store previous day for new day events check
+                    int previousDay = gameTime.getGameDay(); 
+                    gameTime.setGameDay(day);
+                    // Manually trigger new day events if day changed
+                    if (gameTime.getGameDay() > previousDay) {
+                         // Only trigger if new day is actually greater (jumped forward)
+                        handleNewDayEvents(); 
+                    }
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Hari harus angka positif.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    valid = false;
+                }
+            } catch (NumberFormatException e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Input hari bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                valid = false;
+            }
+        }
+
+        // Process time input
+        if (timeInput != null && !timeInput.trim().isEmpty()) {
+            if (timeInput.matches("\\d{1,2}:\\d{2}")) {
                 try {
-                    int day = Integer.parseInt(dayInput.trim());
-                    if (day > 0) {
-                        gameTime.setGameDay(day);
+                    String[] parts = timeInput.split(":");
+                    int hour = Integer.parseInt(parts[0]);
+                    int minute = Integer.parseInt(parts[1]);
+                    if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+                        // Store previous day for new day events check (if time changes across midnight)
+                        int previousDay = gameTime.getGameDay(); 
+                        gameTime.setTime(hour, minute);
+                        // Manually trigger new day events if day changed
+                        if (gameTime.getGameDay() > previousDay) {
+                            handleNewDayEvents(); 
+                        }
                     } else {
-                        javax.swing.JOptionPane.showMessageDialog(
-                            this, "Hari harus angka positif.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
+                        javax.swing.JOptionPane.showMessageDialog(this, "Format waktu tidak valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                         valid = false;
                     }
                 } catch (NumberFormatException e) {
-                    javax.swing.JOptionPane.showMessageDialog(
-                        this, "Input hari bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                    );
+                    javax.swing.JOptionPane.showMessageDialog(this, "Input waktu bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                     valid = false;
                 }
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Format waktu harus HH:MM.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                valid = false;
             }
+        }
 
-            // Proses input waktu
-            if (timeInput != null && !timeInput.trim().isEmpty()) {
-                if (timeInput.matches("\\d{1,2}:\\d{2}")) {
-                    String[] parts = timeInput.split(":");
-                    try {
-                        int hour = Integer.parseInt(parts[0]);
-                        int minute = Integer.parseInt(parts[1]);
-                        if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
-                            gameTime.setTime(hour, minute);
-                        } else {
-                            javax.swing.JOptionPane.showMessageDialog(
-                                this, "Format waktu tidak valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                            );
-                            valid = false;
-                        }
-                    } catch (NumberFormatException e) {
-                        javax.swing.JOptionPane.showMessageDialog(
-                            this, "Input waktu bukan angka valid.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                        );
-                        valid = false;
-                    }
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog(
-                        this, "Format waktu harus HH:MM.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE
-                    );
-                    valid = false;
-                }
-            }
+        if (valid) {
+            System.out.println("Cheat berhasil diterapkan.");
+            
+            // --- ADD THIS LINE ---
+            // Force an immediate update of all plants based on the new time
+            farmingController.updatePlantGrowth(); 
+            // --- END ADDITION ---
 
-            if (valid) {
-                System.out.println("Cheat berhasil diterapkan.");
-                saveGame(); // Simpan state dengan waktu baru
-                saveManger.loadGameState(); // Muat kembali state untuk memperbarui visual dan logika
-            }
+            saveGame(); // Save state with new time
+            saveManger.loadGameState(); // Reload state to update visuals and logic
+        }
 
-            isTimePaused = false;
-            if (gameTime != null) gameTime.resume();
-        });
-    }
+        isTimePaused = false;
+        if (gameTime != null) gameTime.resume();
+    });
+}
 
     public void setGameState(int newState) {
         int oldState = this.gameState;
         this.gameState = newState;
-        
-        // Debug logging
+
         System.out.println("Game State Changed: " + getStateName(oldState) + " -> " + getStateName(newState));
-        
-        // Handle state-specific logic
+
         switch (newState) {
             case dialogState:
-                // Ensure dialog state is properly set
-                if (isTimePaused) {
-                    resumeGameThread();
-                }
-                break;
+            case inventoryState: 
+            case statsState:
+            case cookingState:
+            case shippingBinState:
+            case storeState:
             case npcContextMenuState:
-                // Pause when entering NPC context menu
-                if (!isTimePaused) {
+            case fishingState:
+            case nameInputState:
+                if (!isTimePaused) { 
                     pauseGameThread();
                 }
                 break;
             case playState:
-                // Resume when returning to play state
-                if (isTimePaused) {
+            case sleepState:
+            case titleState: 
+                if (isTimePaused) { 
                     resumeGameThread();
                 }
-                currNPC = null; // Clear current NPC when returning to play
-                isGifting = false; // Clear gifting mode
+                currNPC = null;
+                isGifting = false; 
                 break;
-        }
+            }
     }
 
     // Helper method untuk debug
@@ -647,5 +708,23 @@ public class GamePanel extends JPanel implements Runnable {
         public void loadMap(String filePath) {
             // Do nothing
         }
+    }
+
+    public void startGame() {
+        // Inisialisasi player dengan nama yang diinput
+        player.setName(playerNameInput);
+        System.out.println("Player Name: " + player.getName());
+
+        // Lanjutkan dengan setup map dan item awal
+        int randIndex = random.nextInt(farmMapVariations.length);
+        this.currMap = farmMapVariations[randIndex];
+        this.prevFarmMap = this.currMap;
+        System.out.println("Starting map: " + currMap);
+        tileM.loadMap(this.currMap); // Load map pertama
+        setupMap();
+        addStartingItems();
+        addStoreItems();
+        saveManger.loadGameState(); // Load game state setelah player dibuat
+        setGameState(playState); // Ubah ke playState
     }
 }

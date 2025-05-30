@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import entity.Player;
+import environment.WeatherType;
 import main.GamePanel;
 
 public class LandTile extends SuperObj {
@@ -15,6 +16,7 @@ public class LandTile extends SuperObj {
     public long lastWateredTime; 
     public boolean isWatered; 
     private long plantedTime; 
+    private long lastGrowthUpdateTime;
 
     private BufferedImage landImg;
     private BufferedImage soilImg;
@@ -30,6 +32,9 @@ public class LandTile extends SuperObj {
         plantedCropType = PlantType.NONE;
         isWatered = false;
         collision = false;
+        lastWateredTime = -1;
+        plantedTime = -1;
+        lastGrowthUpdateTime = gp.gameTime.getCurrentGameTime();
 
         plantedImagesMap = new HashMap<>();
         wateredImagesMap = new HashMap<>();
@@ -40,28 +45,158 @@ public class LandTile extends SuperObj {
     }
 
     private void loadImages(){
-        try{
-            landImg = setup("/tutor_tiles/017");
-            soilImg = setup("/tutor_tiles/204");
+    try{
+        landImg = setup("/tutor_tiles/017");
+        soilImg = setup("/tutor_tiles/204");
 
-            BufferedImage[] tomatoPlanted = new BufferedImage[3];
-            tomatoPlanted[0] = setup("/seeds/awal");
-            tomatoPlanted[1] = setup("/seeds/ketiga");
-            tomatoPlanted[2] = setup("/seeds/kedua");
-            plantedImagesMap.put(PlantType.TOMATO, tomatoPlanted);
+        // TOMATO
+        BufferedImage[] tomatoPlanted = new BufferedImage[3];
+        tomatoPlanted[0] = setup("/seeds/awal");
+        tomatoPlanted[1] = setup("/seeds/ketiga");
+        tomatoPlanted[2] = setup("/seeds/kedua");
+        plantedImagesMap.put(PlantType.TOMATO, tomatoPlanted);
 
-            BufferedImage[] tomatoWatered = new BufferedImage[3];
-            tomatoWatered[0] = setup("/seeds/awal");
-            tomatoWatered[1] = setup("/seeds/ketiga");
-            tomatoWatered[2] = setup("/seeds/kedua");
-            wateredImagesMap.put(PlantType.TOMATO, tomatoWatered);
+        BufferedImage[] tomatoWatered = new BufferedImage[3];
+        tomatoWatered[0] = setup("/seeds/awal_basah");
+        tomatoWatered[1] = setup("/seeds/ketiga_basah");
+        tomatoWatered[2] = setup("/seeds/kedua_basah");
+        wateredImagesMap.put(PlantType.TOMATO, tomatoWatered);
 
-        } catch (Exception e){
-            System.err.println("Error loading LandTile images: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // kentang
+        BufferedImage[] kentangPlanted = new BufferedImage[3];
+        kentangPlanted[0] = setup("/seeds/kentang_awal");
+        kentangPlanted[1] = setup("/seeds/kentang_kedua");
+        kentangPlanted[2] = setup("/seeds/kentang_ketiga");
+        plantedImagesMap.put(PlantType.POTATO, kentangPlanted);
+
+        BufferedImage[] kentangWatered = new BufferedImage[3];
+        kentangWatered[0] = setup("/seeds/kentang_awal_basah");
+        kentangWatered[1] = setup("/seeds/kentang_kedua_basah");
+        kentangWatered[2] = setup("/seeds/kentang_ketiga_basah");
+        wateredImagesMap.put(PlantType.POTATO, kentangWatered);
+
+        // PARSNIP
+        BufferedImage[] parsnipPlanted = new BufferedImage[3];
+        parsnipPlanted[0] = setup("/seeds/parsnip_awal");
+        parsnipPlanted[1] = setup("/seeds/parsnip_kedua");
+        parsnipPlanted[2] = setup("/seeds/parsnip_ketiga");
+        plantedImagesMap.put(PlantType.PARSNIP, parsnipPlanted);
+
+        BufferedImage[] parsnipWatered = new BufferedImage[3];
+        parsnipWatered[0] = setup("/seeds/parsnip_awal_basah");
+        parsnipWatered[1] = setup("/seeds/parsnip_kedua_basah");
+        parsnipWatered[2] = setup("/seeds/parsnip_ketiga_basah");
+        wateredImagesMap.put(PlantType.PARSNIP, parsnipWatered);
+
+        // CAULIFLOWER
+        BufferedImage[] cauliflowerPlanted = new BufferedImage[3];
+        cauliflowerPlanted[0] = setup("/seeds/cauliflower_awal");
+        cauliflowerPlanted[1] = setup("/seeds/cauliflower_kedua");
+        cauliflowerPlanted[2] = setup("/seeds/cauliflower_ketiga");
+        plantedImagesMap.put(PlantType.CAULIFLOWER, cauliflowerPlanted);
+
+        BufferedImage[] cauliflowerWatered = new BufferedImage[3];
+        cauliflowerWatered[0] = setup("/seeds/cauliflower_awal_basah");
+        cauliflowerWatered[1] = setup("/seeds/cauliflower_ketiga_basah");
+        cauliflowerWatered[2] = setup("/seeds/cauliflower_kedua_basah");
+        wateredImagesMap.put(PlantType.CAULIFLOWER, cauliflowerWatered);
+
+        // WHEAT
+        BufferedImage[] wheatPlanted = new BufferedImage[3];
+        wheatPlanted[0] = setup("/seeds/wheat_awal");
+        wheatPlanted[1] = setup("/seeds/wheat_kedua");
+        wheatPlanted[2] = setup("/seeds/wheat_ketiga");
+        plantedImagesMap.put(PlantType.WHEAT, wheatPlanted);
+
+        BufferedImage[] wheatWatered = new BufferedImage[3];
+        wheatWatered[0] = setup("/seeds/wheat_awal_basah");
+        wheatWatered[1] = setup("/seeds/wheat_kedua_basah");
+        wheatWatered[2] = setup("/seeds/wheat_ketiga_basah");
+        wateredImagesMap.put(PlantType.WHEAT, wheatWatered);
+
+        // BLUEBERRY
+        BufferedImage[] blueberryPlanted = new BufferedImage[3];
+        blueberryPlanted[0] = setup("/seeds/blueberry_awal");
+        blueberryPlanted[1] = setup("/seeds/blueberry_kedua");
+        blueberryPlanted[2] = setup("/seeds/blueberry_ketiga");
+        plantedImagesMap.put(PlantType.BLUEBERRY, blueberryPlanted);
+
+        BufferedImage[] blueberryWatered = new BufferedImage[3];
+        blueberryWatered[0] = setup("/seeds/blueberry_awal_basah");
+        blueberryWatered[1] = setup("/seeds/blueberry_kedua_basah");
+        blueberryWatered[2] = setup("/seeds/blueberry_ketiga_basah");
+        wateredImagesMap.put(PlantType.BLUEBERRY, blueberryWatered);
+
+        // HOT_PEPPER
+        BufferedImage[] hotPepperPlanted = new BufferedImage[3];
+        hotPepperPlanted[0] = setup("/seeds/hotpepper_awal");
+        hotPepperPlanted[1] = setup("/seeds/hotpepper_kedua");
+        hotPepperPlanted[2] = setup("/seeds/hotpepper_ketiga");
+        plantedImagesMap.put(PlantType.HOT_PEPPER, hotPepperPlanted);
+
+        BufferedImage[] hotPepperWatered = new BufferedImage[3];
+        hotPepperWatered[0] = setup("/seeds/hotpepper_awal_basah");
+        hotPepperWatered[1] = setup("/seeds/hotpepper_kedua_basah");
+        hotPepperWatered[2] = setup("/seeds/hotpepper_ketiga_basah");
+        wateredImagesMap.put(PlantType.HOT_PEPPER, hotPepperWatered);
+
+        // // MELON
+        BufferedImage[] melonPlanted = new BufferedImage[3];
+        melonPlanted[0] = setup("/seeds/awal");
+        melonPlanted[1] = setup("/seeds/ketiga");
+        melonPlanted[2] = setup("/seeds/kedua");
+        plantedImagesMap.put(PlantType.MELON, melonPlanted);
+
+        BufferedImage[] melonWatered = new BufferedImage[3];
+        melonWatered[0] = setup("/seeds/awal_basah");
+        melonWatered[1] = setup("/seeds/ketiga_basah");
+        melonWatered[2] = setup("/seeds/kedua_basah");
+        wateredImagesMap.put(PlantType.MELON, melonWatered);
+
+        // CRANBERRY
+        BufferedImage[] cranberryPlanted = new BufferedImage[3];
+        cranberryPlanted[0] = setup("/seeds/cranberry_awal");
+        cranberryPlanted[1] = setup("/seeds/cranberry_kedua");
+        cranberryPlanted[2] = setup("/seeds/cranberry_ketiga");
+        plantedImagesMap.put(PlantType.CRANBERRY, cranberryPlanted);
+
+        BufferedImage[] cranberryWatered = new BufferedImage[3];
+        cranberryWatered[0] = setup("/seeds/cranberry_awal_basah");
+        cranberryWatered[1] = setup("/seeds/cranberry_kedua_basah");
+        cranberryWatered[2] = setup("/seeds/cranberry_ketiga_basah");
+        wateredImagesMap.put(PlantType.CRANBERRY, cranberryWatered);
+
+        // PUMPKIN
+        BufferedImage[] pumpkinPlanted = new BufferedImage[3];
+        pumpkinPlanted[0] = setup("/seeds/pumpkin_awal");
+        pumpkinPlanted[1] = setup("/seeds/pumpkin_kedua");
+        pumpkinPlanted[2] = setup("/seeds/pumpkin_ketiga");
+        plantedImagesMap.put(PlantType.PUMPKIN, pumpkinPlanted);
+
+        BufferedImage[] pumpkinWatered = new BufferedImage[3];
+        pumpkinWatered[0] = setup("/seeds/pumpkin_awal_basah");
+        pumpkinWatered[1] = setup("/seeds/pumpkin_kedua_basah");
+        pumpkinWatered[2] = setup("/seeds/pumpkin_ketiga_basah");
+        wateredImagesMap.put(PlantType.PUMPKIN, pumpkinWatered);
+
+        // GRAPE
+        BufferedImage[] grapePlanted = new BufferedImage[3];
+        grapePlanted[0] = setup("/seeds/grape_awal");
+        grapePlanted[1] = setup("/seeds/grape_kedua");
+        grapePlanted[2] = setup("/seeds/grape_ketiga");
+        plantedImagesMap.put(PlantType.GRAPE, grapePlanted);
+
+        BufferedImage[] grapeWatered = new BufferedImage[3];
+        grapeWatered[0] = setup("/seeds/grape_awal_basah");
+        grapeWatered[1] = setup("/seeds/grape_kedua_basah");
+        grapeWatered[2] = setup("/seeds/grape_ketiga_basah");
+        wateredImagesMap.put(PlantType.GRAPE, grapeWatered);
+
+    } catch (Exception e){
+        System.err.println("Error loading LandTile images: " + e.getMessage());
+        e.printStackTrace();
     }
-
+}
     public TileState getCurrentState() { return currentState; }
     public PlantType getPlantedCropType() { return plantedCropType; }
     public int getGrowthStage() { return growthStage; }
@@ -85,6 +220,8 @@ public class LandTile extends SuperObj {
         this.plantedCropType = PlantType.NONE;
         this.growthStage = 0;
         this.isWatered = false;
+        this.lastWateredTime = -1;
+        this.plantedTime = -1;
         System.out.println("Tile changed to SOIL at " + wX/gp.tileSize + "," + wY/gp.tileSize);
         updateImage(); 
     }
@@ -95,6 +232,8 @@ public class LandTile extends SuperObj {
         this.plantedCropType = PlantType.NONE;
         this.growthStage = 0;
         this.isWatered = false;
+        this.lastWateredTime = -1;
+        this.plantedTime = -1;
         System.out.println("Tile changed to LAND at " + wX/gp.tileSize + "," + wY/gp.tileSize);
         updateImage(); 
     }
@@ -112,6 +251,7 @@ public class LandTile extends SuperObj {
         if (!type.canGrowInSeason(gp.gameTime.getCurrentSeason())) {
             System.out.println("Cannot plant " + type.name() + " in " + gp.gameTime.getCurrentSeason() + " season.");
             gp.ui.setDialog("It's not the right season to plant " + type.name() + "!");
+            gp.setGameState(GamePanel.dialogState);
             return false;
         }
 
@@ -120,7 +260,8 @@ public class LandTile extends SuperObj {
             this.currentState = TileState.PLANTED;
             this.growthStage = 0; 
             this.isWatered = false; 
-            this.plantedTime = gp.gameTime.getCurrentGameTime(); 
+            this.plantedTime = gp.gameTime.getCurrentGameTime();
+            this.lastWateredTime = gp.gameTime.getCurrentGameTime();
             System.out.println("Planted " + type.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize);
             updateImage();
             return true;
@@ -130,28 +271,48 @@ public class LandTile extends SuperObj {
     }
 
     public void grow() {
-        if (currentState == TileState.PLANTED || currentState == TileState.WATERED) {
-            if (plantedCropType == PlantType.NONE) {
-                return; 
+        if (plantedCropType == PlantType.NONE || currentState == TileState.LAND || currentState == TileState.SOIL) {
+            return;
+        }
+
+        if (gp.weatherManager.getWeatherForDay(gp.gameTime.getGameDay()) == WeatherType.RAINY) {
+            if (!isWatered) { 
+                setWatered(true);
+                System.out.println("Tanaman " + plantedCropType.name() + " otomatis disiram karena hujan!");
             }
+        }
 
-            long timeElapsed = gp.gameTime.getCurrentGameTime() - plantedTime;
-            
-            // Ambil durasi pertumbuhan dari PlantType
-            long growthDurationStage1 = plantedCropType.getGrowthTimeStage1Millis();
-            long growthDurationStage2 = plantedCropType.getGrowthTimeStage2Millis();
 
-            // Logika pertumbuhan berdasarkan waktu dan PlantType
+        if (!isWatered && plantedTime != -1) {
+            long timeSinceLastWatered = gp.gameTime.getCurrentGameTime() - lastWateredTime;
+            if (timeSinceLastWatered >= plantedCropType.getWiltingTimeMillis()) {
+                System.out.println(plantedCropType.name() + " mati");
+                gp.ui.setDialog("Your " + plantedCropType.name() + " wilted!"); 
+                gp.setGameState(GamePanel.dialogState);
+                toSoil();
+                return;
+            }
+        }
+        
+        long timeElapsed = gp.gameTime.getCurrentGameTime() - plantedTime;
+
+        long growthDurationStage1 = plantedCropType.getGrowthTimeStage1Millis();
+        long growthDurationStage2 = plantedCropType.getGrowthTimeStage2Millis();
+
+
+        if (isWatered) { 
             if (growthStage < 2 && timeElapsed >= growthDurationStage2) {
-                growthStage = 2; // Siap panen
+                growthStage = 2;
                 currentState = TileState.HARVESTABLE;
-                System.out.println(plantedCropType.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize + " is HARVESTABLE!");
+                System.out.println(plantedCropType.name() + " siap dipanen!");
                 updateImage();
             } else if (growthStage < 1 && timeElapsed >= growthDurationStage1) {
-                growthStage = 1; // Tumbuh muda
-                System.out.println(plantedCropType.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize + " is growing.");
+                growthStage = 1;
+                System.out.println(plantedCropType.name() + " sedang bertumbuh!");
                 updateImage();
             }
+        } else {
+ 
         }
     }
 
@@ -160,7 +321,7 @@ public class LandTile extends SuperObj {
             String cropNameForFactory = plantedCropType.name().replace("_", " ");
             CropItem harvestedCrop = gp.itemFactory.createCrop(cropNameForFactory); 
             
-            this.currentState = TileState.SOIL; // Setelah panen, kembali ke tanah gembur
+            this.currentState = TileState.SOIL;
             this.plantedCropType = PlantType.NONE;
             this.growthStage = 0;
             this.isWatered = false;
@@ -230,6 +391,10 @@ public class LandTile extends SuperObj {
 
     public void setPlantedTime(long newPlantedTime){
         this.plantedTime = newPlantedTime;
+    }
+
+    public void setLastGrowthUpdateTime(long time) {
+        this.lastGrowthUpdateTime = time;
     }
     
 }

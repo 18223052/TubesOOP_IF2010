@@ -18,9 +18,16 @@ public class FishableSpot extends SuperObj {
 
     @Override
     public void onInteract(GamePanel gp, Player player){
-        // INI ISI SAMA FISHING CONTROLLER 
+        if (player.getActiveItem() == null || !player.getActiveItem().getName().equals("fishingpole")){
+            gp.ui.setDialog("Kamu membutuhkan Fishing pole");
+            gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
+            return;
+        }
+        player.deductEnergy(5);
+        gp.setGameState(GamePanel.fishingState);
+        gp.fishingController.startFishing(getFishingLocationType());
     }
-
 
     
 }

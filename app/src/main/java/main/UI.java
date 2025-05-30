@@ -18,7 +18,10 @@ import GUI.panels.CharacterScreen;
 import GUI.panels.CookingMenu;
 import GUI.panels.ShippingBinMenu;
 import GUI.panels.StoreMenu;
+import GUI.panels.TitleScreen;
 import GUI.panels.NPCContextMenu;
+import GUI.panels.NameInputScreen;
+import GUI.panels.PlayerStatsPanel; // <-- IMPORT BARU INI
 
 public class UI {
 
@@ -30,6 +33,7 @@ public class UI {
 
     // References to your new UI panel objects
     private HUD hud;
+    private PlayerStatsPanel playerStatsPanel; // <-- DEKLARASI BARU INI
     private PauseScreen pauseScreen;
     private DialogBox dialogBox;
     private InventoryScreen inventoryScreen;
@@ -38,6 +42,8 @@ public class UI {
     private ShippingBinMenu shippingBinMenu;
     private StoreMenu storeMenu;
     private NPCContextMenu npcContextMenu;
+    public TitleScreen titleScreen;
+    private NameInputScreen nameInputScreen;
 
     public String currentDialog = "";
 
@@ -49,11 +55,11 @@ public class UI {
             Font baseMaruMonica = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(inputStream));
 
             // Inisialisasi setiap font dengan ukuran yang berbeda
-            this.generalFont = baseMaruMonica.deriveFont(Font.PLAIN, 30f); // Contoh: Font umum untuk HUD, menu utama
-            this.dialogFont = baseMaruMonica.deriveFont(Font.PLAIN, 28f);  // Contoh: Font untuk kotak dialog
-            this.inventoryFont = baseMaruMonica.deriveFont(Font.PLAIN, 26f); // Contoh: Font untuk inventori
-            this.cookingFont = baseMaruMonica.deriveFont(Font.PLAIN, 20f);  // Sesuai permintaan: Font untuk CookingMenu
-            this.smallFont = baseMaruMonica.deriveFont(Font.PLAIN, 18f);   // Contoh: Font yang sangat kecil untuk detail
+            this.generalFont = baseMaruMonica.deriveFont(Font.PLAIN, 30f);
+            this.dialogFont = baseMaruMonica.deriveFont(Font.PLAIN, 28f);
+            this.inventoryFont = baseMaruMonica.deriveFont(Font.PLAIN, 26f);
+            this.cookingFont = baseMaruMonica.deriveFont(Font.PLAIN, 20f);
+            this.smallFont = baseMaruMonica.deriveFont(Font.PLAIN, 18f);
 
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
@@ -67,18 +73,20 @@ public class UI {
 
         // Inisialisasi semua panel UI, passing font yang sesuai
         hud = new HUD(gp, generalFont);
+        playerStatsPanel = new PlayerStatsPanel(gp, generalFont); // <-- INISIALISASI BARU INI
         pauseScreen = new PauseScreen(gp, generalFont);
         dialogBox = new DialogBox(gp, dialogFont);
-        inventoryScreen = new InventoryScreen(gp, inventoryFont); 
-        characterScreen = new CharacterScreen(gp, generalFont); 
-        cookingMenu = new CookingMenu(gp, cookingFont); 
+        inventoryScreen = new InventoryScreen(gp, inventoryFont);
+        characterScreen = new CharacterScreen(gp, generalFont);
+        cookingMenu = new CookingMenu(gp, cookingFont);
         shippingBinMenu = new ShippingBinMenu(gp, inventoryFont);
-        storeMenu = new StoreMenu(gp, inventoryFont); 
-        npcContextMenu = new NPCContextMenu(gp, generalFont); 
+        storeMenu = new StoreMenu(gp, inventoryFont);
+        npcContextMenu = new NPCContextMenu(gp, generalFont);
+        titleScreen = new TitleScreen(gp, generalFont);
+        nameInputScreen = new NameInputScreen(gp, generalFont);
     }
 
     private void setupDefaultGraphics(Graphics2D g2) {
-
         g2.setFont(generalFont);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.WHITE);
@@ -88,11 +96,16 @@ public class UI {
         this.g2 = g2;
         setupDefaultGraphics(g2); // Tetap panggil ini untuk pengaturan global (anti-aliasing, warna)
 
-        // Delegasi drawing berdasarkan game state
-        // Setiap panel akan menggambar dengan font yang sudah mereka terima saat inisialisasi
         switch (gp.gameState) {
+            case GamePanel.titleState:
+                titleScreen.draw(g2);
+                break;
+            case GamePanel.nameInputState:
+                nameInputScreen.draw(g2);
+                break;
             case GamePanel.playState:
                 hud.draw(g2);
+                playerStatsPanel.draw(g2); // <-- PANGGIL METHOD DRAW BARU INI
                 break;
             case GamePanel.pauseState:
                 pauseScreen.draw(g2);
@@ -111,19 +124,39 @@ public class UI {
                 break;
             case GamePanel.shippingBinState:
                 shippingBinMenu.draw(g2);
-                inventoryScreen.draw(g2, false); // Inventori juga harus menggunakan inventoryFont-nya
+                inventoryScreen.draw(g2, false);
                 break;
             case GamePanel.storeState:
                 storeMenu.draw(g2);
-                inventoryScreen.draw(g2, false); 
+                inventoryScreen.draw(g2, false);
                 break;
             case GamePanel.npcContextMenuState:
                 npcContextMenu.draw(g2, gp.currNPC);
+                break;
+            case GamePanel.fishingState:
+                dialogBox.draw(g2, currentDialog, null, false);
                 break;
         }
     }
 
     public void setDialog(String dialog) {
         this.currentDialog = dialog;
+    }
+
+    public void clearDialog() {
+        this.currentDialog = "";
+    }
+
+    public int getCommandNum() {
+        if (titleScreen != null) {
+            return titleScreen.commandNum;
+        }
+        return -1;
+    }
+
+    public void setCommandNum(int num) {
+        if (titleScreen != null) {
+            titleScreen.commandNum = num;
+        }
     }
 }

@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList; // Import ArrayList
+import java.util.List;
 
 import controller.InventoryController;
 import interactable.Interactable;
@@ -22,13 +24,13 @@ public class Player extends Character {
     public int hasKey = 0;
 
     public Rectangle interactionBox;
-    private int interactionDistance;
     private int interactionTileRow;
     private int interactionTileCol;
 
     public InventoryController inventory;
     public static final int MAX_ENERGY = 100;
-    public static final int MIN_ENERGY_BEFORE_SLEEP = -20;
+    public static final int MIN_ENERGY_BEFORE_SLEEP  = -20;
+    public static final int MIN_ENERGY_FOR_ACTION  = -20;
 
     private String name;
     private String gender;
@@ -39,7 +41,6 @@ public class Player extends Character {
     private NPC fiance = null;
     private NPC spouse = null;
     public int fishCaught = 0;
-    public boolean hasHarvested = false;
     public boolean hasFishingPuerfish = false;
     public boolean hasFishingLegend = false;
 
@@ -59,14 +60,13 @@ public class Player extends Character {
         interactionBox = new Rectangle();
         interactionBox.width = gp.tileSize;
         interactionBox.height = gp.tileSize;
-        interactionDistance = gp.tileSize;
 
         inventory = new InventoryController(gp);
 
         setActiveItem(new NoItem(gp));
 
         setDefaultValues();
-        getPlayerImage();
+        getCharacterImage();
         updateInteractionBox();
     }
 
@@ -74,11 +74,11 @@ public class Player extends Character {
         return name;
     }
 
-    public String getFarmMap() {
+    public String getFarmMap(){
         return farmMap;
     }
 
-    public String getGender() {
+    public String getGender(){
         return gender;
     }
 
@@ -90,16 +90,21 @@ public class Player extends Character {
         return energy;
     }
 
+    public int getMaxEnergy(){
+        return MAX_ENERGY;
+    }
+
+
     public void setDefaultValues() {
         wX = gp.tileSize * 23;
         wY = gp.tileSize * 21;
         speed = 4;
         direction = "down";
 
-        energy = 50;
-        gold = 200;
-        name = "bobi";
-        farmMap = "anjoy";
+        energy = 100;
+        gold = 100;
+        // name = "bobi";
+        // farmMap = "anjoy";
         // partner = null;
     }
 
@@ -147,8 +152,8 @@ public class Player extends Character {
 
     public void setFiance(NPC npc) {
         this.fiance = npc;
-        if (npc != null) { // Jika menetapkan tunangan baru
-            this.spouse = null; // Pastikan tidak bisa memiliki pasangan dan tunangan sekaligus
+        if (npc != null) { 
+            this.spouse = null;
         }
     }
 
@@ -162,9 +167,9 @@ public class Player extends Character {
 
     public void setSpouse(NPC npc) {
         this.spouse = npc;
-        if (npc != null) { // Jika menetapkan pasangan baru
-            if (this.fiance == npc) { // Jika menikah dengan tunangan saat ini
-                this.fiance = null; // Hapus status tunangan
+        if (npc != null) { 
+            if (this.fiance == npc) { 
+                this.fiance = null; 
             }
         }
     }
@@ -173,7 +178,58 @@ public class Player extends Character {
         return this.spouse != null;
     }
 
-    public void getPlayerImage() {
+
+    // untuk masak
+    private List<String> unlockedRecipeIds = new ArrayList<>();
+
+    public boolean isRecipeUnlocked(String recipeId){
+        return unlockedRecipeIds.contains(recipeId);
+    }
+
+    public void unlockRecipe(String recipeId){
+        if (!unlockedRecipeIds.contains(recipeId)){
+            unlockedRecipeIds.add(recipeId);
+            System.out.println("Resep '"+recipeId + "' terbuka!");
+            System.out.println("Current unlocked recipes: " + unlockedRecipeIds); // Tambahkan ini
+        }
+    }
+
+    private int totalFishCaught = 0;
+
+    public int getFishCaughtCount(){
+        return totalFishCaught;
+    }
+
+    public void incrementFishCaughtCount(){
+        totalFishCaught ++;
+    }
+
+    private List<String> caughtFishTypes = new ArrayList<>();
+
+    public boolean hasCaughtFish(String fishName){
+        return caughtFishTypes.contains(fishName);
+    }
+
+    public void addCaughtFishType(String fishName){
+        if(!caughtFishTypes.contains(fishName)){
+            caughtFishTypes.add(fishName);
+        }
+    }
+
+    private boolean hasHarvested = false;
+
+    public boolean hasHarvestedFirstTime() {
+        return hasHarvested;
+    }
+
+    public void setHasHarvested(boolean harvested) {
+        this.hasHarvested = harvested;
+    }
+
+
+    @Override 
+    public void getCharacterImage() {
+        
         u1 = setup("/player/u1");
         u2 = setup("/player/u2");
         r1 = setup("/player/r1");
@@ -182,6 +238,8 @@ public class Player extends Character {
         l2 = setup("/player/l2");
         d1 = setup("/player/d1");
         d2 = setup("/player/d2");
+
+        defaultImage = d1;
     }
 
     private void calculatePlayerTilePosition() {
@@ -216,17 +274,16 @@ public class Player extends Character {
         interactionBox.height = gp.tileSize;
     }
 
-    // REVISI: Ubah parameter agar menerima ArrayList
     public <T extends Interactable> int checkInteraction(ArrayList<T> interactables) {
         int index = 999;
-        // Iterasi menggunakan for-each loop karena ini adalah ArrayList
+
         for (int i = 0; i < interactables.size(); i++) {
-            T obj = interactables.get(i); // Ambil objek dari ArrayList
+            T obj = interactables.get(i); 
             if (obj != null) {
-                updateInteractionBox(); // Ensure interactionBox is up-to-date
+                updateInteractionBox();
                 if (obj.isInteractable(interactionBox)) {
-                    index = i; // Simpan indeks dari ArrayList
-                    break; // Found an interaction, no need to check further
+                    index = i; 
+                    break; 
                 }
             }
         }
@@ -261,7 +318,7 @@ public class Player extends Character {
             iscollision = false;
             gp.colCheck.checkTile(this);
 
-            if (!iscollision) { // Simplified from iscollision == false
+            if (!iscollision) { 
                 switch (direction) {
                     case "up":
                         wY -= speed;
@@ -282,15 +339,16 @@ public class Player extends Character {
         }
 
         if (keyH.interactPressed) {
-            keyH.interactPressed = false; // Reset immediately
+            keyH.interactPressed = false; 
 
-            int npcIndex = checkInteraction(convertArrayToArrayList(gp.npc));
-            int objIndex = checkInteraction(gp.obj);
+            
+            int npcIndex = checkInteraction(convertArrayToArrayList(gp.npc)); 
+            int objIndex = checkInteraction(gp.obj); 
 
             if (npcIndex != 999) {
-                gp.npc[npcIndex].onInteract(gp, this); // NPC masih diakses via array
+                gp.npc[npcIndex].onInteract(gp,this);
             } else if (objIndex != 999) {
-                gp.obj.get(objIndex).onInteract(gp, this); // OBJEK sekarang diakses via ArrayList
+                gp.obj.get(objIndex).onInteract(gp,this);
             }
         }
         updateInteractionBox();
@@ -298,8 +356,70 @@ public class Player extends Character {
 
     @Override
     public void draw(Graphics2D g2) {
-        super.draw(g2); // Use the Character's draw for animation
+        super.draw(g2); // Memanggil draw method dari superclass
 
+        if (activeItem != null && !(activeItem instanceof NoItem) && activeItem.getImage() != null) {
+            BufferedImage itemImage = activeItem.getImage();
+
+            int currentScreenX = wX - gp.player.wX + gp.player.screenX;
+            int currentScreenY = wY - gp.player.wY + gp.player.screenY;
+
+            int itemOffsetX = 0;
+            int itemOffsetY = 0;
+            int itemWidth = (int)(gp.tileSize * 0.55); // Lebar default item
+            int itemHeight = (int)(gp.tileSize * 0.55); // Tinggi default item
+
+
+            int drawX = currentScreenX;
+            int drawY = currentScreenY;
+            int drawWidth = itemWidth;
+            int drawHeight = itemHeight;
+
+            int sizeDifferenceX = gp.tileSize - itemWidth;
+            int sizeDifferenceY = gp.tileSize - itemHeight;
+            int centerOffsetX = sizeDifferenceX / 2;
+            int centerOffsetY = sizeDifferenceY / 2;
+
+
+            switch (direction) {
+                case "up":
+
+                    itemOffsetX = -gp.tileSize / 4; // Geser sedikit ke kiri
+                    itemOffsetY = -gp.tileSize / 2; // Geser lebih jauh ke atas
+
+                    break;
+                case "down":
+
+                    itemOffsetX = 0;
+                    itemOffsetY = gp.tileSize / 2;
+                    break;
+                case "left":
+                    itemOffsetX = -gp.tileSize / 2;
+                    itemOffsetY = 0;
+
+                    break;
+                case "right":
+                    itemOffsetX = gp.tileSize / 4;
+                    itemOffsetY = 0;
+                    drawX = currentScreenX + itemOffsetX + itemWidth; 
+                    drawWidth = -itemWidth; 
+                    break;
+            }
+
+            int finalDrawX = drawX + itemOffsetX + centerOffsetX;
+            int finalDrawY = drawY + itemOffsetY + centerOffsetY;
+
+            g2.drawImage(itemImage,
+                        finalDrawX,       
+                        finalDrawY,     
+                        finalDrawX + drawWidth,
+                        finalDrawY + drawHeight, 
+                        0,                         
+                        0,                        
+                        itemImage.getWidth(),     
+                        itemImage.getHeight(),     
+                        null);
+        }
         drawInteractionBox(g2);
     }
 

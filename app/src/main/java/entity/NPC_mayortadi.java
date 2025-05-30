@@ -10,23 +10,23 @@ public class NPC_mayortadi extends NPC {
     public NPC_mayortadi(GamePanel gp,ItemFactory itemFactory) {
         super(gp);
         name = "Mayor Tadi";
+        direction = "down";
+        gender = gender_male;
         setHatesAllUnlistedItems(true);
-        getImage();
+        getCharacterImage();
         initializeGiftPreference(itemFactory);
         setDialogue();
     }
 
-    public void getImage() {
-        u1 = setup("/player/police_diem");
-        u2 = setup("/player/police_diem");
-        r1 = setup("/player/police_diem");
-        r2 = setup("/player/police_diem");
-        l1 = setup("/player/police_diem");
-        l2 = setup("/player/police_diem");
+    @Override
+    public void getCharacterImage() {
         d1 = setup("/player/police_diem");
-        d2 = setup("/player/police_diem");
+        u1 = d1; u2 = d1; l1 = d1; l2 = d1; r1 = d1; r2 = d1; d2 = d1;
+        defaultImage = d1;
     }
     
+    @Override
+    public void update(){}
 
     @Override
     public void setDialogue() {

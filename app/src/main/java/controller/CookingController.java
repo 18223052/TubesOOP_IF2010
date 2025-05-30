@@ -3,16 +3,18 @@ package controller;
 import entity.Ingredient;
 import entity.Recipe;
 import object.FoodItem;
+import object.FuelItem;
 import object.IItem;
 import object.InventorySlot; 
-import object.ItemFactory;
 import main.GamePanel;
+
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
 
 public class CookingController {
     private GamePanel gp;
@@ -23,6 +25,31 @@ public class CookingController {
         this.cookingQueue = new LinkedList<>();
     }
 
+    public boolean isRecipeUnlocked(Recipe recipe){
+        switch (recipe.requirementType) {
+            case NONE:
+                return true; // Resep bawaan selalu terbuka
+            case BOUGHT_FROM_STORE:
+                boolean unlocked = gp.player.isRecipeUnlocked(recipe.id);
+                // System.out.println("  > Player has recipe '" + recipe.id + "': " + unlocked); // DEBUG
+                return unlocked;
+            case FISH_CAUGHT_COUNT:
+
+                return gp.player.getFishCaughtCount() >= recipe.requirementAmount;
+            case CAUGHT_SPECIFIC_FISH:
+
+                return gp.player.hasCaughtFish(recipe.requirementValue); 
+            case HAS_ITEM_IN_INVENTORY:
+
+                return gp.player.inventory.hasItem(recipe.requirementValue);
+            case FIRST_HARVEST:
+
+                return gp.player.hasHarvestedFirstTime();
+            default:
+                return false; 
+        }
+    }
+
     public List<Recipe> getCookableRecipe() {
         List<Recipe> cookableRecipeList = new ArrayList<>();
         List<Recipe> allRecipes = Recipe.getRecipeList();
@@ -30,7 +57,8 @@ public class CookingController {
         InventoryController playerInventory = gp.player.inventory;
 
         for (Recipe recipe : allRecipes) {
-            if (hasEnoughIngredients(recipe, playerInventory)) {
+            // System.out.println("Processing recipe: " + recipe.id + " (Requirement: " + recipe.requirementType + ")"); // DEBUG
+            if (isRecipeUnlocked(recipe) && hasEnoughIngredients(recipe, playerInventory)) {
                 cookableRecipeList.add(recipe);
             }
         }
@@ -55,80 +83,87 @@ public class CookingController {
         }
 
         if (gp.player.getEnergy() < 10) {
-            System.out.println("Energi tidak cukup untuk memasak " + recipe.title);
+
             return false;
         }
 
-        // Check for fuel BEFORE cooking attempts
         return hasEnoughFuel(playerInventory, 1);
     }
 
     public boolean hasEnoughFuel(InventoryController playerInventory, int fuelAmountNeeded) {
-        int totalFuelCapacity = 0;
 
-        for (InventorySlot slot : playerInventory.getInventorySlots()) {
+        int totalAvailableFuelValue =0;
+        for (InventorySlot slot : playerInventory.getInventorySlots()){
             IItem item = slot.getItem();
-            if (item.getCategory().equalsIgnoreCase("fuel")) {
-                if (item.getName().equalsIgnoreCase("coal")) {
-                    totalFuelCapacity += (slot.getQuantity() * 2);
-                } else if (item.getName().equalsIgnoreCase("firewood")) {
-                    totalFuelCapacity += (slot.getQuantity() * 1); 
-                }
+
+            if (item instanceof FuelItem){
+                FuelItem fuel = (FuelItem) item;
+                totalAvailableFuelValue += (fuel.getCurrentFuelValue()*slot.getQuantity());
             }
         }
-        return totalFuelCapacity >= fuelAmountNeeded;
+        return totalAvailableFuelValue >= fuelAmountNeeded;
+        // int totalFuelCapacity = 0;
+
+        // for (InventorySlot slot : playerInventory.getInventorySlots()) {
+        //     IItem item = slot.getItem();
+        //     if (item.getCategory().equalsIgnoreCase("fuel")) {
+        //         if (item.getName().equalsIgnoreCase("coal")) {
+        //             totalFuelCapacity += (slot.getQuantity() * 2);
+        //         } else if (item.getName().equalsIgnoreCase("firewood")) {
+        //             totalFuelCapacity += (slot.getQuantity() * 1); 
+        //         }
+        //     }
+        // }
+        // return totalFuelCapacity >= fuelAmountNeeded;
     }
 
-    public boolean cookRecipe(Recipe recipe) {
+     public boolean cookRecipe(Recipe recipe) {
         if (recipe == null) {
             System.out.println("Resep null.");
+            return false;
+        }
+        
+
+        if (!isRecipeUnlocked(recipe)) {
+            System.out.println("Resep " + recipe.title + " belum terbuka.");
+            gp.ui.setDialog("Resep " + recipe.title + " belum terbuka.");
+            gp.repaint();
             return false;
         }
 
         InventoryController playerInventory = gp.player.inventory;
 
-        // Double-check conditions immediately before cooking
-        if (!hasEnoughIngredients(recipe, playerInventory)) {
-            // hasEnoughIngredients already prints specific messages for energy/fuel
-            System.out.println("Bahan tidak cukup untuk memasak " + recipe.title); // Redundant if hasEnoughIngredients logs it
-            return false;
-        }
-        
-        // Energy check is already part of hasEnoughIngredients, but good to ensure
-        if (gp.player.getEnergy() < 10) {
+        if (gp.player.getEnergy() < 10){
             System.out.println("Energi tidak cukup untuk memasak " + recipe.title);
-            return false;
-        }
-
-        // Fuel check is already part of hasEnoughIngredients
-        if (!hasEnoughFuel(playerInventory, 1)) {
-            System.out.println("Bahan bakar tidak cukup untuk memasak " + recipe.title);
+            gp.ui.setDialog("Energi tidak cukup untuk memasak " + recipe.title);
+            gp.repaint();
             return false;
         }
 
 
-        // Deduct energy first, as it's a direct player cost
+        if (!hasEnoughIngredients(recipe, playerInventory)) {
+            System.out.println("Bahan atau sumber daya (fuel) tidak cukup untuk memasak " + recipe.title);
+            gp.ui.setDialog("Bahan atau fuel tidak cukup untuk memasak " + recipe.title); // Tampilkan pesan di sini
+            gp.repaint();
+            return false;
+        }
+
         gp.player.deductEnergy(10);
         System.out.println("Energi player dikurangi 10 untuk memasak");
 
-        // Consume ingredients
         for (Ingredient requiredIngredient : recipe.ingredients) {
             String ingredientName = requiredIngredient.name;
             int amountToConsume = requiredIngredient.amount;
 
             if (ingredientName.equalsIgnoreCase("Any Fish")) {
-                // Consume "Any Fish" by removing items one by one until amountToConsume is met
-                // The getItemCountByCategory already ensures we have enough.
                 playerInventory.removeCategoryItems("fish", amountToConsume);
                 System.out.println("Mengonsumsi " + amountToConsume + " ikan untuk resep.");
             } else {
-                // Use the InventoryController's removeItems method for stackable items
                 playerInventory.removeItems(ingredientName, amountToConsume);
                 System.out.println("Mengonsumsi " + amountToConsume + "x " + ingredientName + " untuk resep.");
             }
         }
 
-        // Consume fuel after ingredients
         consumeFuel(playerInventory, 1);
 
         long currentTotalGameMinutes = gp.gameTime.getTotalGameMinutes();
@@ -136,6 +171,8 @@ public class CookingController {
         cookingQueue.add(new CookingQueueEntry(recipe, currentTotalGameMinutes, cookingDuration, gp));
 
         System.out.println("Memasak " + recipe.title + " telah dimulai! Akan selesai pada menit ke-" + (currentTotalGameMinutes + cookingDuration) + " in-game time.");
+        gp.ui.setDialog("Memulai memasak " + recipe.title + "!"); 
+        gp.repaint(); 
         return true;
     }
 
@@ -155,8 +192,7 @@ public class CookingController {
                 }
                 iterator.remove();
             } else {
-                // Assuming items in the queue are ordered by completion time,
-                // if the current item is not ready, subsequent items won't be either.
+
                 break;
             }
         }
@@ -171,50 +207,46 @@ public class CookingController {
     }
 
     private void consumeFuel(InventoryController playerInventory, int fuelAmountNeeded) {
-        int consumedFuelValue = 0; // Tracks the total fuel value consumed
+    int remainingFuelToConsume = fuelAmountNeeded;
 
-        // Prioritize Coal first
-        Iterator<InventorySlot> inventoryIterator = playerInventory.getInventorySlots().iterator();
-        while (inventoryIterator.hasNext() && consumedFuelValue < fuelAmountNeeded) {
-            InventorySlot slot = inventoryIterator.next();
-            IItem item = slot.getItem();
-
-            if (item.getName().equalsIgnoreCase("coal")) {
-                int coalFuelValue = 2; // Fuel value of one coal
-                int numToConsume = (fuelAmountNeeded - consumedFuelValue + coalFuelValue - 1) / coalFuelValue; // Calculate how many coal needed
-                numToConsume = Math.min(numToConsume, slot.getQuantity()); // Don't consume more than available
-
-                if (numToConsume > 0) {
-                    playerInventory.removeItems("coal", numToConsume); // Use the correct remove method
-                    consumedFuelValue += (numToConsume * coalFuelValue);
-                    System.out.println("Mengonsumsi " + numToConsume + " Coal untuk memasak. Total fuel consumed: " + consumedFuelValue);
-                }
-            }
-        }
-
-        // Then use Firewood if more fuel is still needed
-        // Re-iterate the inventory or process remaining fuel items if coal wasn't enough
-        inventoryIterator = playerInventory.getInventorySlots().iterator(); // Reset iterator
-        while (inventoryIterator.hasNext() && consumedFuelValue < fuelAmountNeeded) {
-            InventorySlot slot = inventoryIterator.next();
-            IItem item = slot.getItem();
-
-            if (item.getName().equalsIgnoreCase("firewood")) {
-                int firewoodFuelValue = 1; // Fuel value of one firewood
-                int numToConsume = (fuelAmountNeeded - consumedFuelValue + firewoodFuelValue - 1) / firewoodFuelValue; // Calculate how many firewood needed
-                numToConsume = Math.min(numToConsume, slot.getQuantity()); // Don't consume more than available
-
-                if (numToConsume > 0) {
-                    playerInventory.removeItems("firewood", numToConsume); // Use the correct remove method
-                    consumedFuelValue += (numToConsume * firewoodFuelValue);
-                    System.out.println("Mengonsumsi " + numToConsume + " Firewood untuk memasak. Total fuel consumed: " + consumedFuelValue);
-                }
-            }
-        }
-
-        if (consumedFuelValue < fuelAmountNeeded) {
-            System.err.println("Warning: fuel tidak cukup untuk memasak. (This message implies a prior logic error)");
-            // This case should ideally not happen if hasEnoughFuel was checked correctly beforehand
+    // Kumpulkan semua FuelItem dari inventory (Setiap item di sini adalah instance unik)
+    List<FuelItem> availableFuelItems = new ArrayList<>();
+    for (InventorySlot slot : playerInventory.getInventorySlots()) {
+        if (slot.getItem() instanceof FuelItem) {
+            availableFuelItems.add((FuelItem) slot.getItem());
         }
     }
+
+    // Urutkan fuelItems untuk memprioritaskan konsumsi (misal: Firewood dulu, lalu Coal)
+    // Urutkan berdasarkan nilai maxFuelValue (nilai awal fuel yang lebih kecil akan datang duluan)
+    // Perbaikan: gunakan f1.getMaxFuelValue() dan f2.getMaxFuelValue()
+    availableFuelItems.sort((f1, f2) -> Integer.compare(f1.getMaxFuelValue(), f2.getMaxFuelValue())); // <--- REVISI DI SINI
+
+    // Iterasi melalui FuelItem yang ditemukan
+    Iterator<FuelItem> fuelIterator = availableFuelItems.iterator();
+    while (fuelIterator.hasNext() && remainingFuelToConsume > 0) {
+        FuelItem currentFuelItem = fuelIterator.next();
+
+        // Hitung berapa unit fuel yang akan diambil dari item ini
+        int fuelToTakeFromThisItem = Math.min(remainingFuelToConsume, currentFuelItem.getCurrentFuelValue());
+
+        if (fuelToTakeFromThisItem > 0) {
+            currentFuelItem.deductFuel(fuelToTakeFromThisItem); // Kurangi nilai fuel dari objek FuelItem
+            remainingFuelToConsume -= fuelToTakeFromThisItem;    // Kurangi kebutuhan fuel
+
+            System.out.println("Mengonsumsi " + fuelToTakeFromThisItem + " fuel dari " + currentFuelItem.getName() +
+                               ". Sisa fuel di item: " + currentFuelItem.getCurrentFuelValue() +
+                               ". Sisa kebutuhan fuel: " + remainingFuelToConsume);
+
+            if (currentFuelItem.isFuelEmpty()) {
+                playerInventory.removeItemInstance(currentFuelItem);
+                System.out.println(currentFuelItem.getName() + " habis dan dihapus dari inventory.");
+            }
+        }
+    }
+
+    if (remainingFuelToConsume > 0) {
+        System.err.println("Warning: Gagal mengonsumsi semua fuel yang dibutuhkan! (Initial hasEnoughFuel check error)");
+    }
+}
 }

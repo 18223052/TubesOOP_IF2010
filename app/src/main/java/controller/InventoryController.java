@@ -8,7 +8,10 @@ import object.IConsumable;
 import object.IItem;
 import object.IUsable;
 import object.InventorySlot;
-import object.NoItem; // Import the NoItem class
+import object.NoItem;
+import object.RecipeItem;
+import object.SeedItem;
+import object.ToolItem;
 import GUI.panels.InventoryScreen;
 
 public class InventoryController {
@@ -29,8 +32,6 @@ public class InventoryController {
         this.inventory = new ArrayList<>();
         this.selectedSlot = 0;
         this.eatingController = new EatingController(gp);
-        // Ensure the player's active item is set to NoItem initially if the inventory is empty or no item is active.
-        // This is typically handled during Player initialization, but a fallback here is good.
         if (gp.player != null && gp.player.getActiveItem() == null) {
             gp.player.setActiveItem(new NoItem(gp));
         }
@@ -88,9 +89,9 @@ public class InventoryController {
             } else {
                 inventory.remove(index);
                 System.out.println("Menghapus item: " + removedItem.getName() + " dari inventory");
-                // If the item being removed was the active item, set active item to NoItem
+                
                 if (gp.player.getActiveItem() == removedItem) {
-                    gp.player.setActiveItem(new NoItem(gp)); // Set active item to NoItem
+                    gp.player.setActiveItem(new NoItem(gp)); 
                     gp.ui.setDialog("Item unequipped.");
                 }
             }
@@ -298,30 +299,55 @@ public class InventoryController {
         return inventory;
     }
 
-    // Revised useItem to handle active item logic more robustly
     public void useItem(int index) {
-        if (index >= 0 && index < inventory.size()) {
-            InventorySlot slot = inventory.get(index);
-            IItem item = slot.getItem();
+    if (index >= 0 && index < inventory.size()) {
+        InventorySlot slot = inventory.get(index);
+        IItem item = slot.getItem();
 
-            if (item instanceof IUsable) {
-                System.out.println("Menggunakan: " + item.getName());
-                gp.player.setActiveItem(item); // Set the player's active item
-                gp.ui.setDialog("Equipped " + item.getName() + "."); // Inform player
-            } else if (item instanceof IConsumable) {
-                System.out.println("Mengonsumsi: " + item.getName());
-                eatingController.consume((IConsumable) item);
-                // After consumption, if this item was the active item, set to NoItem
-                if (gp.player.getActiveItem() == item) {
-                    gp.player.setActiveItem(new NoItem(gp));
-                }
-                removeItem(index); // Remove after consumption
+        if (item instanceof ToolItem) {
+            if (gp.player.getActiveItem() == item) {
+                gp.player.setActiveItem(new NoItem(gp)); 
+                gp.ui.setDialog("Unequipped " + item.getName() + "."); 
+                System.out.println("Melepas equip: " + item.getName());
             } else {
-                gp.ui.setDialog("You can't use " + item.getName() + " this way.");
-                System.out.println("Item ini bisa dijual: " + item.getName());
+
+                System.out.println("Menggunakan: " + item.getName());
+                gp.player.setActiveItem(item); 
+                gp.ui.setDialog("Equipped " + item.getName() + "."); 
             }
+        } else if (item instanceof RecipeItem){
+            System.out.println("Mennggunakan resep: " + item.getName());
+            RecipeItem recipeItem = (RecipeItem) item;
+
+            recipeItem.use(gp.player,gp);
+
+            if (gp.player.isRecipeUnlocked(recipeItem.getRecipeToUnlock()) && !recipeItem.getName().equals("Unknown Recipe")){
+                removeItem(index);
+            }
+        } else if (item instanceof IConsumable) {
+            System.out.println("Mengonsumsi: " + item.getName());
+            eatingController.consume((IConsumable) item);
+
+            if (gp.player.getActiveItem() == item) {
+                gp.player.setActiveItem(new NoItem(gp));
+            }
+            removeItem(index); 
+        } else if (item instanceof SeedItem){
+            if (gp.player.getActiveItem() == item) {
+                gp.player.setActiveItem(new NoItem(gp)); 
+                gp.ui.setDialog("Unequipped " + item.getName() + "."); 
+                System.out.println("Melepas equip: " + item.getName());
+            } else {
+            System.out.println("Menggunakan: " + item.getName());
+                gp.player.setActiveItem(item); 
+                gp.ui.setDialog("Equipped " + item.getName() + "."); }
+        }
+        else {
+            gp.ui.setDialog("You can't use " + item.getName() + " this way.");
+            System.out.println("Item ini bisa dijual: " + item.getName());
         }
     }
+}
 
     public void sellItem(int index) {
         if (index >= 0 && index < inventory.size()) {
@@ -331,11 +357,11 @@ public class InventoryController {
             gp.shippingBinController.addItem(item);
             System.out.println("Menjual " + item.getName() + " untuk " + goldGained + " gold");
 
-            // If the item being sold was the active item, set active item to NoItem
+
             if (gp.player.getActiveItem() == item) {
                 gp.player.setActiveItem(new NoItem(gp));
             }
-            removeItem(index); // Remove after selling
+            removeItem(index); 
         }
     }
 
@@ -350,7 +376,6 @@ public class InventoryController {
             } else {
                 inventory.remove(index);
                 System.out.println("Discarded item: " + discardedItem.getName());
-                // If the item discarded was the active item, set active item to NoItem
                 if (gp.player.getActiveItem() == discardedItem) {
                     gp.player.setActiveItem(new NoItem(gp));
                 }
@@ -360,7 +385,7 @@ public class InventoryController {
                 selectedSlot = inventory.size() - 1;
             } else if (inventory.isEmpty()) {
                 selectedSlot = 0;
-                gp.player.setActiveItem(new NoItem(gp)); // If inventory becomes empty, ensure NoItem is active
+                gp.player.setActiveItem(new NoItem(gp));
             }
             if (inventoryScreen != null) {
                 inventoryScreen.adjustScrollToSelectedItem();
@@ -369,13 +394,36 @@ public class InventoryController {
     }
 
     public void update() {
-        // No specific update logic needed in InventoryController itself,
-        // as it's primarily event-driven.
     }
 
     public boolean hasToolEquipped(String toolName) {
         IItem activeItem = gp.player.getActiveItem();
-        // Check if the active item is not NoItem AND its name matches the toolName
         return activeItem != null && !(activeItem instanceof NoItem) && activeItem.getName().equalsIgnoreCase(toolName);
+    }
+
+    public void removeSpecificSlot(InventorySlot slotToRemove) {
+        Iterator<InventorySlot> iterator = inventory.iterator();
+        while (iterator.hasNext()) {
+            InventorySlot slot = iterator.next();
+            if (slot == slotToRemove) { 
+                iterator.remove();
+                System.out.println("Slot inventory dihapus.");
+                return;
+            }
+        }
+    }
+
+
+    public void removeItemInstance(IItem itemInstanceToRemove) {
+        Iterator<InventorySlot> iterator = inventory.iterator();
+        while (iterator.hasNext()) {
+            InventorySlot slot = iterator.next();
+            if (slot.getItem() == itemInstanceToRemove) {
+                iterator.remove();
+                System.out.println("Instance item " + itemInstanceToRemove.getName() + " dihapus dari inventory.");
+                return; 
+            }
+        }
+        System.err.println("Warning: Attempted to remove item instance " + itemInstanceToRemove.getName() + " but it was not found.");
     }
 }

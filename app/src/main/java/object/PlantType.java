@@ -5,27 +5,28 @@ import java.util.Set;
 import environment.Season;
 
 public enum PlantType {
-    NONE(Collections.emptySet(), 0, 0), 
-    TOMATO(EnumSet.of(Season.SPRING, Season.FALL), 1 * 60 * 1000, 12 * 60 * 1000), 
-    POTATO(EnumSet.of(Season.SPRING), 4 * 60 * 1000, 8 * 60 * 1000),
-    PARSNIP(EnumSet.of(Season.SPRING), 3 * 60 * 1000, 6 * 60 * 1000),
-    CAULIFLOWER(EnumSet.of(Season.SPRING), 7 * 60 * 1000, 14 * 60 * 1000),
-    WHEAT(EnumSet.of(Season.SUMMER, Season.FALL), 2 * 60 * 1000, 4 * 60 * 1000),
-    BLUEBERRY(EnumSet.of(Season.SUMMER), 8 * 60 * 1000, 16 * 60 * 1000),
-    HOT_PEPPER(EnumSet.of(Season.SUMMER), 5 * 60 * 1000, 10 * 60 * 1000),
-    MELON(EnumSet.of(Season.SUMMER), 9 * 60 * 1000, 18 * 60 * 1000),
-    CRANBERRY(EnumSet.of(Season.FALL), 7 * 60 * 1000, 14 * 60 * 1000),
-    PUMPKIN(EnumSet.of(Season.FALL), 9 * 60 * 1000, 18 * 60 * 1000),
-    GRAPE(EnumSet.of(Season.FALL), 6 * 60 * 1000, 12 * 60 * 1000); 
+    NONE(Collections.emptySet(), 0, 0, 0), 
+    TOMATO(EnumSet.of(Season.SPRING, Season.FALL), 3 * 1440 / 2 * 60 * 1000L, 3 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L), 
+    POTATO(EnumSet.of(Season.SPRING), 3 * 1440 / 2 * 60 * 1000L, 3 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L), 
+    PARSNIP(EnumSet.of(Season.SPRING), 1 * 1440 / 2 * 60 * 1000L, 1 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L),
+    CAULIFLOWER(EnumSet.of(Season.SPRING), 5 * 1440 / 2 * 60 * 1000L, 5 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L),
+    WHEAT(EnumSet.of(Season.SUMMER, Season.FALL), 1 * 1440 / 2 * 60 * 1000L, 1 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L),
+    BLUEBERRY(EnumSet.of(Season.SUMMER), 7 * 1440 / 2 * 60 * 1000L, 7 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L),
+    HOT_PEPPER(EnumSet.of(Season.SUMMER), 1 * 1440 / 2 * 60 * 1000L, 1 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L),
+    MELON(EnumSet.of(Season.SUMMER), 4 * 1440 / 2 * 60 * 1000L, 4 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L),
+    CRANBERRY(EnumSet.of(Season.FALL), 2 * 1440 / 2 * 60 * 1000L, 2 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L),
+    PUMPKIN(EnumSet.of(Season.FALL), 7 * 1440 / 2 * 60 * 1000L, 7 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L),
+    GRAPE(EnumSet.of(Season.FALL), 3 * 1440 / 2 * 60 * 1000L, 3 * 1440 * 60 * 1000L, 24 * 60 * 60 * 1000L); 
 
     private final Set<Season> growthSeasons;
     private final long growthTimeStage1Millis; 
     private final long growthTimeStage2Millis; 
-
-    PlantType(Set<Season> growthSeasons, long growthTimeStage1Millis, long growthTimeStage2Millis) {
+    private final long wiltingTimeMillis; 
+    PlantType(Set<Season> growthSeasons, long growthTimeStage1Millis, long growthTimeStage2Millis, long wiltingTimeMillis) {
         this.growthSeasons = Collections.unmodifiableSet(growthSeasons);
         this.growthTimeStage1Millis = growthTimeStage1Millis;
         this.growthTimeStage2Millis = growthTimeStage2Millis;
+        this.wiltingTimeMillis = wiltingTimeMillis;
     }
 
     public Set<Season> getGrowthSeasons() {
@@ -42,5 +43,9 @@ public enum PlantType {
 
     public long getGrowthTimeStage2Millis() {
         return growthTimeStage2Millis;
+    }
+
+    public long getWiltingTimeMillis() {
+        return wiltingTimeMillis;
     }
 }

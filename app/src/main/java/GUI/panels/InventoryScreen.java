@@ -27,7 +27,6 @@ public class InventoryScreen extends BaseUIPanel {
     private final int INV_COLS = 4;
     // CORNER_RADIUS is now inherited from BaseUIPanel
 
-    // Enhanced color scheme properties are now inherited from BaseUIPanel
     // private final Color BACKGROUND_COLOR = new Color(25, 25, 35, 240);
     // private final Color FRAME_BORDER_COLOR = new Color(100, 120, 150, 200);
     // private final Color SLOT_BORDER_COLOR = new Color(80, 90, 110);
@@ -45,84 +44,70 @@ public class InventoryScreen extends BaseUIPanel {
     private final int LINE_HEIGHT_MEDIUM = 22;
     private final int LINE_HEIGHT_LARGE = 26;
 
-    // Removed: Category button constants (no longer needed for drawing)
-    // private final int CATEGORY_HEIGHT = 32;
-    // private final int CATEGORY_MARGIN = 2;
-
-    // Scrollable Inventory Variables
-    private int scrollOffsetRow = 0; // Tracks the starting row for drawing
-    private int visibleRows; // Number of rows visible in the inventory frame
+    private int scrollOffsetRow = 0; 
+    private int visibleRows; 
 
     public InventoryScreen(GamePanel gp, Font uiFont) {
         super(gp, uiFont);
 
         INV_FRAME_X = gp.tileSize * 9;
-        INV_FRAME_Y = gp.tileSize + 40; // Maintain position, category buttons are removed
+        INV_FRAME_Y = gp.tileSize - 20; 
         INV_FRAME_WIDTH = gp.tileSize * 6;
-        INV_FRAME_HEIGHT = gp.tileSize * 6;
+        INV_FRAME_HEIGHT = gp.tileSize * 7;
         INV_SLOT_SIZE = (INV_FRAME_WIDTH - 40 - (INV_SLOT_PADDING * (INV_COLS - 1))) / INV_COLS;
 
-        // Calculate visible rows in the inventory frame
-        // This is based on the available height for slots after the header and some padding
-        int availableHeightForSlots = INV_FRAME_HEIGHT - (55 + 10); // 55 for header, 10 for bottom padding
+        int availableHeightForSlots = INV_FRAME_HEIGHT - (55 + 10); 
         visibleRows = availableHeightForSlots / (INV_SLOT_SIZE + INV_SLOT_PADDING);
-        // If there's enough space for a partial row, consider it visible
-        if (availableHeightForSlots % (INV_SLOT_SIZE + INV_SLOT_PADDING) > (INV_SLOT_SIZE / 2)) { // Half a slot's height
+
+        if (availableHeightForSlots % (INV_SLOT_SIZE + INV_SLOT_PADDING) > (INV_SLOT_SIZE / 2)) { 
              visibleRows++;
         }
 
 
         DETAIL_FRAME_WIDTH = gp.tileSize * 6;
-        DETAIL_FRAME_HEIGHT = gp.tileSize * 3;
+        DETAIL_FRAME_HEIGHT = gp.tileSize * 4;
 
-        // Set the InventoryScreen reference in InventoryController
+
         gp.inventoryController.setInventoryScreen(this);
     }
 
     public void draw(Graphics2D g2, boolean isGifting) {
-        // Enable antialiasing for smoother graphics
+       
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        // Removed: drawEnhancedCategoryFilters(g2);
-
-        // Draw main inventory frame with modern styling
-        // Using the enhanced drawSubWindow from BaseUIPanel
         drawSubWindow(g2, INV_FRAME_X, INV_FRAME_Y, INV_FRAME_WIDTH, INV_FRAME_HEIGHT);
 
-        // Draw inventory header
+
         drawInventoryHeader(g2);
 
-        // Draw inventory slots and items
+
         drawEnhancedInventorySlots(g2);
 
-        // Draw item details if an item is selected
         InventorySlot selectedSlot = gp.inventoryController.getSelectedSlotItem();
         if (selectedSlot != null) {
             drawEnhancedItemDetails(g2, selectedSlot.getItem(), selectedSlot.getQuantity(),
                     INV_FRAME_X, INV_FRAME_Y + INV_FRAME_HEIGHT + 15, isGifting);
         }
 
-        // Draw gifting instructions if in gifting mode
+
         if (isGifting) {
             drawEnhancedGiftingInstructions(g2);
         }
     }
 
-    // drawEnhancedFrame is now replaced by drawSubWindow in BaseUIPanel
-    // private void drawEnhancedFrame(Graphics2D g2, int x, int y, int width, int height) { ... }
 
     private void drawInventoryHeader(Graphics2D g2) {
-        // Header background with subtle accent
+
         g2.setColor(new Color(60, 70, 90, 150));
         g2.fillRoundRect(INV_FRAME_X + 5, INV_FRAME_Y + 5, INV_FRAME_WIDTH - 10, 40, 8, 8);
 
-        // Title
+
         g2.setFont(uiFont.deriveFont(Font.BOLD, 16f));
         g2.setColor(HEADER_COLOR);
         g2.drawString("INVENTORY", INV_FRAME_X + 15, INV_FRAME_Y + 25);
 
-        // Slot counter with better styling
+
         String slotText = gp.inventoryController.getInventorySlots().size() + "/" +
                 gp.inventoryController.getInventoryMaxSize();
         g2.setFont(uiFont.deriveFont(Font.PLAIN, 12f));
@@ -137,17 +122,15 @@ public class InventoryScreen extends BaseUIPanel {
     }
 
     private void drawEnhancedInventorySlots(Graphics2D g2) {
-        // Now using all items for display, no filtering on UI
-        ArrayList<InventorySlot> allSlots = gp.inventoryController.getInventorySlots();
-        int startY = INV_FRAME_Y + 55; // Start below header
 
-        // Calculate the range of slots to draw based on scrollOffsetRow
+        ArrayList<InventorySlot> allSlots = gp.inventoryController.getInventorySlots();
+        int startY = INV_FRAME_Y + 55;
+
+
         int startIndex = scrollOffsetRow * INV_COLS;
         int endIndex = Math.min(allSlots.size(), startIndex + (visibleRows * INV_COLS));
 
-        // Define the clipping region for the inventory display area
-        // This ensures that items drawn outside this boundary are not visible.
-        Shape oldClip = g2.getClip(); // Save the old clip
+        Shape oldClip = g2.getClip(); 
         g2.setClip(INV_FRAME_X + 10, startY, INV_FRAME_WIDTH - 20, INV_FRAME_HEIGHT - (startY - INV_FRAME_Y) - 10);
 
 
@@ -155,8 +138,8 @@ public class InventoryScreen extends BaseUIPanel {
             InventorySlot slot = allSlots.get(i);
             IItem item = slot.getItem();
 
-            int col = (i - startIndex) % INV_COLS; // Calculate column relative to the start of the drawn items
-            int row = (i - startIndex) / INV_COLS; // Calculate row relative to the start of the drawn items
+            int col = (i - startIndex) % INV_COLS; 
+            int row = (i - startIndex) / INV_COLS; 
 
             int slotX = INV_FRAME_X + 20 + (col * (INV_SLOT_SIZE + INV_SLOT_PADDING));
             int slotY = startY + (row * (INV_SLOT_SIZE + INV_SLOT_PADDING));
@@ -199,11 +182,6 @@ public class InventoryScreen extends BaseUIPanel {
         g2.setColor(SELECTED_SLOT_COLOR); // Use theme goldish color for name
         g2.drawString(item.getName(), x + DETAIL_PADDING, currentY);
         currentY += LINE_HEIGHT_MEDIUM + 5; // Add a bit more space after name
-
-        g2.setColor(new Color(255, 215, 0, 100));
-        g2.setStroke(new BasicStroke(1f));
-        g2.drawLine(x + DETAIL_PADDING, currentY - 8,
-                x + DETAIL_FRAME_WIDTH - DETAIL_PADDING, currentY - 8);
 
         // Item details with better formatting
         g2.setFont(uiFont.deriveFont(Font.PLAIN, 13f)); // Slightly larger font for details

@@ -1,6 +1,8 @@
 package entity;
 
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import interactable.Interactable;
@@ -53,12 +55,12 @@ public abstract class NPC extends Character implements Interactable {
 
     public abstract void setDialogue();
 
-    public abstract void getImage();
+    @Override
+    public abstract void getCharacterImage();
 
     public abstract void initializeGiftPreference(object.ItemFactory itemFactory);
 
     public void speak() {
-
         setDialogue();
         if (dialogues[dialogIndex] == null){
             dialogIndex =0;
@@ -191,8 +193,7 @@ public abstract class NPC extends Character implements Interactable {
 
     public void marryPlayer(Player player) {
         this.relationshipStatus = STATUS_MARRIED;
-        // dayBecameFiance bisa dibiarkan sebagai catatan atau direset
-        // player.setSpouse(this); // Ini akan diatur dari sisi controller/player
+
     }
 
     public String getProposalDeclineMessage() {
@@ -218,6 +219,24 @@ public abstract class NPC extends Character implements Interactable {
     
     public String getRelationshipStatus(){
         return this.relationshipStatus;
+    }
+
+    @Override
+    public void update(){
+
+    }
+
+    @Override
+    public BufferedImage getDisplayImage(){
+        if (defaultImage != null){
+            return defaultImage;
+        }
+        return d1;
+    }
+
+    @Override
+    public void draw (Graphics2D g2){
+        super.draw(g2);
     }
     
 }
