@@ -74,6 +74,10 @@ public class Player extends Character {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getFarmMap(){
         return farmMap;
     }

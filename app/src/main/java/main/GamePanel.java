@@ -120,16 +120,15 @@ public class GamePanel extends JPanel implements Runnable {
     public int interactionTileCol;
     public int interactionTileRow;
     
-    // Arrays/List for game objects and NPCs
-    // REVISI: Ubah ini menjadi ArrayList untuk fleksibilitas yang lebih baik
-    public ArrayList<SuperObj> obj = new ArrayList<>(); // Ganti dari SuperObj[]
-    public NPC npc[] = new NPC[6]; // NPC bisa tetap array jika jumlahnya tetap
+
+    public ArrayList<SuperObj> obj = new ArrayList<>(); 
+    public NPC npc[] = new NPC[6]; 
     
-    // Current interactive objects
+  
     public SuperObj currObj;
     public NPC currNPC;
 
-    public SaveManager saveManger; // Perhatikan nama variabel, konsistenkan jadi 'saveManager' (huruf kecil 'm')
+    public SaveManager saveManger; 
     
     public String playerNameInput = "";
     public boolean requestingNameInput = false;
@@ -157,7 +156,7 @@ public class GamePanel extends JPanel implements Runnable {
         storeController = new StoreController(this);
         npcController = new NPCController(this);
 
-        // Inisialisasi SaveManager di constructor
+
         saveManger = new SaveManager(this); // Perhatikan nama variabel 'saveManger'
         
         this.keyH = new KeyHandler(this);
@@ -395,14 +394,14 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    // Optional: Force pause from external sources
+
     public void forceGamePause() {
         synchronized (pauseLock) {
             pauseGameThread();
         }
     }
 
-    // Optional: Force resume from external sources  
+
     public void forceGameResume() {
         synchronized (pauseLock) {
             resumeGameThread();
@@ -437,16 +436,16 @@ public class GamePanel extends JPanel implements Runnable {
                 Lighting lighting = eManager.getLighting();
 
                 if (currentHour == 5 && currentMinute == 0) {
-                    lighting.triggerTransition(Lighting.DAWN); // Transisi terang
+                    lighting.triggerTransition(Lighting.DAWN); 
                 }
                 else if (currentHour == 6 && currentMinute == 0) {
-                    lighting.triggerTransition(Lighting.DAY); // Langsung terang penuh
+                    lighting.triggerTransition(Lighting.DAY); 
                 }
                 else if (currentHour == 17 && currentMinute == 0) {
-                    lighting.triggerTransition(Lighting.DUSK); // Transisi gelap
+                    lighting.triggerTransition(Lighting.DUSK); 
                 }
                 else if (currentHour == 18 && currentMinute == 0) {
-                    lighting.triggerTransition(Lighting.NIGHT); // Langsung gelap penuh
+                    lighting.triggerTransition(Lighting.NIGHT); 
                 }
             }
 
@@ -455,7 +454,7 @@ public class GamePanel extends JPanel implements Runnable {
         } else if (gameState == sleepState){
             sleepController.update();
         }
-        // nambah gamestate lain kali
+
     }
 
     private void handleNewDayEvents() {
@@ -469,7 +468,7 @@ public class GamePanel extends JPanel implements Runnable {
                     tile.getCurrentState() == TileState.WATERED || 
                     tile.getCurrentState() == TileState.HARVESTABLE)) {
                     
-                    tile.setWatered(false); // This will update the image to the 'unwatered' version
+                    tile.setWatered(false); 
                     System.out.println(tile.getPlantedCropType().name() + " di " + tile.wX/tileSize + "," + tile.wY/tileSize + " butuh disiram.");
                 }
             }
@@ -711,20 +710,19 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGame() {
-        // Inisialisasi player dengan nama yang diinput
+
         player.setName(playerNameInput);
         System.out.println("Player Name: " + player.getName());
 
-        // Lanjutkan dengan setup map dan item awal
         int randIndex = random.nextInt(farmMapVariations.length);
         this.currMap = farmMapVariations[randIndex];
         this.prevFarmMap = this.currMap;
         System.out.println("Starting map: " + currMap);
-        tileM.loadMap(this.currMap); // Load map pertama
+        tileM.loadMap(this.currMap); 
         setupMap();
         addStartingItems();
         addStoreItems();
-        saveManger.loadGameState(); // Load game state setelah player dibuat
-        setGameState(playState); // Ubah ke playState
+        saveManger.loadGameState();
+        setGameState(playState);
     }
 }
