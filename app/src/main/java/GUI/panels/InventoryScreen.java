@@ -43,9 +43,9 @@ public class InventoryScreen extends BaseUIPanel {
     private final int LINE_HEIGHT_SMALL = 18;
     private final int LINE_HEIGHT_MEDIUM = 22;
     private final int LINE_HEIGHT_LARGE = 26;
-    
-    private int scrollOffsetRow = 0; // Tracks the starting row for drawing
-    private int visibleRows; // Number of rows visible in the inventory frame
+
+    private int scrollOffsetRow = 0; 
+    private int visibleRows; 
 
     public InventoryScreen(GamePanel gp, Font uiFont) {
         super(gp, uiFont);
