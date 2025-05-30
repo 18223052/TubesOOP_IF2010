@@ -27,7 +27,6 @@ public class InventoryScreen extends BaseUIPanel {
     private final int INV_COLS = 4;
     // CORNER_RADIUS is now inherited from BaseUIPanel
 
-    // Enhanced color scheme properties are now inherited from BaseUIPanel
     // private final Color BACKGROUND_COLOR = new Color(25, 25, 35, 240);
     // private final Color FRAME_BORDER_COLOR = new Color(100, 120, 150, 200);
     // private final Color SLOT_BORDER_COLOR = new Color(80, 90, 110);
@@ -44,12 +43,7 @@ public class InventoryScreen extends BaseUIPanel {
     private final int LINE_HEIGHT_SMALL = 18;
     private final int LINE_HEIGHT_MEDIUM = 22;
     private final int LINE_HEIGHT_LARGE = 26;
-
-    // Removed: Category button constants (no longer needed for drawing)
-    // private final int CATEGORY_HEIGHT = 32;
-    // private final int CATEGORY_MARGIN = 2;
-
-    // Scrollable Inventory Variables
+    
     private int scrollOffsetRow = 0; // Tracks the starting row for drawing
     private int visibleRows; // Number of rows visible in the inventory frame
 
