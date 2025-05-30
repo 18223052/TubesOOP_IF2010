@@ -1,6 +1,7 @@
 package controller;
 
 import entity.NPC;
+import entity.Player;
 import main.GamePanel;
 import object.IItem;
 
@@ -10,6 +11,32 @@ public class NPCController {
 
     public NPCController(GamePanel gp){
         this.gp = gp;
+    }
+
+    public void initiateChatWithCurrentNPC(){
+        if (gp.currNPC == null || gp.player == null || gp.ui == null || gp.gameTime == null) {
+            System.err.println("NPCController: Chat initiation failed, critical component is null.");
+            if (gp.ui != null) {
+                gp.ui.setDialog("Error: Tidak dapat memulai percakapan saat ini.");
+                if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState);
+                gp.repaint(); 
+            }
+            return;
+        }
+        int energyAfterChat = gp.player.getEnergy() - NPC.CHAT_ENERGY_COST;
+        if (energyAfterChat < Player.MIN_ENERGY_BEFORE_SLEEP ){
+            gp.ui.setDialog("Kamu terlalu lelah untuk melakukan chat sekarang.");
+            gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
+        }
+
+        gp.player.deductEnergy(NPC.CHAT_ENERGY_COST);
+        gp.gameTime.addTime(10);
+        gp.currNPC.addHeartPoints(10);
+        gp.currNPC.speak();
+        gp.currNPC.recordChatSession();
+
+        System.out.println(gp.currNPC.getTotalTimesChatted());
     }
 
     public void giftItemToNPC(IItem itemToGift) {
@@ -38,11 +65,11 @@ public class NPCController {
             pointsToAdd = 20;
             reactionMessage = gp.currNPC.getName() + " likes " + itemToGift.getName() + "!"; 
         } else {
-            if (gp.currNPC.doesHateAllUnlistedItems()) { // Assuming this means they hate neutral items too
-                pointsToAdd = -25; // Or a smaller negative for merely disliked/neutral if hated is different
+            if (gp.currNPC.doesHateAllUnlistedItems()) { 
+                pointsToAdd = -25; 
                 reactionMessage = gp.currNPC.getName() + " really dislikes " + itemToGift.getName() + "!";
-            } else { // Neutral reaction
-                pointsToAdd = 5; // Or 0, or a small positive for politeness
+            } else { 
+                pointsToAdd = 5; 
                 reactionMessage = gp.currNPC.getName() + " accepts " + itemToGift.getName() + ".";
             }
         }
@@ -79,7 +106,7 @@ public class NPCController {
 
         gp.gameTime.addTime(60); 
 
-        if (!gp.player.hasItem("ring")) { 
+        if (!gp.player.inventory.hasItem("ring")) { 
             gp.ui.setDialog("You need a ring to propose."); 
             gp.player.changeEnergy(-20); 
             if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
@@ -132,7 +159,7 @@ public class NPCController {
 
         NPC fiance = gp.player.getFiance(); 
 
-        if (!gp.player.hasItem("ring")) { 
+        if (!gp.player.inventory.hasItem("ring")) { 
             gp.ui.setDialog("You need the Ring for the wedding ceremony!"); 
             if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
             return;

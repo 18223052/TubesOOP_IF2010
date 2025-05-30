@@ -22,6 +22,13 @@ public abstract class NPC extends Character implements Interactable {
     protected final int MAX_HEART_POINTS = 150;
     protected final int MIN_HEART_POINTS = 0;
 
+    public static final int CHAT_ENERGY_COST = 10;
+    public static final int GIFT_ENERGY_COST = 5;
+    public static final int PROPOSING_ACCEPT_ENERGY_COST = 10;
+    public static final int PROPOSING_DECLINE_ENERGY_COST = 20;
+    public static final int MARRY_ENERGY_COST = 80;
+
+
     public String[] dialogues = new String[20];
     public int dialogIndex = 0;
 
@@ -35,6 +42,9 @@ public abstract class NPC extends Character implements Interactable {
     protected String gender;
     public static final String gender_male = "Male";
     public static final String gender_female = "Female";
+
+    private int timeChattedToday = 0;
+    private int totalTimesChatted = 0;
 
     public NPC(GamePanel gp){
         super(gp);
@@ -148,6 +158,25 @@ public abstract class NPC extends Character implements Interactable {
         System.out.println(name + " now has " + heartPoints + " heart points.");
     }
 
+    public void recordChatSession(){
+        this.timeChattedToday ++;
+        this.totalTimesChatted ++;
+        this.dialogIndex = 0;
+    }
+
+    public int getTimeChattedToday(){
+        return timeChattedToday;
+    }
+
+    public int getTotalTimesChatted(){
+        return totalTimesChatted;
+    }
+
+    public void resetDailyStats() {
+        this.timeChattedToday = 0;
+        this.dialogIndex = 0; 
+        System.out.println("Statistik harian direset untuk " + name + ". Times chatted today: " + this.timeChattedToday);
+    }
     
     public String getGender(){
         return this.gender;

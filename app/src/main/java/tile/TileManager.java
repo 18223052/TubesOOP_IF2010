@@ -125,11 +125,10 @@ public class TileManager {
                     teleportPlayer("/maps/rumah.txt", 26, 36); 
                     return;
                 }
-                // To River
-                // Note: Your river teleport check is a range (28-31 for col), so we check that
+
                 if ((checkCol >= coords[2] && checkCol <= coords[2] + 3) && checkRow == coords[3]) {
-                    gp.prevFarmMap = gp.currMap; // Store the current farm map
-                    teleportPlayer("/maps/river.txt", 22, 1); // Fixed entry point for River
+                    gp.prevFarmMap = gp.currMap; 
+                    teleportPlayer("/maps/river.txt", 22, 1); 
                     return;
                 }
                 // To Worldmap
@@ -180,9 +179,30 @@ public class TileManager {
                 }
                 return;
             }
+            
 
             if ((checkCol == 24 || checkCol == 25) && checkRow == 50){
-                teleportPlayer("/maps/lake.txt", 25, 1);
+                teleportPlayer("/maps/lake.txt", 28, 30);
+                return;
+            }
+
+            // if (checkCol == 28 && checkRow == 18){
+            //     teleportPlayer("/maps/rumahabigail.txt", 28, 30);
+            //     return;
+            // }
+
+            // if (checkCol == 23 && checkRow == 21){
+            //     teleportPlayer("/maps/rumahmayortadi.txt", 28, 30);
+            //     return;
+            // }
+
+            // if (checkCol == 18 && checkRow == 21){
+            //     teleportPlayer("/maps/rumahdasco.txt", 28, 30);
+            //     return;
+            // }
+
+            if (checkCol == 18 && checkRow == 18){
+                teleportPlayer("/maps/rumahperry.txt", 28, 30);
                 return;
             }
         }

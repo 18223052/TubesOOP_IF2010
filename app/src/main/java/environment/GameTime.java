@@ -88,7 +88,7 @@ public class GameTime implements Runnable {
         }
     }
 
-    public int getGameMinute() {
+    public synchronized int getGameMinute() {
         return gameMinute;
     }
 
@@ -96,11 +96,11 @@ public class GameTime implements Runnable {
         return isTimePointOnly;
     }
 
-    public int getGameHour() {
+    public synchronized int getGameHour() {
         return gameHour;
     }
 
-    public int getGameDay() {
+    public synchronized int getGameDay() {
         return gameDay;
     }
 
@@ -131,7 +131,7 @@ public class GameTime implements Runnable {
         }
     }
 
-    public void add1Day(){
+    public synchronized void add1Day(){
         this.gameDay += 1;
         this.gameHour = 6;
         this.gameMinute = 0;
@@ -145,7 +145,7 @@ public class GameTime implements Runnable {
         updateTotalGameMillis();
     }
 
-    public void nextDaySleep() {
+    public synchronized void nextDaySleep() {
         gameDay++;
         gameHour = 6;      
         gameMinute = 0;

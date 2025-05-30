@@ -304,7 +304,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_E:
                 interactPressed = true; 
                 if (gp.currNPC != null) {
-                    gp.currNPC.speak();
+                    gp.npcController.initiateChatWithCurrentNPC();
                 
                 }
                 break;

@@ -398,7 +398,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
             }
 
             if (timer >= 1000000000) {
-                // System.out.println("FPS: " + drawCnt);
+
                 timer = 0;
             }
         }
@@ -437,14 +437,13 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         }
     }
 
-    // Optional: Force pause from external sources
+
     public void forceGamePause() {
         synchronized (pauseLock) {
             pauseGameThread();
         }
     }
 
-    // Optional: Force resume from external sources  
     public void forceGameResume() {
         synchronized (pauseLock) {
             resumeGameThread();
@@ -452,52 +451,61 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
     }
 
     public void update() {
+        
         if (gameState == playState) {
-            player.update();
-            interactionTileCol = player.interactionBox.x / tileSize;
-            interactionTileRow = player.interactionBox.y / tileSize;
-            tileM.checkTeleport(interactionTileCol, interactionTileRow);
-            eManager.update();
-            cookingController.update();
-            
-           
-            farmingController.updatePlantGrowth(); 
 
-            // Game time update every n frames
             currentMinute = gameTime.getGameMinute();
             currentHour = gameTime.getGameHour();
             currentDay = gameTime.getGameDay();
 
-            if (currentDay != lastCheckedGameDay){
+        
+            if (currentDay != lastCheckedGameDay) {
                 handleNewDayEvents();
                 lastCheckedGameDay = currentDay;
             }
 
 
+            player.update();
+            interactionTileCol = player.interactionBox.x / tileSize;
+            interactionTileRow = player.interactionBox.y / tileSize;
+            tileM.checkTeleport(interactionTileCol, interactionTileRow);
+
+        
+            eManager.update();
+
 
             if (eManager != null && eManager.isLightingSetup()) {
                 Lighting lighting = eManager.getLighting();
-
                 if (currentHour == 5 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DAWN); // Transisi terang
+                } else if (currentHour == 6 && currentMinute == 0) {
+                    lighting.triggerTransition(Lighting.DAY); 
+                } else if (currentHour == 17 && currentMinute == 0) {
+                    lighting.triggerTransition(Lighting.DUSK); 
+                } else if (currentHour == 18 && currentMinute == 0) {
+                    lighting.triggerTransition(Lighting.NIGHT); 
                 }
-                else if (currentHour == 6 && currentMinute == 0) {
-                    lighting.triggerTransition(Lighting.DAY); // Langsung terang penuh
+            }
+
+            if (currentHour == 2 && currentMinute == 0) {
+                if (!sleepController.isSleeping()) { 
+                    System.out.println("GamePanel: Sudah jam 2 pagi (" + currentHour + ":" + currentMinute + "), pemain pingsan! Status tidur saat ini: " + sleepController.isSleeping());
+                    sleepController.forceSleep();
+                
                 }
-                else if (currentHour == 17 && currentMinute == 0) {
-                    lighting.triggerTransition(Lighting.DUSK); // Transisi gelap
-                }
-                else if (currentHour == 18 && currentMinute == 0) {
-                    lighting.triggerTransition(Lighting.NIGHT); // Langsung gelap penuh
-                }
+            }
+
+            if (gameState == playState) {
+                cookingController.update();
+                farmingController.updatePlantGrowth();
             }
 
         } else if (gameState == inventoryState) {
             inventoryController.update();
-        } else if (gameState == sleepState){
+        } else if (gameState == sleepState) {
             sleepController.update();
         }
-        // nambah gamestate lain kali
+
     }
 
     private void handleNewDayEvents() {
