@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.io.StringBufferInputStream;
 import java.util.ArrayList; // Import ArrayList
 
 import controller.InventoryController;
@@ -58,6 +59,8 @@ public class Player extends Character {
         interactionBox.height = gp.tileSize;
         interactionDistance = gp.tileSize;
 
+        this.gender = "Male";
+
         inventory = new InventoryController(gp);
 
         setActiveItem(new NoItem(gp));
@@ -110,6 +113,17 @@ public class Player extends Character {
 
     public IItem getActiveItem() {
         return activeItem;
+    }
+
+    public String getPartner(){
+        if (this.fiance != null || this.spouse != null){
+            if (this.fiance == null){
+                return this.spouse.getName();
+            } else {
+                return this.fiance.getName();
+            }
+        }
+        return null;
     }
 
     public void addGold(int amount) {

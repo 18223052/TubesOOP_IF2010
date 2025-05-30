@@ -10,7 +10,8 @@ public class NPC_mayortadi extends NPC {
     public NPC_mayortadi(GamePanel gp,ItemFactory itemFactory) {
         super(gp);
         name = "Mayor Tadi";
-        gender = gender_male;
+        gender = NPC.gender_male;
+        heartPoints = MAX_HEART_POINTS; //Debug
         setHatesAllUnlistedItems(true);
         getImage();
         initializeGiftPreference(itemFactory);

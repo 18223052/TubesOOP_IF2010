@@ -303,10 +303,17 @@ public class KeyHandler implements KeyListener {
                 break;
             case KeyEvent.VK_P: // Propose
                 if (gp.npcController != null) { //
+                    if (gp.currNPC.isProposable(gp.player)){
+                        System.out.println("DEBUG PROPOSAL: Bisa dilamar");
+                    } else {
+                        System.out.println("DEBUG PROPOSAL: Gabisa dilamar");
+                    }
                     // Syarat utama untuk *mencoba* melamar adalah pemain memiliki "Proposal Ring".
                     if (gp.player.hasItem("ring")) { // hasItem() di Player
-                        gp.npcController.attemptPropose(gp.currNPC); // Panggil NPCController
-                        System.out.println("Melamar...");
+                        if (gp.currNPC.isProposable(gp.player)){
+                            gp.npcController.attemptPropose(gp.currNPC); // Panggil NPCController
+                            System.out.println("Melamar...");
+                        } 
                     } else {
                         // Pemain tidak punya cincin, berikan pesan.
                         if (gp.ui != null) { //

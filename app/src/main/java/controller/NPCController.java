@@ -56,6 +56,7 @@ public class NPCController {
             if (gp.ui != null) {
                 gp.ui.setDialog("Error: Cannot process proposal at this time."); 
                 if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+                gp.repaint();
                 gp.currNPC = targetNPC; 
             }
             return;
@@ -67,18 +68,21 @@ public class NPCController {
             gp.ui.setDialog("You need a ring to propose."); 
             gp.player.changeEnergy(-20); 
             if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+            gp.repaint();
             gp.currNPC = targetNPC; 
             return;
         }
 
-        if (targetNPC.isProposable(gp.player)) { 
+        if (targetNPC.isProposable(gp.player) && NPC.gender_female.equals(targetNPC.getGender())) { 
             System.out.println("Selamat atas pernikahanmu Na Hee Do");
             targetNPC.becomeFiance(gp.player, gp.gameTime.getGameDay()); 
             gp.player.setFiance(targetNPC); 
             gp.player.changeEnergy(-10); 
             gp.ui.setDialog(targetNPC.getName() + " joyfully accepts! You are now engaged."); 
             if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+            gp.repaint();
             gp.currNPC = targetNPC; 
+            gp.update();
         } else {
             System.out.println(gp.gameState);
             System.out.println("Kamu terlalu baik buat aku");
@@ -89,13 +93,12 @@ public class NPCController {
                 reason = targetNPC.getName() + " needs to feel a stronger connection."; 
             } else if (!NPC.STATUS_SINGLE.equals(targetNPC.getRelationshipStatus())) { 
                 reason = targetNPC.getName() + " is not available for a relationship."; 
-            } else if (!NPC.gender_female.equals(targetNPC.getGender())) { // Menggunakan konstanta dari NPC.java
-                reason = "You can only propose to female NPCs.";
             } else if (gp.player.hasFiance() || gp.player.hasSpouse()) { 
                 reason = "You are already in a relationship!";
             }
             gp.ui.setDialog("Proposal to " + targetNPC.getName() + " was declined. " + reason); 
             if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+            gp.repaint();
             gp.currNPC = targetNPC;
         }
         System.out.println("Energy sesudah: " + gp.player.getEnergy());
@@ -113,8 +116,8 @@ public class NPCController {
 
         NPC fiance = gp.player.getFiance(); 
 
-        if (!gp.player.hasItem("Proposal Ring")) { 
-            gp.ui.setDialog("You need the Proposal Ring for the wedding ceremony!"); 
+        if (!gp.player.hasItem("ring")) { 
+            gp.ui.setDialog("You need the Ring for the wedding ceremony!"); 
             if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
             return;
         }

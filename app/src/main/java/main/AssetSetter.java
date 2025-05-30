@@ -154,9 +154,9 @@ public class AssetSetter {
             // gp.npc[0].wX = gp.tileSize*18;
             // gp.npc[0].wY = gp.tileSize*29;
 
-            gp.npc[1] = new NPC_abigail(gp, gp.itemFactory);
-            gp.npc[1].wX = gp.tileSize*19;
-            gp.npc[1].wY = gp.tileSize*29;
+            gp.npc[0] = new NPC_abigail(gp, gp.itemFactory);
+            gp.npc[0].wX = gp.tileSize*19;
+            gp.npc[0].wY = gp.tileSize*29;
 
             // gp.npc[2] = new NPC_perry(gp);
             // gp.npc[2].wX = gp.tileSize*20;

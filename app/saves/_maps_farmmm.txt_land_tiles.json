@@ -1,0 +1,162 @@
+[
+  {
+    "worldX": 1296,
+    "worldY": 1680,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1344,
+    "worldY": 1680,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1392,
+    "worldY": 1680,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1440,
+    "worldY": 1680,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1488,
+    "worldY": 1680,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1536,
+    "worldY": 1680,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1584,
+    "worldY": 1680,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1632,
+    "worldY": 1680,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1296,
+    "worldY": 1728,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1344,
+    "worldY": 1728,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1392,
+    "worldY": 1728,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1440,
+    "worldY": 1728,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1488,
+    "worldY": 1728,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1536,
+    "worldY": 1728,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1584,
+    "worldY": 1728,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  },
+  {
+    "worldX": 1632,
+    "worldY": 1728,
+    "currentState": "LAND",
+    "plantedCropType": "NONE",
+    "growthStage": 0,
+    "lastWateredTime": -1,
+    "isWatered": false,
+    "plantedTime": -1
+  }
+]
