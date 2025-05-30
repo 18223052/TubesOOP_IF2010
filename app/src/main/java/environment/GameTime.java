@@ -12,7 +12,6 @@ public class GameTime implements Runnable {
     private final Object pauseLock = new Object();
 
     private long totalGameMillis = 0;
-    private long lastUpdateTimeMillis = System.nanoTime() / 1_000_000;
 
     private Thread thread;
     private boolean isTimePointOnly = false;

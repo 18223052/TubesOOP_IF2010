@@ -29,7 +29,6 @@ public class StoreMenu extends BaseUIPanel {
     private final int DETAIL_PADDING = 15;
     private final int LINE_HEIGHT_SMALL = 18;
     private final int LINE_HEIGHT_MEDIUM = 22;
-    private final int LINE_HEIGHT_LARGE = 26;
 
     public StoreMenu(GamePanel gp, Font uiFont) {
         super(gp, uiFont);

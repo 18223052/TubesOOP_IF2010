@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import interactable.Interactable;
 import main.GamePanel;
 import object.IItem;
-import object.ItemFactory;
 
 public abstract class NPC extends Character implements Interactable {
 

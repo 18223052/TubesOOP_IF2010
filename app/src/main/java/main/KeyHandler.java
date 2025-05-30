@@ -28,15 +28,15 @@ public class KeyHandler implements KeyListener {
             char c = e.getKeyChar();
             // Allow letters, digits, and space
             if (Character.isLetterOrDigit(c) || c == ' '){
-                if (gp.playerNameInput.length() < 12){ // Limit name length
+                if (gp.playerNameInput.length() < 12){ 
                     gp.playerNameInput += String.valueOf(c);
                 }
-            } else if (c == KeyEvent.VK_BACK_SPACE){ // Handle backspace
+            } else if (c == KeyEvent.VK_BACK_SPACE){
                 if (gp.playerNameInput.length() > 0){
                     gp.playerNameInput = gp.playerNameInput.substring(0,gp.playerNameInput.length() - 1);
                 }
             }
-            // Repaint to show the updated name immediately
+
             gp.repaint(); 
         }
     }
@@ -45,7 +45,7 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
 
-        // --- TAMBAH BAGIAN INI UNTUK MENANGANI TITLESTATE DAN NAMEINPUTSTATE ---
+
         if (gp.gameState == GamePanel.titleState) {
             handleTitleState(code);
         } else if (gp.gameState == GamePanel.nameInputState) {
@@ -74,22 +74,22 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    // --- TAMBAH METODE BARU INI ---
+
 
     public void handleTitleState(int code) {
         if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
-            gp.ui.titleScreen.moveSelectionUp(); // Panggil metode baru
-            gp.repaint(); // Tambahkan repaint untuk memperbarui tampilan
+            gp.ui.titleScreen.moveSelectionUp(); 
+            gp.repaint(); 
         }
         if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
-            gp.ui.titleScreen.moveSelectionDown(); // Panggil metode baru
-            gp.repaint(); // Tambahkan repaint untuk memperbarui tampilan
+            gp.ui.titleScreen.moveSelectionDown(); 
+            gp.repaint(); 
         }
         if (code == KeyEvent.VK_ENTER) {
-            if (gp.ui.getCommandNum() == 0) { // START GAME
+            if (gp.ui.getCommandNum() == 0) { 
                 gp.setGameState(GamePanel.nameInputState); 
-                // gp.repaint(); // setGameState sudah handle repaint, tapi tidak ada salahnya
-            } else if (gp.ui.getCommandNum() == 1) { // QUIT
+
+            } else if (gp.ui.getCommandNum() == 1) { 
                 System.exit(0);
             }
         }
@@ -97,18 +97,18 @@ public class KeyHandler implements KeyListener {
 
     public void handleNameInputState(int code) {
         if (code == KeyEvent.VK_ENTER) {
-            // Pastikan nama tidak kosong atau hanya spasi
+
             if (!gp.playerNameInput.trim().isEmpty()) {
-                gp.startGame(); // Panggil startGame() dari GamePanel
+                gp.startGame(); 
             } else {
-                // Tampilkan pesan error atau dialog bahwa nama tidak boleh kosong
+
                 gp.ui.setDialog("Nama tidak boleh kosong!");
-                gp.setGameState(GamePanel.dialogState); // Kembali ke dialog state untuk menampilkan pesan
+                gp.setGameState(GamePanel.dialogState);
             }
         }
     }
 
-    // --- AKHIR METODE BARU ---
+
 
     public void handlePlayState(int code) {
         switch (code) {
@@ -116,14 +116,14 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S -> downPressed = true;
             case KeyEvent.VK_A -> leftPressed = true;
             case KeyEvent.VK_D -> rightPressed = true;
-            case KeyEvent.VK_P -> gp.setGameState(GamePanel.pauseState); // Gunakan setGameState
+            case KeyEvent.VK_P -> gp.setGameState(GamePanel.pauseState); 
             case KeyEvent.VK_E -> interactPressed = true;
             case KeyEvent.VK_I -> {
                 gp.setGameState(GamePanel.inventoryState);
                 gp.isGifting = false;
             
             }
-            case KeyEvent.VK_C -> gp.setGameState(GamePanel.statsState); // Gunakan setGameState
+            case KeyEvent.VK_C -> gp.setGameState(GamePanel.statsState); 
             case KeyEvent.VK_ENTER -> enterPressed = true;
             case KeyEvent.VK_SLASH -> {
                 gp.openTimeCheatDialog();
@@ -133,19 +133,19 @@ public class KeyHandler implements KeyListener {
 
     public void handlePauseState(int code) {
         if (code == KeyEvent.VK_P) {
-            gp.setGameState(GamePanel.playState); // Gunakan setGameState
+            gp.setGameState(GamePanel.playState); 
         }
     }
 
     public void handleDialogState(int code) {
         if (code == KeyEvent.VK_E) {
-            gp.setGameState(GamePanel.playState); // Gunakan setGameState
+            gp.setGameState(GamePanel.playState); 
         }
     }
 
     public void handleStatsState(int code) {
         if (code == KeyEvent.VK_C) {
-            gp.setGameState(GamePanel.playState); // Gunakan setGameState
+            gp.setGameState(GamePanel.playState); 
         }
     }
 
@@ -166,17 +166,17 @@ public class KeyHandler implements KeyListener {
                     gp.npcController.giftItemToNPC(selectedItem);
                 } else {
                     gp.ui.setDialog("No item selected to gift.");
-                    // gp.setGameState(GamePanel.dialogState); // Ini akan dihandle oleh NPCController setelah gift
-                    // gp.repaint(); // setGameState sudah trigger repaint
+                    // gp.setGameState(GamePanel.dialogState); 
+                    // gp.repaint(); 
                 }
                 gp.isGifting = false;
-                gp.setGameState(GamePanel.dialogState); // Arahkan ke dialog state untuk pesan gift/no item
-                // gp.repaint(); // setGameState sudah trigger repaint
+                gp.setGameState(GamePanel.dialogState); 
+                // gp.repaint(); 
             
                 break;
             case KeyEvent.VK_ESCAPE:
                 gp.isGifting = false;
-                gp.setGameState(GamePanel.playState); // Gunakan setGameState
+                gp.setGameState(GamePanel.playState); 
             
                 break;
             case KeyEvent.VK_W, KeyEvent.VK_UP:
@@ -255,19 +255,19 @@ public class KeyHandler implements KeyListener {
                 gp.shippingBinController.moveSelectionRight();
                 gp.repaint();
             }
-            case KeyEvent.VK_UP -> { // Ini untuk inventory player di bagian bawah shipping bin
+            case KeyEvent.VK_UP -> { 
                 gp.inventoryController.moveSelectionUp();
                 gp.repaint();
             }
-            case KeyEvent.VK_DOWN -> { // Ini untuk inventory player di bagian bawah shipping bin
+            case KeyEvent.VK_DOWN -> { 
                 gp.inventoryController.moveSelectionDown();
                 gp.repaint();
             }
-            case KeyEvent.VK_LEFT -> { // Ini untuk inventory player di bagian bawah shipping bin
+            case KeyEvent.VK_LEFT -> { 
                 gp.inventoryController.moveSelectionLeft();
                 gp.repaint();
             }
-            case KeyEvent.VK_RIGHT -> { // Ini untuk inventory player di bagian bawah shipping bin
+            case KeyEvent.VK_RIGHT -> { 
                 gp.inventoryController.moveSelectionRight();
                 gp.repaint();
             }
@@ -323,36 +323,36 @@ public class KeyHandler implements KeyListener {
             
                 break;
             case KeyEvent.VK_P: // Propose
-                if (gp.npcController != null) { //
+                if (gp.npcController != null) {
                     if (gp.currNPC.isProposable(gp.player)){
                         System.out.println("DEBUG PROPOSAL: Bisa dilamar");
                     } else {
                         System.out.println("DEBUG PROPOSAL: Gabisa dilamar");
                     }
-                    // Syarat utama untuk *mencoba* melamar adalah pemain memiliki "Proposal Ring".
-                    if (gp.player.hasItem("ring")) { // hasItem() di Player
+
+                    if (gp.player.inventory.hasItem("ring")) {
                         if (gp.currNPC.isProposable(gp.player)){
-                            gp.npcController.attemptPropose(gp.currNPC); // Panggil NPCController
+                            gp.npcController.attemptPropose(gp.currNPC); 
                             System.out.println("Melamar...");
                         } 
                     } else {
-                        // Pemain tidak punya cincin, berikan pesan.
+
                         if (gp.ui != null) { //
-                            gp.ui.setDialog("You need a Ring to propose."); //
-                            // Setelah pesan ini, GamePanel akan menggambar dialog jika state adalah dialogState
+                            gp.ui.setDialog("You need a Ring to propose."); 
+
                             gp.setGameState(GamePanel.dialogState); //
-                            // gp.currNPC tetap untuk konteks dialog.
+
                         }
                     }
                 }
                 break;
 
             case KeyEvent.VK_M: // Marry
-                if (gp.npcController != null) { //
-                    // Validasi awal apakah pemain bisa *mencoba* menikahi NPC ini
+                if (gp.npcController != null) {
+
                     boolean canTryToMarry = gp.player.getFiance() == gp.currNPC && //
-                                            gp.player.hasItem("ring"); //
-                                            // Pengecekan canMarryPlayer akan dilakukan di dalam attemptMarry
+                                            gp.player.inventory.hasItem("ring"); //
+
 
                     if (canTryToMarry) {
                         gp.npcController.attemptMarry();
@@ -361,12 +361,10 @@ public class KeyHandler implements KeyListener {
                             String message = "Cannot marry " + gp.currNPC.getName() + " at this time."; //
                             if (gp.player.getFiance() != gp.currNPC) { //
                                 message = "This is not your fiance!";
-                            } else if (!gp.player.hasItem("ring")) { //
+                            } else if (!gp.player.inventory.hasItem("ring")) { //
                                 message = "You need the Proposal Ring for the ceremony!";
                             }
-                            // Tidak perlu cek canMarryPlayer di sini karena itu urusan attemptMarry.
-                            // UI hanya menampilkan opsi jika canMarryPlayer true.
-                            // Jika pemain menekan M meskipun UI tidak menampilkan, pesan ini akan muncul.
+
                             gp.ui.setDialog(message); //
                             gp.setGameState(GamePanel.dialogState); //
                             gp.repaint();

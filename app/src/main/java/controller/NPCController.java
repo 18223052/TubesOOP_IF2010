@@ -21,7 +21,7 @@ public class NPCController {
         }
 
         if (itemToGift == null) {
-            gp.ui.setDialog("You have no item selected to gift."); // Changed message slightly
+            gp.ui.setDialog("You have no item selected to gift.");
             gp.setGameState(GamePanel.dialogState);
             gp.repaint();
             return;
@@ -30,13 +30,13 @@ public class NPCController {
         int pointsToAdd = 0;
         String reactionMessage;
 
-        // Determine reaction based on item preferences
+
         if (gp.currNPC.isLovedItem(itemToGift)) {
             pointsToAdd = 25;
-            reactionMessage = gp.currNPC.getName() + " loves " + itemToGift.getName() + "!"; // Adjusted wording slightly
+            reactionMessage = gp.currNPC.getName() + " loves " + itemToGift.getName() + "!"; 
         } else if (gp.currNPC.isLikedItem(itemToGift)) {
             pointsToAdd = 20;
-            reactionMessage = gp.currNPC.getName() + " likes " + itemToGift.getName() + "!"; // Adjusted wording slightly
+            reactionMessage = gp.currNPC.getName() + " likes " + itemToGift.getName() + "!"; 
         } else {
             if (gp.currNPC.doesHateAllUnlistedItems()) { // Assuming this means they hate neutral items too
                 pointsToAdd = -25; // Or a smaller negative for merely disliked/neutral if hated is different

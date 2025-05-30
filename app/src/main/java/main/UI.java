@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
-// Import all new UI panel classes
+
 import GUI.panels.HUD;
 import GUI.panels.PauseScreen;
 import GUI.panels.DialogBox;
@@ -21,19 +21,18 @@ import GUI.panels.StoreMenu;
 import GUI.panels.TitleScreen;
 import GUI.panels.NPCContextMenu;
 import GUI.panels.NameInputScreen;
-import GUI.panels.PlayerStatsPanel; // <-- IMPORT BARU INI
-
+import GUI.panels.PlayerStatsPanel; 
 public class UI {
 
     GamePanel gp;
     public Graphics2D g2;
 
-    // Deklarasikan font dengan nama yang lebih spesifik
+
     public Font generalFont, dialogFont, inventoryFont, cookingFont, smallFont;
 
-    // References to your new UI panel objects
+
     private HUD hud;
-    private PlayerStatsPanel playerStatsPanel; // <-- DEKLARASI BARU INI
+    private PlayerStatsPanel playerStatsPanel;
     private PauseScreen pauseScreen;
     private DialogBox dialogBox;
     private InventoryScreen inventoryScreen;
@@ -54,7 +53,7 @@ public class UI {
             InputStream inputStream = getClass().getResourceAsStream("/fonts/x12y16pxMaruMonica.ttf");
             Font baseMaruMonica = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(inputStream));
 
-            // Inisialisasi setiap font dengan ukuran yang berbeda
+
             this.generalFont = baseMaruMonica.deriveFont(Font.PLAIN, 30f);
             this.dialogFont = baseMaruMonica.deriveFont(Font.PLAIN, 28f);
             this.inventoryFont = baseMaruMonica.deriveFont(Font.PLAIN, 26f);
@@ -63,7 +62,7 @@ public class UI {
 
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
-            // Fallback fonts jika font kustom gagal dimuat
+
             this.generalFont = new Font("Arial", Font.PLAIN, 30);
             this.dialogFont = new Font("Arial", Font.PLAIN, 28);
             this.inventoryFont = new Font("Arial", Font.PLAIN, 26);
@@ -71,9 +70,9 @@ public class UI {
             this.smallFont = new Font("Arial", Font.PLAIN, 18);
         }
 
-        // Inisialisasi semua panel UI, passing font yang sesuai
+
         hud = new HUD(gp, generalFont);
-        playerStatsPanel = new PlayerStatsPanel(gp, generalFont); // <-- INISIALISASI BARU INI
+        playerStatsPanel = new PlayerStatsPanel(gp, generalFont); 
         pauseScreen = new PauseScreen(gp, generalFont);
         dialogBox = new DialogBox(gp, dialogFont);
         inventoryScreen = new InventoryScreen(gp, inventoryFont);
@@ -94,7 +93,7 @@ public class UI {
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
-        setupDefaultGraphics(g2); // Tetap panggil ini untuk pengaturan global (anti-aliasing, warna)
+        setupDefaultGraphics(g2);
 
         switch (gp.gameState) {
             case GamePanel.titleState:
@@ -105,7 +104,7 @@ public class UI {
                 break;
             case GamePanel.playState:
                 hud.draw(g2);
-                playerStatsPanel.draw(g2); // <-- PANGGIL METHOD DRAW BARU INI
+                playerStatsPanel.draw(g2); 
                 break;
             case GamePanel.pauseState:
                 pauseScreen.draw(g2);

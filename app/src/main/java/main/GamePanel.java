@@ -202,7 +202,7 @@ public class GamePanel extends JPanel implements Runnable {
         // saveManger.loadGameState(); 
     }
     
-    // Setup objects dan NPC's
+
     public void setupMap() {
         aSetter.clearObjects(); 
         aSetter.clearNPCs();
@@ -236,14 +236,12 @@ public class GamePanel extends JPanel implements Runnable {
 
 public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) {
 
-    // 1. SIMPAN STATE PETA LAMA DULU
     mapCache.put(petaLamaUntukDisimpan, saveCurrentMapState());
     System.out.println("DEBUG (ChangeMap): State Peta lama disimpan ke cache: " + petaLamaUntukDisimpan);
     System.out.println("DEBUG (ChangeMap): Jumlah objek sebelum clear: " + obj.size() + " di " + petaLamaUntukDisimpan);
     System.out.println("DEBUG (ChangeMap): NPC pertama sebelum clear: " + (npc[0] != null ? npc[0].getName() : "null"));
 
 
-    // 2. BERSIHKAN SEMUA OBJEK DAN NPC YANG ADA SAAT INI
     obj.clear();
     aSetter.clearNPCs();
 
@@ -252,14 +250,13 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
     System.out.println("DEBUG (ChangeMap): NPC pertama setelah clear: " + (npc[0] != null ? npc[0].getName() : "null"));
 
 
-    // 3. UPDATE PATH PETA DAN MUAT DATA TILE BARU
+
     this.currMap = petaBaruUntukDimuat;
     this.tileM.loadMap(petaBaruUntukDimuat);
     this.tileM.setCurrentMap(petaBaruUntukDimuat);
     System.out.println("DEBUG (ChangeMap): Peta baru dimuat: " + petaBaruUntukDimuat);
 
 
-    // 4. MUAT DARI CACHE ATAU SET UP BARU
     if (mapCache.containsKey(petaBaruUntukDimuat)) {
         loadMapStateFromCache(mapCache.get(petaBaruUntukDimuat));
         System.out.println("DEBUG (ChangeMap): State peta baru dimuat dari cache: " + petaBaruUntukDimuat);
@@ -277,7 +274,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
 
 
     farmingController.updatePlantGrowth();
-    debugCurrentObjects(); // Pastikan method ini juga menampilkan info yang berguna
+    debugCurrentObjects(); 
 }
 
     private MapStateData saveCurrentMapState(){

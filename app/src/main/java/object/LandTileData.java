@@ -5,7 +5,7 @@ public class LandTileData {
     public int worldX;
     public int worldY;
 
-    // Data state yang perlu disimpan
+
     public TileState currentState;
     public PlantType plantedCropType;
     public int growthStage;

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.io.StringBufferInputStream;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList; // Import ArrayList
 import java.util.List;
@@ -13,7 +12,6 @@ import controller.InventoryController;
 import interactable.Interactable;
 import main.GamePanel;
 import main.KeyHandler;
-import object.BaseItem;
 import object.IItem;
 import object.NoItem;
 
@@ -523,11 +521,11 @@ public class Player extends Character {
         return this.spouse != null;
     }
 
-    public boolean hasItem(String itemName) {
-        if (this.inventory != null) { 
-            return this.inventory.hasItem(itemName);
-        }
-        System.err.println("Peringatan: InventoryController adalah null di Player.hasItem()");
-        return false;
-    }
+    // public boolean hasItem(String itemName) {
+    //     if (this.inventory != null) { 
+    //         return this.inventory.hasItem(itemName);
+    //     }
+    //     System.err.println("Peringatan: InventoryController adalah null di Player.hasItem()");
+    //     return false;
+    // }
 }

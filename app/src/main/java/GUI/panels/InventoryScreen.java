@@ -9,7 +9,6 @@ import object.InventorySlot;
 import java.awt.BasicStroke; // Needed for BasicStroke
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GradientPaint; // Needed for GradientPaint
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape; // Needed for Shape
