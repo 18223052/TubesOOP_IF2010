@@ -7,7 +7,7 @@ public abstract class FuelItem extends BaseItem {
     public int maxFuelValue;
 
     public FuelItem(String name, int buyPrice, int sellPrice, GamePanel gp, int initialFuelValue) {
-        super(name, buyPrice, sellPrice, gp, "fuel"); // Kategori khusus "fuel"
+        super(name, buyPrice, sellPrice, gp, "fuel"); 
         this.currentFuelValue = initialFuelValue;
         this.maxFuelValue = initialFuelValue;
         setStackable(false);

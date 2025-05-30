@@ -143,7 +143,7 @@ public class CookingMenu extends BaseUIPanel {
 
         } else { // Recipe Details View
             if (selectRecipe <= 0 || selectRecipe > allRecipes.size()) {
-                this.selectRecipe = 0; // Reset to list view if invalid
+                this.selectRecipe = 0; 
                 return;
             }
             Recipe currentRecipeToDisplay = allRecipes.get(selectRecipe - 1);

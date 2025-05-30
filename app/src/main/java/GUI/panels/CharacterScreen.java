@@ -70,9 +70,9 @@ public class CharacterScreen extends BaseUIPanel {
         g2.drawString(value, textX, textY);
         textY += lineHeight;
 
-        // value = String.valueOf(gp.player.getPartner());
-        // textX = getXforAllignToRight(value, tailX, g2);
-        // g2.drawString(value, textX, textY);
-        // textY += lineHeight;
+        value = String.valueOf(gp.player.getPartner());
+        textX = getXforAllignToRight(value, tailX, g2);
+        g2.drawString(value, textX, textY);
+        textY += lineHeight;
     }
 }

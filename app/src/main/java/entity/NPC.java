@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import interactable.Interactable;
 import main.GamePanel;
 import object.IItem;
-import object.ItemFactory;
 
 public abstract class NPC extends Character implements Interactable {
 
@@ -18,7 +17,7 @@ public abstract class NPC extends Character implements Interactable {
     protected ArrayList<IItem> likedItems;
     protected ArrayList<IItem> hatedItems;
     protected String relationshipStatus;
-    protected int dayBecameFiance;
+    public int dayBecameFiance;
 
     protected final int MAX_HEART_POINTS = 150;
     protected final int MIN_HEART_POINTS = 0;
@@ -37,7 +36,6 @@ public abstract class NPC extends Character implements Interactable {
     public static final String gender_male = "Male";
     public static final String gender_female = "Female";
 
-
     public NPC(GamePanel gp){
         super(gp);
         this.direction = "down";
@@ -46,9 +44,14 @@ public abstract class NPC extends Character implements Interactable {
         this.likedItems = new ArrayList<>();
         this.hatedItems = new ArrayList<>();
         this.relationshipStatus = STATUS_SINGLE;
+        this.relationshipStatus = STATUS_SINGLE;
         this.dayBecameFiance = -1;
         this.hatesAllUnlistedItems = false;
         // setDialogue();
+
+        // Propose & Marry
+        this.heartPoints = 0;
+        this.dayBecameFiance = -1;
         this.heartPoints = 0;
         this.dayBecameFiance = -1;
     }
@@ -67,12 +70,14 @@ public abstract class NPC extends Character implements Interactable {
             if (dialogues[dialogIndex] == null){
                 gp.ui.currentDialog = "Hmmm..";
                 gp.setGameState(GamePanel.dialogState);
+                gp.repaint();
                 return;
             }
         }
         gp.ui.currentDialog = dialogues[dialogIndex];
         dialogIndex ++;
         gp.setGameState(GamePanel.dialogState);
+        gp.repaint();
     }
 
     @Override
@@ -173,9 +178,20 @@ public abstract class NPC extends Character implements Interactable {
         return checkItemInList(this.hatedItems, item);
     }
 
+    // Di entity/NPC.java
     public boolean isProposable(Player player){
         if (player == null) return false;
-        return this.heartPoints >= MAX_HEART_POINTS && this.relationshipStatus.equals(STATUS_SINGLE) && !player.hasFiance() && !player.hasSpouse() && this.gender == gender_female;  // Pemain tidak sedang menikah dengan orang lain
+        System.out.println("DEBUG isProposable for " + this.name + ":");
+        System.out.println("  heartPoints >= MAX_HEART_POINTS: " + (this.heartPoints >= MAX_HEART_POINTS) + " (Current: " + this.heartPoints + ")");
+        System.out.println("  relationshipStatus.equals(Single): " + this.relationshipStatus.equals(NPC.STATUS_SINGLE) + " (Current: " + this.relationshipStatus + ")");
+        System.out.println("  !player.hasFiance(): " + !player.hasFiance());
+        System.out.println("  !player.hasSpouse(): " + !player.hasSpouse());
+        System.out.println("  this.gender == gender_female: " + (this.gender == gender_female) + " (Current Gender: " + this.gender + ")");
+        if (this.heartPoints >= MAX_HEART_POINTS && this.relationshipStatus.equals(NPC.STATUS_SINGLE) && !player.hasFiance() && !player.hasSpouse() && this.gender == NPC.gender_female){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void becomeFiance(Player player, int currentDay) {
@@ -193,7 +209,8 @@ public abstract class NPC extends Character implements Interactable {
 
     public void marryPlayer(Player player) {
         this.relationshipStatus = STATUS_MARRIED;
-
+        // dayBecameFiance bisa dibiarkan sebagai catatan atau direset
+        // player.setSpouse(this); // Ini akan diatur dari sisi controller/player
     }
 
     public String getProposalDeclineMessage() {

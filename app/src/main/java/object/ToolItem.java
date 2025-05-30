@@ -4,7 +4,7 @@ import entity.Player;
 import main.GamePanel;
 
 /**
- * Implementation for tool items like hoe, watering can, etc.
+ * Implementasi untuk item tools seperti hoe,pickaxe,fishingpole
  */
 public class ToolItem extends BaseItem implements IUsable {
     private String toolType;
@@ -12,25 +12,20 @@ public class ToolItem extends BaseItem implements IUsable {
     public ToolItem(String toolType, int buyPrice, int sellPrice, GamePanel gp) {
         super(toolType, buyPrice, sellPrice, gp, "tools");
         this.toolType = toolType;
-        setStackable(false); // Tools are not stackable
+        setStackable(false); 
     }
     
-    /**
-     * Returns the type of this tool
-     */
+
     public String getToolType() {
         return toolType;
     }
     
-    /**
-     * Performs the tool's action. Subclasses can override this method
-     * to implement specific tool behaviors.
-     */
+
     @Override
     public void use(Player player, GamePanel gp) {
         System.out.println("Using " + getName() + " on target tile (delegating to FarmingController).");
         
-        // Dapatkan tile yang diinteraksikan pemain
+
         int[] interactionTileCoords = player.getInteractionTile();
         int targetCol = interactionTileCoords[0];
         int targetRow = interactionTileCoords[1];
@@ -47,7 +42,7 @@ public class ToolItem extends BaseItem implements IUsable {
         }
 
         if (targetLandTile != null) {
-            // Delegasikan aksi ke FarmingController berdasarkan toolType
+
             switch (toolType.toLowerCase()) {
                 case "hoe":
                     gp.farmingController.tillage(player, targetLandTile);

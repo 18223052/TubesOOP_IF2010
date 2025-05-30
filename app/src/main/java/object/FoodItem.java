@@ -2,9 +2,7 @@ package object;
 
 import main.GamePanel;
 
-/**
- * Implementation for food and consumable items
- */
+
 public class FoodItem extends BaseItem implements IConsumable {
     private int energyValue;
     

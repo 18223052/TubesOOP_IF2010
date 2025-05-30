@@ -19,7 +19,7 @@ public class RecipeItem extends BaseItem implements IUsable {
     @Override
     public void use(Player player, GamePanel gp){
         if (gp != null && player != null){
-            System.out.println("RecipeItem trying to unlock ID: " + this.recipeToUnlock); // Tambahkan ini
+            System.out.println("RecipeItem trying to unlock ID: " + this.recipeToUnlock); 
             if(!player.isRecipeUnlocked(this.recipeToUnlock)){
                 player.unlockRecipe(this.recipeToUnlock);
                 System.out.println("Resep '" + this.recipeToUnlock + "' telah terbuka!");
@@ -33,7 +33,7 @@ public class RecipeItem extends BaseItem implements IUsable {
                 gp.repaint();
             }
         } else {
-            System.out.println("Resep untuk " + recipeToUnlock + " terbuka !"); // Baris ini agak aneh, bisa dihapus atau diperbaiki
+            System.out.println("Resep untuk " + recipeToUnlock + " terbuka !"); 
         }
     }
 }

@@ -31,6 +31,10 @@ public class TileManager {
 
     }
     
+    public void setCurrentMap(String mapPath){
+        this.currentMap = mapPath;
+    }
+
     public void setup() {
         loadMap(currentMap);
     }
@@ -111,7 +115,6 @@ public class TileManager {
     }
     
     public void checkTeleport(int checkCol, int checkRow) { 
-        String currentFarmMap = null; 
 
         if (gp.currMap.startsWith("/maps/farmmm")) {
             int[] coords = farmMapTeleportCoords.get(gp.currMap);
@@ -144,7 +147,7 @@ public class TileManager {
                 if (coords != null) {
                     teleportPlayer(gp.prevFarmMap, coords[6], coords[7]); 
                 } else {
-                    // Fallback in case prevFarmMap is not set or invalid
+
                     System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
                     teleportPlayer("/maps/farmmm.txt", 18, 20);
                 }
@@ -157,7 +160,7 @@ public class TileManager {
             if ((checkCol >= 21 && checkCol <= 24) && checkRow == 0) { 
                 int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
                 if (coords != null) {
-                    teleportPlayer(gp.prevFarmMap, coords[8], coords[9]); // Use stored entry point for specific farm map
+                    teleportPlayer(gp.prevFarmMap, coords[8], coords[9]);
                 } else {
                     System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
                     teleportPlayer("/maps/farmmm.txt", 31, 48); 
@@ -167,13 +170,13 @@ public class TileManager {
         }
 
         if (currentMap.equals("/maps/worldmap.txt")) {
-            if (checkCol == 0 && checkRow == 30) { // Worldmap exit trigger (common to all worldmaps)
+            if (checkCol == 0 && checkRow == 30) { 
                 int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
                 if (coords != null) {
-                    teleportPlayer(gp.prevFarmMap, coords[10], coords[11]); // Use stored entry point for specific farm map
+                    teleportPlayer(gp.prevFarmMap, coords[10], coords[11]); 
                 } else {
                     System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
-                    teleportPlayer("/maps/farmmm.txt", 48, 32); // Default to original farmmm worldmap entry
+                    teleportPlayer("/maps/farmmm.txt", 48, 32); 
                 }
                 return;
             }
@@ -195,12 +198,13 @@ public class TileManager {
 
     
     public void teleportPlayer(String newMapPath, int destX, int destY) {
-        String mapPathYangAkanDisimpan = gp.currMap; 
+        String mapPathYangAkanDisimpan = gp.currMap;
+         System.out.println("DEBUG (Teleport): Akan menyimpan peta: " + mapPathYangAkanDisimpan + " dan pindah ke: " + newMapPath);
 
-        gp.currMap = newMapPath;        
-        this.currentMap = newMapPath;   
+        // gp.currMap = newMapPath;        
+        // this.currentMap = newMapPath;   
 
-        loadMap(newMapPath);            
+        // loadMap(newMapPath);            
 
         gp.player.wX = destX * gp.tileSize;
         gp.player.wY = destY * gp.tileSize;
@@ -208,9 +212,15 @@ public class TileManager {
         
         gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
 
+        // gp.aSetter.setNPC(); // Pertimbangkan jika NPC perlu di-reset di peta baru
+        // gp.aSetter.setObj(); // Pertimbangkan jika objek perlu di-reset di peta baru
 
-        gp.player.deductEnergy(10);
-        gp.gameTime.addTime(15);
+
+        if (!mapPathYangAkanDisimpan.equals("/maps/rumah.txt") && !newMapPath.equals("/maps/rumah.txt")) {
+            gp.player.deductEnergy(10);
+            gp.gameTime.addTime(15);
+        }
+        
     }
     
     public void loadMap(String filePath) {
@@ -246,10 +256,9 @@ public class TileManager {
             }
             br.close();
             
-            // Update the current map
+     
             currentMap = filePath;
             
-            // gp.setupExceptEnvironment();
     
         } catch (Exception e) {
             e.printStackTrace();
@@ -263,13 +272,13 @@ public class TileManager {
         while (worldcol < gp.maxWorldCol && worldrow < gp.maxWorldRow){
             int tileNum = mapTileNum[worldcol][worldrow];
 
-            // Camera setting
+
             int worldX = worldcol * gp.tileSize;
             int worldY = worldrow * gp.tileSize;
             int screenX = worldX - gp.player.wX + gp.player.screenX;
             int screenY = worldY - gp.player.wY + gp.player.screenY;
             
-            // Only draw tiles visible on screen
+
             if (screenX > -gp.tileSize && screenX < gp.screenWidth && 
                 screenY > -gp.tileSize && screenY < gp.screenHeight) {
                 g2.drawImage(tile[tileNum].image, screenX, screenY, null);

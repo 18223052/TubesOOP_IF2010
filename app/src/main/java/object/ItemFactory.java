@@ -11,10 +11,7 @@ import environment.WeatherType;
 import main.GamePanel;
 import object.FishItem.FishCategory;
 
-/**
- * Factory for creating different types of items Following the Factory pattern
- * to create appropriate item subclasses
- */
+
 public class ItemFactory {
 
     private GamePanel gp;
@@ -25,10 +22,8 @@ public class ItemFactory {
         this.allFishItems = new ArrayList<>();
         loadAllFishItems();
     }
+    
 
-    /**
-     * Creates a seed item
-     */
     public SeedItem createSeed(String seedType) {
         int buyPrice = 0;
         int sellPrice = 0;
@@ -88,11 +83,8 @@ public class ItemFactory {
 
         return new SeedItem(seedType, buyPrice, sellPrice, gp);
     }
+    
 
-   
-    /**
-     * Creates a tool item
-     */
     public IItem createTool(String toolName) {
         switch (toolName.toLowerCase()) {
             case "hoe":
@@ -108,10 +100,7 @@ public class ItemFactory {
                 return null;
         }
     }
-
-    /**
-     * Creates a crop item
-     */
+    
     public CropItem createCrop(String cropName) {
         int buyPrice = 0;
         int sellPrice = 0;
@@ -169,10 +158,7 @@ public class ItemFactory {
 
         return new CropItem(cropName, buyPrice, sellPrice, gp);
     }
-
-    /**
-     * Creates a Food item
-     */
+    
     public FoodItem createFood(String foodName) {
         int buyPrice = 0;
         int sellPrice = 0;
@@ -260,7 +246,7 @@ public class ItemFactory {
             null,
             Arrays.asList(new TimeRange(new GameTime(0,0), new GameTime(23,59))), 
             new FishLocation[]{FishLocation.POND, FishLocation.FOREST_RIVER},
-            FishItem.FishCategory.COMMON, 5, gp
+            FishItem.FishCategory.COMMON,1, gp
         ));
         allFishItems.add(new FishItem(
             "Bull Head", 0,
@@ -268,7 +254,7 @@ public class ItemFactory {
             null,
             null, 
             new FishLocation[]{FishLocation.MOUNTAIN_LAKE},
-            FishItem.FishCategory.COMMON, 10, gp
+            FishItem.FishCategory.COMMON, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Carp", 0,
@@ -276,7 +262,7 @@ public class ItemFactory {
             null, 
             null, 
             new FishLocation[]{FishLocation.MOUNTAIN_LAKE, FishLocation.POND},
-            FishItem.FishCategory.COMMON, 12, gp
+            FishItem.FishCategory.COMMON, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Chub", 0,
@@ -284,7 +270,7 @@ public class ItemFactory {
             null,
             null, 
             new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.MOUNTAIN_LAKE},
-            FishItem.FishCategory.COMMON, 8, gp
+            FishItem.FishCategory.COMMON,1, gp
         ));
         allFishItems.add(new FishItem(
             "Sardine", 0,
@@ -292,7 +278,7 @@ public class ItemFactory {
             null, 
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(18, 0))), // Morning to Evening
             new FishLocation[]{FishLocation.OCEAN},
-            FishItem.FishCategory.COMMON, 7, gp
+            FishItem.FishCategory.COMMON,1, gp
         ));
 
         // --- REGULAR FISH ---
@@ -302,7 +288,7 @@ public class ItemFactory {
             null, 
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(18, 0))),
             new FishLocation[]{FishLocation.FOREST_RIVER},
-            FishItem.FishCategory.REGULAR, 20, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Largemouth Bass", 0,
@@ -310,7 +296,7 @@ public class ItemFactory {
             null, 
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(18, 0))),
             new FishLocation[]{FishLocation.MOUNTAIN_LAKE},
-            FishItem.FishCategory.REGULAR, 25, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Rainbow Trout", 0,
@@ -318,7 +304,7 @@ public class ItemFactory {
             new WeatherType[]{WeatherType.SUNNY},
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(18, 0))),
             new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.MOUNTAIN_LAKE},
-            FishItem.FishCategory.REGULAR, 30, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Sturgeon", 0,
@@ -326,7 +312,7 @@ public class ItemFactory {
             null, 
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(18, 0))),
             new FishLocation[]{FishLocation.MOUNTAIN_LAKE},
-            FishItem.FishCategory.REGULAR, 40, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Midnight Carp", 0,
@@ -334,7 +320,7 @@ public class ItemFactory {
             null, 
             Arrays.asList(new TimeRange(new GameTime(20, 0), new GameTime(2, 0))), // Note: This time range spans midnight
             new FishLocation[]{FishLocation.MOUNTAIN_LAKE, FishLocation.POND},
-            FishItem.FishCategory.REGULAR, 35, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Flounder", 0,
@@ -342,7 +328,7 @@ public class ItemFactory {
             null, 
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(22, 0))),
             new FishLocation[]{FishLocation.OCEAN},
-            FishItem.FishCategory.REGULAR, 30, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Halibut", 0,
@@ -351,7 +337,7 @@ public class ItemFactory {
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(11, 0)), 
                           new TimeRange(new GameTime(19, 0), new GameTime(2, 0))),
             new FishLocation[]{FishLocation.OCEAN},
-            FishItem.FishCategory.REGULAR, 45, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Octopus", 0,
@@ -359,7 +345,7 @@ public class ItemFactory {
             null, 
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(22, 0))),
             new FishLocation[]{FishLocation.OCEAN},
-            FishItem.FishCategory.REGULAR, 50, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Pufferfish", 0,
@@ -367,7 +353,7 @@ public class ItemFactory {
             new WeatherType[]{WeatherType.SUNNY},
             Arrays.asList(new TimeRange(new GameTime(0, 0), new GameTime(16, 0))),
             new FishLocation[]{FishLocation.OCEAN},
-            FishItem.FishCategory.REGULAR, 45, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
         allFishItems.add(new FishItem(
             "Super Cucumber", 0,
@@ -375,7 +361,7 @@ public class ItemFactory {
             null, 
             Arrays.asList(new TimeRange(new GameTime(18, 0), new GameTime(2, 0))), // Spans midnight
             new FishLocation[]{FishLocation.OCEAN},
-            FishItem.FishCategory.REGULAR, 60, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
 
         allFishItems.add(new FishItem(
@@ -384,10 +370,9 @@ public class ItemFactory {
             new WeatherType[]{WeatherType.RAINY},
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(22, 0))),
             new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.POND},
-            FishItem.FishCategory.REGULAR, 40, gp
+            FishItem.FishCategory.REGULAR, 1, gp
         ));
 
-        // --- LEGENDARY FISH ---
 
         allFishItems.add(new FishItem(
             "Legendary Bass", 0,
@@ -396,13 +381,10 @@ public class ItemFactory {
             Arrays.asList(new TimeRange(new GameTime(6,0), new GameTime(8,0)),
                           new TimeRange(new GameTime(20,0), new GameTime(22,0))),
             new FishLocation[]{FishLocation.MOUNTAIN_LAKE},
-            FishItem.FishCategory.LEGENDARY, 100, gp
+            FishItem.FishCategory.LEGENDARY, 1, gp
         ));
     }
-    /**
-     * Creates a fish item
-     */
-    
+
     public FishItem createFish(String fishType) {
 
         for (FishItem fish : allFishItems) {
@@ -419,7 +401,7 @@ public class ItemFactory {
             new Season[]{Season.SPRING}, null,
             Arrays.asList(new TimeRange(new GameTime(6,0), new GameTime(18,0))),
             new FishLocation[]{FishLocation.POND},
-            FishCategory.COMMON, 5, gp);
+            FishCategory.COMMON, 1, gp);
     }
 
         public List<FishItem> getAllFishItems() {
@@ -457,10 +439,10 @@ public class ItemFactory {
         String recipeToUnlock = "";
 
         switch (recipeName.toLowerCase()) {
-            case "recipe_fish_n_chips": // Example recipe item name
+            case "recipe_fish_n_chips": 
                 buyPrice = 10;
                 sellPrice = 10;
-                recipeToUnlock = "Fish n Chips"; // This is the name of the food item it unlocks
+                recipeToUnlock = "Fish n Chips"; 
                 break;
             case "recipe_fish_sandwich":
                 buyPrice = 10;

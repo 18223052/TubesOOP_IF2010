@@ -6,7 +6,6 @@ import java.util.Iterator;
 import main.GamePanel;
 import object.IConsumable;
 import object.IItem;
-import object.IUsable;
 import object.InventorySlot;
 import object.NoItem;
 import object.RecipeItem;

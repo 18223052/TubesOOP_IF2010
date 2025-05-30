@@ -33,9 +33,7 @@ public class SaveManager {
         setupShutdownHook();
     }
 
-    /**
-     * Setup shutdown hook yang akan menghapus semua save files saat program dihentikan
-     */
+
     private void setupShutdownHook() {
         shutdownHook = new Thread(() -> {
             System.out.println("=== SHUTDOWN HOOK TRIGGERED ===");
@@ -74,9 +72,6 @@ public class SaveManager {
         return "saves/" + fileName;
     }
 
-    /**
-     * Menyimpan state semua LandTile dari current map ke file JSON.
-     */
     public void saveGameState() {
         String currentMapFilePath = gp.currMap;
         String saveFilePath = getSaveFilePath(currentMapFilePath);
@@ -136,9 +131,7 @@ public class SaveManager {
         System.out.println("=== SAVE DEBUG END ===");
     }
 
-    /**
-     * Memuat state semua LandTile untuk current map dari file JSON.
-     */
+
     public void loadGameState() {
         String currentMapFilePath = gp.currMap;
         String saveFilePath = getSaveFilePath(currentMapFilePath);
@@ -219,9 +212,7 @@ public class SaveManager {
         return null;
     }
 
-    /**
-     * Method untuk menghapus save files secara manual jika diperlukan
-     */
+
     public void clearAllSaveFiles() {
         System.out.println("=== MANUAL CLEANUP START ===");
         for (String saveFilePath : new HashSet<>(activeSaveFiles)) {
@@ -238,9 +229,7 @@ public class SaveManager {
         System.out.println("=== MANUAL CLEANUP END ===");
     }
 
-    /**
-     * Method untuk disable shutdown hook jika diperlukan (misal saat normal exit)
-     */
+
     public void disableAutoDelete() {
         try {
             Runtime.getRuntime().removeShutdownHook(shutdownHook);
