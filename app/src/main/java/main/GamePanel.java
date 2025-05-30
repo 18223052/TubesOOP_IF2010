@@ -278,42 +278,34 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("wateringcan"));
         inventoryController.addItem(itemFactory.createTool("fishingpole"));
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
-        // inventoryController.addItem(itemFactory.createFood("salmon"));
-        // inventoryController.addItem(itemFactory.createFood("veggiesoup"));
-        // inventoryController.addItem(itemFactory.createFish("salmon"));
-        // inventoryController.addItem(itemFactory.createFish("salmon"));
-        // inventoryController.addItem(itemFactory.createFish("salmon"));
-        // inventoryController.addItem(itemFactory.createMiscItem("coal"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
+        inventoryController.addItem(itemFactory.createFish("salmon"));
         inventoryController.addItem(itemFactory.createSeed("tomato"));
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
         inventoryController.addItem(itemFactory.createSeed("potato"));
         inventoryController.addItem(itemFactory.createSeed("cauliflower"));
         inventoryController.addItem(itemFactory.createSeed("wheat"));
         inventoryController.addItem(itemFactory.createSeed("pumpkin"));
-        // inventoryController.addItem(itemFactory.createSeed("hotpepper"));
-        // inventoryController.addItem(itemFactory.createSeed("melon"));
         inventoryController.addItem(itemFactory.createSeed("potato"));
         inventoryController.addItem(itemFactory.createSeed("cauliflower"));
         inventoryController.addItem(itemFactory.createFood("sashimi"));
         inventoryController.addItem(itemFactory.createCrop("hotpepper"));
-        // inventoryController.addItem(itemFactory.createFood("hotpepper"));
-        // inventoryController.addItem(itemFactory.createFood("grape"));
+        inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
 
         inventoryController.addItem(itemFactory.createMiscItem("ring"));
-        inventoryController.addItem(itemFactory.createMiscItem("firewood"));
+        inventoryController.addItem(itemFactory.createFuelItem("coal"));
     }
  
     private void addStoreItems() {
-        storeController.addItem(itemFactory.createTool("hoe"));
-        storeController.addItem(itemFactory.createTool("hoe"));
-        storeController.addItem(itemFactory.createTool("wateringcan"));
-        storeController.addItem(itemFactory.createTool("wateringcan"));
-        storeController.addItem(itemFactory.createTool("pickaxe"));
-        storeController.addItem(itemFactory.createTool("pickaxe"));
         storeController.addItem(itemFactory.createFood("veggiesoup"));
         storeController.addItem(itemFactory.createFood("veggiesoup"));
         storeController.addItem(itemFactory.createFood("salmon"));
         storeController.addItem(itemFactory.createFood("salmon"));
+        storeController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
     }
 
     public void startGameThread() {

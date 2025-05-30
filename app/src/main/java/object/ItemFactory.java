@@ -400,8 +400,9 @@ public class ItemFactory {
     /**
      * Creates a fish item
      */
+    
     public FishItem createFish(String fishType) {
-        // Find the fish in the pre-loaded list instead of redefining it
+
         for (FishItem fish : allFishItems) {
             if (fish.getName().equalsIgnoreCase(fishType)) {
 
@@ -423,28 +424,48 @@ public class ItemFactory {
         return new ArrayList<>(allFishItems); 
     }
 
-    public MiscItem createMiscItem(String itemName) {
-        int buyPrice = 0;
-        int sellPrice =0 ;
-        String category = "misc";
-
-        switch (itemName.toLowerCase()){
+    public FuelItem createFuelItem(String fuelName) { 
+        switch (fuelName.toLowerCase()) {
             case "firewood":
-                buyPrice = 10;
-                sellPrice = 5;
-                category = "fuel";
-                break;
-            case "coal" :
-                buyPrice = 20;
-                sellPrice = 10;
-                category = "fuel";
-                break;
+                return new Firewood(gp);
+            case "coal":
+                return new Coal(gp);
             default:
-                System.err.println("Warning: Attempted to create unknown miscellaneous item: " + itemName);
-                buyPrice = 1; 
-                sellPrice = 1;
+
+                System.err.println("Warning: Attempted to create unknown fuel item: " + fuelName + ". Returning null.");
+                return null;
+        }
+    }
+
+    public MiscItem createMiscItem (String itemName){
+        switch(itemName.toLowerCase()){
+            case "ring":
+                return new MiscItem("ring", 0, 0, gp, itemName);
+        
+            default:
+
+                System.err.println("Warning: Attempted to create unknown fuel item: " + itemName+ ". Returning null.");
+                return null; // Atau throw an exception
+        }
+    }
+
+    public RecipeItem createRecipeItem(String recipeName){
+        int buyPrice = 0;
+        int sellPrice = 0;
+        String recipeToUnlock = "";
+
+        switch (recipeName.toLowerCase()) {
+            case "recipe_fish_n_chips": // Example recipe item name
+                buyPrice = 10;
+                sellPrice = 10;
+                recipeToUnlock = "Fish n Chips"; // This is the name of the food item it unlocks
+                break;
+            case "recipe_fish_sandwich":
+                buyPrice = 10;
+                sellPrice = 10;
+                recipeToUnlock = "Fish Sandwich";
                 break;
         }
-        return new MiscItem(itemName, buyPrice, sellPrice, gp, category);
+        return new RecipeItem(recipeName, buyPrice, sellPrice, gp, recipeToUnlock);
     }
 }

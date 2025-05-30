@@ -9,6 +9,8 @@ import object.IItem;
 import object.IUsable;
 import object.InventorySlot;
 import object.NoItem;
+import object.RecipeItem;
+import object.ToolItem;
 import GUI.panels.InventoryScreen;
 
 public class InventoryController {
@@ -301,11 +303,22 @@ public class InventoryController {
             InventorySlot slot = inventory.get(index);
             IItem item = slot.getItem();
 
-            if (item instanceof IUsable) {
+            if (item instanceof ToolItem) {
                 System.out.println("Menggunakan: " + item.getName());
                 gp.player.setActiveItem(item); // Set the player's active item
                 gp.ui.setDialog("Equipped " + item.getName() + "."); // Inform player
-            } else if (item instanceof IConsumable) {
+            } else if (item instanceof RecipeItem){
+                System.out.println("Mennggunakan resep: " + item.getName());
+                RecipeItem recipeItem = (RecipeItem) item;
+
+                recipeItem.use(gp.player,gp);
+
+                if (gp.player.isRecipeUnlocked(recipeItem.getRecipeToUnlock()) && !recipeItem.getName().equals("Unknown Recipe")){
+                    removeItem(index);
+                }
+            } 
+            
+            else if (item instanceof IConsumable) {
                 System.out.println("Mengonsumsi: " + item.getName());
                 eatingController.consume((IConsumable) item);
                 // After consumption, if this item was the active item, set to NoItem
@@ -374,5 +387,38 @@ public class InventoryController {
         IItem activeItem = gp.player.getActiveItem();
         // Check if the active item is not NoItem AND its name matches the toolName
         return activeItem != null && !(activeItem instanceof NoItem) && activeItem.getName().equalsIgnoreCase(toolName);
+    }
+
+    public void removeSpecificSlot(InventorySlot slotToRemove) {
+        Iterator<InventorySlot> iterator = inventory.iterator();
+        while (iterator.hasNext()) {
+            InventorySlot slot = iterator.next();
+            if (slot == slotToRemove) { // Bandingkan referensi objek
+                iterator.remove();
+                // Opsional: Jika slot bisa kosong tapi tidak dihapus, set itemnya ke null atau NoItem
+                // slot.setItem(new NoItem(gp)); // Atau set null
+                System.out.println("Slot inventory dihapus.");
+                return;
+            }
+        }
+    }
+
+    // Atau jika Anda perlu menghapus instance item tertentu dari slot
+    public void removeItemInstance(IItem itemInstanceToRemove) {
+        Iterator<InventorySlot> iterator = inventory.iterator();
+        while (iterator.hasNext()) {
+            InventorySlot slot = iterator.next();
+            // Penting: Bandingkan referensi objek, bukan hanya namanya
+            if (slot.getItem() == itemInstanceToRemove) {
+                // Karena FuelItem seharusnya tidak stackable dan ini adalah instance unik,
+                // kita bisa langsung menghapus slotnya.
+                // Jika FuelItem stackable dan Anda ingin mengurangi quantity, logikanya akan lebih kompleks.
+                // Tapi dengan FuelItem.setStackable(false), ini menjadi sederhana.
+                iterator.remove();
+                System.out.println("Instance item " + itemInstanceToRemove.getName() + " dihapus dari inventory.");
+                return; // Asumsi hanya ada satu instance objek ini di inventory
+            }
+        }
+        System.err.println("Warning: Attempted to remove item instance " + itemInstanceToRemove.getName() + " but it was not found.");
     }
 }

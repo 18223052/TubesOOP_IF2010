@@ -143,6 +143,8 @@ public class FishingController {
             gp.setGameState(GamePanel.dialogState);
             gp.repaint();
             gp.player.getInventory().addItem(currentFish);
+            gp.player.incrementFishCaughtCount();
+            gp.player.addCaughtFishType(currentFish.getName());
             endFishing(true);
         } else if (attemptsLeft <= 0) {
             gp.ui.setDialog("Gabisa main lagi! kesempatan kamu sudah habis " + currentFish.getName() + " maburrrr.");

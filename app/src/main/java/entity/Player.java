@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList; // Import ArrayList
+import java.util.List;
 
 import controller.InventoryController;
 import interactable.Interactable;
@@ -175,6 +176,54 @@ public class Player extends Character {
 
     public boolean hasSpouse() {
         return this.spouse != null;
+    }
+
+
+    // untuk masak
+    private List<String> unlockedRecipeIds = new ArrayList<>();
+
+    public boolean isRecipeUnlocked(String recipeId){
+        return unlockedRecipeIds.contains(recipeId);
+    }
+
+    public void unlockRecipe(String recipeId){
+        if (!unlockedRecipeIds.contains(recipeId)){
+            unlockedRecipeIds.add(recipeId);
+            System.out.println("Resep '"+recipeId + "' terbuka!");
+            System.out.println("Current unlocked recipes: " + unlockedRecipeIds); // Tambahkan ini
+        }
+    }
+
+    private int totalFishCaught = 0;
+
+    public int getFishCaughtCount(){
+        return totalFishCaught;
+    }
+
+    public void incrementFishCaughtCount(){
+        totalFishCaught ++;
+    }
+
+    private List<String> caughtFishTypes = new ArrayList<>();
+
+    public boolean hasCaughtFish(String fishName){
+        return caughtFishTypes.contains(fishName);
+    }
+
+    public void addCaughtFishType(String fishName){
+        if(!caughtFishTypes.contains(fishName)){
+            caughtFishTypes.add(fishName);
+        }
+    }
+
+    private boolean hasHarvested = false;
+
+    public boolean hasHarvestedFirstTime() {
+        return hasHarvested;
+    }
+
+    public void setHasHarvested(boolean harvested) {
+        this.hasHarvested = harvested;
     }
 
 
