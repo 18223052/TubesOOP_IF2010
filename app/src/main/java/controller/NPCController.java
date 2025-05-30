@@ -12,41 +12,56 @@ public class NPCController {
         this.gp = gp;
     }
 
-    public void giftItemToNPC(IItem itemToGift){
-        if (itemToGift == null){
-            gp.ui.currentDialog = "Kamu tidak memiliki barang yang akan dijadikan gift";
-            gp.gameState = GamePanel.dialogState;
+    public void giftItemToNPC(IItem itemToGift) {
+        if (gp.currNPC == null) { // Added safety check
+            gp.ui.setDialog("Error: No NPC targeted for gifting.");
+            gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
             return;
         }
-        
-        int pointsToAdd =0;
+
+        if (itemToGift == null) {
+            gp.ui.setDialog("You have no item selected to gift."); // Changed message slightly
+            gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
+            return;
+        }
+
+        int pointsToAdd = 0;
         String reactionMessage;
 
-        if (gp.currNPC.isLovedItem(itemToGift)){
+        // Determine reaction based on item preferences
+        if (gp.currNPC.isLovedItem(itemToGift)) {
             pointsToAdd = 25;
-            reactionMessage = gp.currNPC.getName() + " mencintai " + itemToGift.getName() + "!";
-        } else if (gp.currNPC.isLikedItem(itemToGift)){
+            reactionMessage = gp.currNPC.getName() + " loves " + itemToGift.getName() + "!"; // Adjusted wording slightly
+        } else if (gp.currNPC.isLikedItem(itemToGift)) {
             pointsToAdd = 20;
-            reactionMessage = gp.currNPC.getName() + " menyukai " + itemToGift.getName() + "!";
+            reactionMessage = gp.currNPC.getName() + " likes " + itemToGift.getName() + "!"; // Adjusted wording slightly
         } else {
-            if (gp.currNPC.doesHateAllUnlistedItems()){
-                pointsToAdd = -25;
-                reactionMessage = gp.currNPC.getName() + " sangat amat tidak menyukai" + itemToGift.getName() + "!";
-            } else {
-                pointsToAdd = 0;
-                reactionMessage = gp.currNPC.getName() + " menerima " + itemToGift.getName() + "!";
+            if (gp.currNPC.doesHateAllUnlistedItems()) { // Assuming this means they hate neutral items too
+                pointsToAdd = -25; // Or a smaller negative for merely disliked/neutral if hated is different
+                reactionMessage = gp.currNPC.getName() + " really dislikes " + itemToGift.getName() + "!";
+            } else { // Neutral reaction
+                pointsToAdd = 5; // Or 0, or a small positive for politeness
+                reactionMessage = gp.currNPC.getName() + " accepts " + itemToGift.getName() + ".";
             }
         }
 
         gp.currNPC.addHeartPoints(pointsToAdd);
 
-        if (gp.currNPC instanceof entity.NPC_mayortadi && gp.currNPC.getName().equals("Mayor Tadi")){
-            gp.ui.currentDialog = ((entity.NPC_mayortadi) gp.currNPC).getGiftReaction(itemToGift, pointsToAdd);
+        String finalDialog;
+        if (gp.currNPC instanceof entity.NPC_mayortadi && gp.currNPC.getName().equals("Mayor Tadi")) {
+
+            finalDialog = ((entity.NPC_mayortadi) gp.currNPC).getGiftReaction(itemToGift, pointsToAdd);
         } else {
-           gp.ui.currentDialog = reactionMessage;
+            finalDialog = reactionMessage;
         }
+        gp.ui.setDialog(finalDialog); 
 
         gp.player.inventory.removeItems(itemToGift.getName(), 1);
+
+        gp.setGameState(GamePanel.dialogState); 
+        gp.repaint(); 
     }
 
     public void attemptPropose(NPC targetNPC) {
@@ -55,7 +70,7 @@ public class NPCController {
             System.err.println("NPCController: Proposal failed, critical component is null.");
             if (gp.ui != null) {
                 gp.ui.setDialog("Error: Cannot process proposal at this time."); 
-                if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+                if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
                 gp.repaint();
                 gp.currNPC = targetNPC; 
             }
@@ -67,7 +82,7 @@ public class NPCController {
         if (!gp.player.hasItem("ring")) { 
             gp.ui.setDialog("You need a ring to propose."); 
             gp.player.changeEnergy(-20); 
-            if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+            if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
             gp.repaint();
             gp.currNPC = targetNPC; 
             return;
@@ -79,7 +94,7 @@ public class NPCController {
             gp.player.setFiance(targetNPC); 
             gp.player.changeEnergy(-10); 
             gp.ui.setDialog(targetNPC.getName() + " joyfully accepts! You are now engaged."); 
-            if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+            if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
             gp.repaint();
             gp.currNPC = targetNPC; 
             gp.update();
@@ -97,7 +112,7 @@ public class NPCController {
                 reason = "You are already in a relationship!";
             }
             gp.ui.setDialog("Proposal to " + targetNPC.getName() + " was declined. " + reason); 
-            if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+            if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
             gp.repaint();
             gp.currNPC = targetNPC;
         }
@@ -105,11 +120,12 @@ public class NPCController {
     }
 
     public void attemptMarry() {
+
         if (gp.player == null || gp.player.getFiance() == null || gp.ui == null || gp.gameTime == null) { 
             System.err.println("NPCController: Marriage failed, critical component null or player not engaged.");
             if (gp.ui != null) {
                 gp.ui.setDialog(gp.player != null && gp.player.getFiance() == null ? "You are not engaged to anyone." : "Error: Cannot process marriage."); //
-                if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+                if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
             }
             return;
         }
@@ -118,10 +134,11 @@ public class NPCController {
 
         if (!gp.player.hasItem("ring")) { 
             gp.ui.setDialog("You need the Ring for the wedding ceremony!"); 
-            if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); 
+            if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); 
             return;
         }
-
+        
+        System.out.println("DEBUG (AttemptMarry): gp.currMap saat ini: " + gp.currMap);
         if (fiance.canMarryPlayer(gp.player, gp.gameTime.getGameDay())) { 
             fiance.marryPlayer(gp.player); 
             gp.player.setSpouse(fiance); 
@@ -133,25 +150,20 @@ public class NPCController {
             gp.gameTime.setTime(22, 0); 
 
             String homeMapPath = "/maps/rumah.txt"; 
-            int homeSpawnTileX = 10; 
-            int homeSpawnTileY = 10; 
+            int homeSpawnTileX = 26; 
+            int homeSpawnTileY = 36; 
 
-            gp.currMap = homeMapPath; 
-            gp.tileM.loadMap(homeMapPath); 
+            gp.tileM.teleportPlayer(homeMapPath, homeSpawnTileX, homeSpawnTileY); 
+            gp.repaint();
 
-            gp.player.wX = homeSpawnTileX * gp.tileSize; 
-            gp.player.wY = homeSpawnTileY * gp.tileSize; 
             
-            // gp.aSetter.setNPC(); // Pertimbangkan jika NPC perlu di-reset di peta baru
-            // gp.aSetter.setObject(); // Pertimbangkan jika objek perlu di-reset di peta baru
 
             gp.ui.setDialog("Congratulations! You are now married to " + fiance.getName() + //
                             ".\nYou spend the rest of the day with your new spouse until 10:00 PM."); //
-            if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); //
+            if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); //
             gp.currNPC = fiance; //
         } else {
             int daysRemaining = 0;
-            // Asumsi ada getter publik getDayBecameFiance() di NPC.java
             if (fiance.getDayBecameFiance() > 0 && fiance.getDayBecameFiance() >= gp.gameTime.getGameDay()) { //
                 daysRemaining = (fiance.getDayBecameFiance() + 1) - gp.gameTime.getGameDay(); //
             }
@@ -161,7 +173,7 @@ public class NPCController {
             } else {
                 gp.ui.setDialog("The wedding with " + fiance.getName() + " cannot happen right now."); //
             }
-            if (gp.gameState != gp.dialogState) gp.setGameState(gp.dialogState); //
+            if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState); //
             gp.currNPC = fiance; //
         }
     }

@@ -121,7 +121,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_I -> {
                 gp.setGameState(GamePanel.inventoryState);
                 gp.isGifting = false;
-                // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+            
             }
             case KeyEvent.VK_C -> gp.setGameState(GamePanel.statsState); // Gunakan setGameState
             case KeyEvent.VK_ENTER -> enterPressed = true;
@@ -172,12 +172,12 @@ public class KeyHandler implements KeyListener {
                 gp.isGifting = false;
                 gp.setGameState(GamePanel.dialogState); // Arahkan ke dialog state untuk pesan gift/no item
                 // gp.repaint(); // setGameState sudah trigger repaint
-                // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+            
                 break;
             case KeyEvent.VK_ESCAPE:
                 gp.isGifting = false;
                 gp.setGameState(GamePanel.playState); // Gunakan setGameState
-                // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+            
                 break;
             case KeyEvent.VK_W, KeyEvent.VK_UP:
                 gp.inventoryController.moveSelectionUp();
@@ -221,7 +221,7 @@ public class KeyHandler implements KeyListener {
             gp.setGameState(GamePanel.inventoryState);
         } else if (gp.gameState == GamePanel.inventoryState) {
             gp.setGameState(GamePanel.playState);
-            // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+        
         }
         inventoryPressed = true; 
     }
@@ -231,7 +231,7 @@ public class KeyHandler implements KeyListener {
             gp.setGameState(GamePanel.shippingBinState);
         } else if (gp.gameState == GamePanel.shippingBinState) {
             gp.setGameState(GamePanel.playState);
-            // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+        
         }
     }
 
@@ -305,7 +305,7 @@ public class KeyHandler implements KeyListener {
                 interactPressed = true; 
                 if (gp.currNPC != null) {
                     gp.currNPC.speak();
-                    // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+                
                 }
                 break;
             case KeyEvent.VK_G:
@@ -313,13 +313,14 @@ public class KeyHandler implements KeyListener {
                 gp.isGifting = true;
                 gp.setGameState(GamePanel.inventoryState);
                 gp.inventoryController.setSelectedSlot(0); 
-                // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+                gp.repaint();
+            
                 break;
             case KeyEvent.VK_ESCAPE:
                 gp.setGameState(GamePanel.playState);
                 gp.currNPC = null; 
                 gp.isGifting = false;
-                // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+            
                 break;
             case KeyEvent.VK_P: // Propose
                 if (gp.npcController != null) { //
@@ -339,7 +340,7 @@ public class KeyHandler implements KeyListener {
                         if (gp.ui != null) { //
                             gp.ui.setDialog("You need a Ring to propose."); //
                             // Setelah pesan ini, GamePanel akan menggambar dialog jika state adalah dialogState
-                            gp.setGameState(gp.dialogState); //
+                            gp.setGameState(GamePanel.dialogState); //
                             // gp.currNPC tetap untuk konteks dialog.
                         }
                     }
@@ -367,7 +368,8 @@ public class KeyHandler implements KeyListener {
                             // UI hanya menampilkan opsi jika canMarryPlayer true.
                             // Jika pemain menekan M meskipun UI tidak menampilkan, pesan ini akan muncul.
                             gp.ui.setDialog(message); //
-                            gp.setGameState(gp.dialogState); //
+                            gp.setGameState(GamePanel.dialogState); //
+                            gp.repaint();
                         }
                     }
                 }
@@ -383,7 +385,7 @@ public class KeyHandler implements KeyListener {
     private void toggleStoreState() {
         if (gp.gameState == GamePanel.storeState) {
             gp.setGameState(GamePanel.playState);
-            // gp.resumeGameThread(); // setGameState sudah handle resume/pause
+        
         }
     }
 

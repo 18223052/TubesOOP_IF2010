@@ -31,6 +31,10 @@ public class TileManager {
 
     }
     
+    public void setCurrentMap(String mapPath){
+        this.currentMap = mapPath;
+    }
+
     public void setup() {
         loadMap(currentMap);
     }
@@ -144,7 +148,7 @@ public class TileManager {
                 if (coords != null) {
                     teleportPlayer(gp.prevFarmMap, coords[6], coords[7]); 
                 } else {
-                    // Fallback in case prevFarmMap is not set or invalid
+
                     System.err.println("Error: prevFarmMap not found or invalid. Defaulting to farmmm.txt.");
                     teleportPlayer("/maps/farmmm.txt", 18, 20);
                 }
@@ -195,18 +199,22 @@ public class TileManager {
 
     
     public void teleportPlayer(String newMapPath, int destX, int destY) {
-        String mapPathYangAkanDisimpan = gp.currMap; 
+        String mapPathYangAkanDisimpan = gp.currMap;
+         System.out.println("DEBUG (Teleport): Akan menyimpan peta: " + mapPathYangAkanDisimpan + " dan pindah ke: " + newMapPath);
 
-        gp.currMap = newMapPath;        
-        this.currentMap = newMapPath;   
+        // gp.currMap = newMapPath;        
+        // this.currentMap = newMapPath;   
 
-        loadMap(newMapPath);            
+        // loadMap(newMapPath);            
 
         gp.player.wX = destX * gp.tileSize;
         gp.player.wY = destY * gp.tileSize;
 
         
         gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
+
+        // gp.aSetter.setNPC(); // Pertimbangkan jika NPC perlu di-reset di peta baru
+        // gp.aSetter.setObj(); // Pertimbangkan jika objek perlu di-reset di peta baru
 
 
         if (!mapPathYangAkanDisimpan.equals("/maps/rumah.txt") && !newMapPath.equals("/maps/rumah.txt")) {

@@ -58,7 +58,6 @@ public class Player extends Character {
         interactionBox = new Rectangle();
         interactionBox.width = gp.tileSize;
         interactionBox.height = gp.tileSize;
-        interactionDistance = gp.tileSize;
 
         this.gender = "Male";
 

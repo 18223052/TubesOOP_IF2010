@@ -89,6 +89,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int npcContextMenuState = 10;
     public static final int fishingState = 11;
     public static final int nameInputState = 12;
+    public static final int giftingState = 13;
 
     public int gameState;
     private final Object pauseLock = new Object();
@@ -233,43 +234,89 @@ public class GamePanel extends JPanel implements Runnable {
 
 
 
-    public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) {
+public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) {
 
-        mapCache.put(petaLamaUntukDisimpan, saveCurrentMapState());
-        System.out.println("DEBUG: State Peta lama disimpan ke cache: " + petaLamaUntukDisimpan);
+    // 1. SIMPAN STATE PETA LAMA DULU
+    mapCache.put(petaLamaUntukDisimpan, saveCurrentMapState());
+    System.out.println("DEBUG (ChangeMap): State Peta lama disimpan ke cache: " + petaLamaUntukDisimpan);
+    System.out.println("DEBUG (ChangeMap): Jumlah objek sebelum clear: " + obj.size() + " di " + petaLamaUntukDisimpan);
+    System.out.println("DEBUG (ChangeMap): NPC pertama sebelum clear: " + (npc[0] != null ? npc[0].getName() : "null"));
 
-        obj.clear();
-        aSetter.clearNPCs();
 
-        this.currMap = petaBaruUntukDimuat;
-        this.tileM.loadMap(petaBaruUntukDimuat);
+    // 2. BERSIHKAN SEMUA OBJEK DAN NPC YANG ADA SAAT INI
+    obj.clear();
+    aSetter.clearNPCs();
 
-        if (mapCache.containsKey(petaBaruUntukDimuat)){
-            loadMapStateFromCache(mapCache.get(petaBaruUntukDimuat));
-            System.out.println("DEBUG: State peta baru dimuat dari cache: " + petaBaruUntukDimuat);
-        } else {
-            setupMap();
-            System.out.println("DEBUG: Melakukan setupMap() untuk PETA BARU: " + petaBaruUntukDimuat);
-            mapCache.put(petaBaruUntukDimuat, saveCurrentMapState());
-        }
+    System.out.println("DEBUG (ChangeMap): --- SETELAH CLEARING ---");
+    System.out.println("DEBUG (ChangeMap): Jumlah objek setelah clear: " + obj.size());
+    System.out.println("DEBUG (ChangeMap): NPC pertama setelah clear: " + (npc[0] != null ? npc[0].getName() : "null"));
 
-        farmingController.updatePlantGrowth();
-        debugCurrentObjects();
+
+    // 3. UPDATE PATH PETA DAN MUAT DATA TILE BARU
+    this.currMap = petaBaruUntukDimuat;
+    this.tileM.loadMap(petaBaruUntukDimuat);
+    this.tileM.setCurrentMap(petaBaruUntukDimuat);
+    System.out.println("DEBUG (ChangeMap): Peta baru dimuat: " + petaBaruUntukDimuat);
+
+
+    // 4. MUAT DARI CACHE ATAU SET UP BARU
+    if (mapCache.containsKey(petaBaruUntukDimuat)) {
+        loadMapStateFromCache(mapCache.get(petaBaruUntukDimuat));
+        System.out.println("DEBUG (ChangeMap): State peta baru dimuat dari cache: " + petaBaruUntukDimuat);
+    } else {
+        System.out.println("DEBUG (ChangeMap): Melakukan setup ASET untuk PETA BARU: " + petaBaruUntukDimuat);
+        aSetter.setObj();
+        aSetter.setNPC();
+        mapCache.put(petaBaruUntukDimuat, saveCurrentMapState());
+        System.out.println("DEBUG (ChangeMap): State peta baru setelah setup awal disimpan ke cache: " + petaBaruUntukDimuat);
     }
+
+    System.out.println("DEBUG (ChangeMap): --- AKHIR changeMap ---");
+    System.out.println("DEBUG (ChangeMap): Jumlah objek setelah load/setup: " + obj.size());
+    System.out.println("DEBUG (ChangeMap): NPC pertama setelah load/setup: " + (npc[0] != null ? npc[0].getName() : "null"));
+
+
+    farmingController.updatePlantGrowth();
+    debugCurrentObjects(); // Pastikan method ini juga menampilkan info yang berguna
+}
 
     private MapStateData saveCurrentMapState(){
         MapStateData data = new MapStateData();
         data.objects = new ArrayList<>(this.obj);
-        return data;
+
+        data.npcs = new NPC[this.npc.length];
+        for (int i = 0; i < this.npc.length; i++) {
+            data.npcs[i] = this.npc[i]; 
+        }
+        System.out.println("DEBUG (Cache): Menyimpan state untuk " + currMap + ": " + data.objects.size() + " obj, " + countNonNullNPCs(data.npcs) + " NPC.");
+    return data;
     }
 
     private void loadMapStateFromCache(MapStateData data){
         this.obj.clear();
         this.obj.addAll(data.objects);
+        this.aSetter.clearNPCs();
+        for (int i = 0; i < data.npcs.length; i++){
+            this.npc[i] = data.npcs[i];
+        }
+        System.out.println("DEBUG (Cache): Memuat state dari cache untuk " + currMap + ": " + data.objects.size() + " obj, " + countNonNullNPCs(data.npcs) + " NPC.");
     }
+
+    private int countNonNullNPCs(NPC[] npcArray) {
+    int count = 0;
+    if (npcArray != null) {
+        for (NPC n : npcArray) {
+            if (n != null) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
 
     private static class MapStateData implements java.io.Serializable{
         public ArrayList<SuperObj> objects;
+        public NPC[] npcs;
     }
     
 
@@ -653,6 +700,7 @@ public class GamePanel extends JPanel implements Runnable {
             case npcContextMenuState:
             case fishingState:
             case nameInputState:
+            case giftingState:
                 if (!isTimePaused) { 
                     pauseGameThread();
                 }

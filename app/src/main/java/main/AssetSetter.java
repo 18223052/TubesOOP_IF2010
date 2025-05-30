@@ -1,5 +1,4 @@
 package main;
-import entity.NPC_abigail;
 import entity.*;
 
 import object.Bed;
@@ -12,7 +11,6 @@ import object.ShippingBin;
 import object.Store;
 import object.Stove;
 import object.TV;
-import object.SuperObj; // Pastikan ini di-import
 
 public class AssetSetter {
     
@@ -27,15 +25,19 @@ public class AssetSetter {
     }
     
     public void clearNPCs() {
+        System.out.println("DEBUG (AssetSetter): clearNPCs() dipanggil. Mengosongkan " + gp.npc.length + " slot NPC.");
         for(int i = 0; i < gp.npc.length; i++) {
             gp.npc[i] = null;
         }
+        System.out.println("DEBUG (AssetSetter): clearNPCs() selesai.");
     }
 
     public void setObj(){
 
         if(gp.currMap.equals("/maps/farmmm.txt")) {
             
+
+            System.out.println("DEBUG (AssetSetter): setObj() dipanggil untuk peta: " + gp.currMap);
             // inisialisasi shippingbin
             ShippingBin shippingBin1 = new ShippingBin(gp);
             shippingBin1.wX = 20 * gp.tileSize;
@@ -185,6 +187,8 @@ public class AssetSetter {
             LakeFishingSpot lake2 = new LakeFishingSpot(gp, 25*gp.tileSize, 8*gp.tileSize);
             gp.obj.add(lake2);
         }
+
+        System.out.println("DEBUG (AssetSetter): setObj() selesai. Total objek: " + gp.obj.size());
     }
 
     public void setNPC(){
