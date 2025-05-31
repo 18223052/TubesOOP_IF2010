@@ -177,7 +177,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 
 
-        saveManger = new SaveManager(this); // Perhatikan nama variabel 'saveManger'
+        saveManger = new SaveManager(this);
         
         this.keyH = new KeyHandler(this);
         this.addKeyListener(keyH);

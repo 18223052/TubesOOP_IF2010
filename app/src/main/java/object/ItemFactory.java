@@ -339,6 +339,16 @@ public class ItemFactory {
             new FishLocation[]{FishLocation.OCEAN},
             FishItem.FishCategory.REGULAR, 1, gp
         ));
+
+        allFishItems.add(new FishItem(
+            "Angler", 0,
+            new Season[]{Season.FALL},
+            null, 
+            Arrays.asList(new TimeRange(new GameTime(8, 0), new GameTime(20, 0))),
+            new FishLocation[]{FishLocation.POND},
+            FishItem.FishCategory.LEGENDARY, 1, gp
+        ));
+
         allFishItems.add(new FishItem(
             "Halibut", 0,
             null, 
@@ -380,6 +390,24 @@ public class ItemFactory {
             Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(22, 0))),
             new FishLocation[]{FishLocation.FOREST_RIVER, FishLocation.POND},
             FishItem.FishCategory.REGULAR, 1, gp
+        ));
+
+        allFishItems.add(new FishItem(
+            "Glacierfish", 0,
+            new Season[]{Season.WINTER},
+            new WeatherType[]{WeatherType.RAINY, WeatherType.SUNNY},
+            Arrays.asList(new TimeRange(new GameTime(8, 0), new GameTime(20, 0))),
+            new FishLocation[]{FishLocation.FOREST_RIVER},
+            FishItem.FishCategory.LEGENDARY, 1, gp
+        ));
+
+        allFishItems.add(new FishItem(
+            "Crimsonfish", 0,
+            new Season[]{Season.SUMMER},
+            new WeatherType[]{WeatherType.RAINY, WeatherType.SUNNY},
+            Arrays.asList(new TimeRange(new GameTime(8, 0), new GameTime(20, 0))),
+            new FishLocation[]{FishLocation.OCEAN},
+            FishItem.FishCategory.LEGENDARY, 1, gp
         ));
 
 
@@ -433,7 +461,7 @@ public class ItemFactory {
     public MiscItem createMiscItem (String itemName){
         switch(itemName.toLowerCase()){
             case "ring":
-                return new MiscItem("ring", 250, 0, gp, itemName);
+                return new MiscItem("ring", 250, 0, gp, itemName, true);
             case "18223052":
                 return new MiscItem("Fathimah Nurhumaida (18223052)", 0, 0, gp, "BEBAN", true );
             default:

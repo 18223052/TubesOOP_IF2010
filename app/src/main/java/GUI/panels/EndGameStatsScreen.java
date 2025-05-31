@@ -69,7 +69,7 @@ public class EndGameStatsScreen {
         g2.setFont(titleFont);
         String title = "--- Game Statistics ---";
         g2.drawString(title, getXforCenteredText(g2, title), currentY);
-        currentY += lineHeight * 2; // Jarak setelah judul
+        currentY += lineHeight * 2; 
 
 
         int col1Y = currentY; 
@@ -97,7 +97,7 @@ public class EndGameStatsScreen {
 
         long avgExpenditure = gp.player.getTotalExpenditure() / seasonsToAverage;
         g2.drawString("  Average Season Expenditure: " + avgExpenditure + "g", col1X, col1Y);
-        col1Y += lineHeight * 1.5; // Jarak setelah grup finansial
+        col1Y += lineHeight * 1.5;
 
         // GENERAL STATS
         g2.setFont(statsFont);
@@ -125,7 +125,6 @@ public class EndGameStatsScreen {
 
         int col2Y = currentY; 
 
-        // NPC INTERACTIONS
         g2.setFont(statsFont);
         g2.drawString("NPC INTERACTIONS", col2X, col2Y);
         col2Y += smallLineHeight;

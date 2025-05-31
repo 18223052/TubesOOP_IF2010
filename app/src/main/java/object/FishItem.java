@@ -1,6 +1,5 @@
 package object;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -182,7 +181,7 @@ public class FishItem extends BaseItem implements IFishAttributes, IConsumable {
         if (this.timeRanges == null || this.timeRanges.isEmpty()) {
             timeMatch = true;
         } else {
-            // Use getGameHour() and getGameMinute() for currTime, catchStartTime, catchEndTime
+
             int currentTotalMinutes = currTime.getGameHour() * 60 + currTime.getGameMinute();
 
             for (TimeRange range : this.timeRanges){

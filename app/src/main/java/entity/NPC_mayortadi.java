@@ -9,7 +9,7 @@ public class NPC_mayortadi extends NPC {
 
     public NPC_mayortadi(GamePanel gp,ItemFactory itemFactory) {
         super(gp);
-        name = "Mayor Tadi";
+        name = "Mayortadi";
         direction = "down";
         gender = NPC.gender_male;
         heartPoints = 0; //Debug
@@ -56,7 +56,7 @@ public class NPC_mayortadi extends NPC {
                 }
                 break;
         }
-        if (dialogues[0] == null && gp.player != null) { // Tambahkan null check untuk gp.player
+        if (dialogues[0] == null && gp.player != null) { 
             dialogues[0] = "Hello, " + gp.player.getName() + ".";
         } else if (dialogues[0] == null) {
             dialogues[0] = "Hello there.";
@@ -75,7 +75,7 @@ public class NPC_mayortadi extends NPC {
         likedItems.add(itemFactory.createFish("crimsonfish"));
         likedItems.add(itemFactory.createFish("glacierfish"));
         likedItems.add(itemFactory.createFish("angler"));
-        lovedItems.add(itemFactory.createFish("Legendary Bass"));
+        lovedItems.add(itemFactory.createFood("Legendary Bass"));
     }
 
     public String getGiftReaction(IItem item, int pointsAwarded){

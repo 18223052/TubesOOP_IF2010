@@ -188,39 +188,27 @@ public class AssetSetter {
             gp.obj.add(lake2);
         }
 
-        // System.out.println("DEBUG (AssetSetter): setObj() selesai. Total objek: " + gp.obj.size());
+
     }
 
-        public void setNPC(){
-        clearNPCs(); // Kosongkan array NPC aktif saat ini
+    public void setNPC(){
+        clearNPCs(); 
 
-        // Helper untuk menempatkan NPC dari allGameNPCs ke peta
-        // Menggunakan slot gp.npc[0] untuk kesederhanaan, sesuaikan jika perlu lebih banyak NPC per peta
+
         int npcSlotIndex = 0; 
 
-        if (gp.currMap.equals("/maps/farmmm.txt") || 
-            gp.currMap.equals("/maps/farmmm2.txt") || 
-            gp.currMap.equals("/maps/farmmm3.txt") || 
-            gp.currMap.equals("/maps/rumahmayortadi.txt")) {
-            // Asumsi Mayortadi muncul di farm dan rumahnya
-            // Ganti "Mayortadi" dengan hasil dari NPC_mayortadi.getName() jika berbeda
+        if (gp.currMap.equals("/maps/rumahmayortadi.txt")) {
             NPC mayor = gp.allGameNPCs.get("Mayortadi"); 
             if (mayor != null) {
-                if (gp.currMap.equals("/maps/farmmm.txt") || gp.currMap.equals("/maps/farmmm2.txt") || gp.currMap.equals("/maps/farmmm3.txt")) {
-                    mayor.wX = gp.tileSize*16; // Posisi di farm (sesuaikan per variasi farm jika perlu)
-                    mayor.wY = gp.tileSize*20;
-                } else { // rumahmayortadi.txt
-                    mayor.wX = gp.tileSize*28;
-                    mayor.wY = gp.tileSize*28;
-                }
-                gp.npc[npcSlotIndex++] = mayor;
+        
+                mayor.wX = gp.tileSize * 28;
+                mayor.wY = gp.tileSize * 28;
+                gp.npc[npcSlotIndex++] = mayor; 
             } else {
                 System.err.println("AssetSetter: NPC 'Mayortadi' tidak ditemukan di allGameNPCs untuk map " + gp.currMap);
             }
         }
         else if(gp.currMap.equals("/maps/worldmap.txt")) {
-            // Asumsi Emily muncul di worldmap (dekat tokonya mungkin)
-            // Ganti "Emily" dengan hasil dari NPC_Emily.getName() jika berbeda
             NPC emily = gp.allGameNPCs.get("Emily"); 
             if (emily != null) {
                 emily.wX = gp.tileSize*30;
@@ -231,7 +219,6 @@ public class AssetSetter {
             }
         }
         else if (gp.currMap.equals("/maps/rumahabigail.txt")){
-            // Ganti "Abigail" dengan hasil dari NPC_abigail.getName() jika berbeda
             NPC abigail = gp.allGameNPCs.get("Abigail"); 
             if (abigail != null) {
                 abigail.wX = gp.tileSize*28;
@@ -242,7 +229,7 @@ public class AssetSetter {
             }
         }
         else if (gp.currMap.equals("/maps/rumahperry.txt")){
-            // Ganti "Perry" dengan hasil dari NPC_Perry.getName() jika berbeda
+
             NPC perry = gp.allGameNPCs.get("Perry"); 
             if (perry != null) {
                 perry.wX = gp.tileSize*28;
@@ -253,7 +240,7 @@ public class AssetSetter {
             }
         }
         else if (gp.currMap.equals("/maps/rumahcaroline.txt")){
-            // Ganti "Caroline" dengan hasil dari NPC_Caroline.getName() jika berbeda
+
             NPC caroline = gp.allGameNPCs.get("Caroline"); 
             if (caroline != null) {
                 caroline.wX = gp.tileSize*28;
@@ -264,7 +251,7 @@ public class AssetSetter {
             }
         }
         else if (gp.currMap.equals("/maps/rumahdasco.txt")){
-            // Ganti "Dasco" dengan hasil dari NPC_Dasco.getName() jika berbeda
+
             NPC dasco = gp.allGameNPCs.get("Dasco"); 
             if (dasco != null) {
                 dasco.wX = gp.tileSize*28;
