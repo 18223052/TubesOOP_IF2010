@@ -46,7 +46,7 @@ public class Player extends Character {
     private int harvestCounter =0;
     private int giftingCounter =0;
     private int chattingCounter =0;
-    private int goldEarnedCounter = 0;
+    private int goldEarnedFromSelling = 0;
     
     // private NPC partner;
     private NPC fiance = null;
@@ -227,13 +227,13 @@ public class Player extends Character {
         return this.visitingCounter;
     }
 
-    public void incrementGoldEarnedCount(int amount){
-        this.goldEarnedCounter = amount;
-        System.out.println("jumlah visiting : " + this.visitingCounter);
+    public void addGoldEarnedFromSelling(int amount){
+        this.goldEarnedFromSelling += amount;
+        System.out.println("Player earned " + amount + " gold from selling. Total gold earned from selling: " + this.goldEarnedFromSelling);
     }
 
-    public int getGoldEarnedCount() {
-        return this.goldEarnedCounter;
+    public int getGoldEarnedFromSelling() {
+        return this.goldEarnedFromSelling;
     }
 
     public void incrementHarvestCount(){

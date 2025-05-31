@@ -126,8 +126,8 @@ public void moveSelectionDown() {
     public void update() {
 
         if (goldEarned > 0) {
-            gp.player.incrementGoldEarnedCount(goldEarned);
             gp.player.addGold(goldEarned);
+            gp.player.addGoldEarnedFromSelling(goldEarned); 
             System.out.println("Player earned " + goldEarned + " gold from shipped items.");
             goldEarned = 0;
         }
