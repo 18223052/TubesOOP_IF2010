@@ -58,7 +58,7 @@ public class GamePanel extends JPanel implements Runnable {
     public int currentMinute = gameTime.getGameMinute();
     public int currentHour = gameTime.getGameHour();
     public int currentDay = gameTime.getGameDay();
-    public boolean isTimePaused = false;
+    public volatile boolean isTimePaused;
 
     // Weather
     public WeatherManager weatherManager;
@@ -91,7 +91,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int nameInputState = 12;
     public static final int giftingState = 13;
 
-    public int gameState;
+    public volatile int gameState;
     private final Object pauseLock = new Object();
 
 
@@ -335,12 +335,19 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         inventoryController.addItem(itemFactory.createSeed("pumpkin"));
         inventoryController.addItem(itemFactory.createSeed("potato"));
         inventoryController.addItem(itemFactory.createSeed("cauliflower"));
-        // inventoryController.addItem(itemFactory.createFood("sashimi"));
-        // inventoryController.addItem(itemFactory.createCrop("hotpepper"));
+        inventoryController.addItem(itemFactory.createCrop("grape"));
+        inventoryController.addItem(itemFactory.createCrop("grape"));
+        inventoryController.addItem(itemFactory.createCrop("grape"));
+        inventoryController.addItem(itemFactory.createFood("sashimi"));
+        inventoryController.addItem(itemFactory.createCrop("hotpepper"));
         inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
 
         inventoryController.addItem(itemFactory.createMiscItem("ring"));
         inventoryController.addItem(itemFactory.createFuelItem("coal"));
+        inventoryController.addItem(itemFactory.createFood("veggiesoup"));
+        inventoryController.addItem(itemFactory.createFish("sardine"));
+        inventoryController.addItem(itemFactory.createFish("angler"));
+        inventoryController.addItem(itemFactory.createFish("potato"));
     }
  
     private void addStoreItems() {

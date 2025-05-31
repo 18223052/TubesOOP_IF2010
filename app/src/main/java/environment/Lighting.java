@@ -111,7 +111,7 @@ public class Lighting {
 
     public void updateEnvironment() {
         // Hentikan update environment jika game tidak dalam playState
-        if (gp.gameState != gp.playState) {
+        if (gp.gameState != GamePanel.playState) {
             return;
         }
 
@@ -121,14 +121,6 @@ public class Lighting {
         if (inTransition) {
             updateTransition(currentTime);
         }
-        // Jika tidak dalam transisi, cek apakah sudah waktunya untuk memulai transisi berikutnya
-        // else {
-        //     long elapsedSinceLastTransition = currentTime - transitionStartTime;
-
-        //     if (elapsedSinceLastTransition >= TRANSITION_DURATION) {
-        //         startNextTransition(currentTime);
-        //     }
-        // }
     }
 
     private void updateTransition(long currentTime) {

@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO; // Jangan lupa import jika memuat gambar langsung di sini
+import javax.imageio.ImageIO; 
 
 public class PlayerStatsPanel extends BaseUIPanel {
 

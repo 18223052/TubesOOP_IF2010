@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import entity.Player;
+import environment.Season;
 import environment.WeatherType;
 import main.GamePanel;
 
@@ -23,6 +24,9 @@ public class LandTile extends SuperObj {
 
     private Map<PlantType, BufferedImage[]> plantedImagesMap;
     private Map<PlantType, BufferedImage[]> wateredImagesMap;
+
+    private Season lastKnownSeason;
+    private int lastCheckedGameDay;
 
     public LandTile(GamePanel gp){
         super(gp);
@@ -210,9 +214,13 @@ public class LandTile extends SuperObj {
 
 
     public void setWatered(boolean watered) {
-        isWatered = watered;
-        lastWateredTime = gp.gameTime.getCurrentGameTime(); 
-        updateImage();
+        if (this.isWatered != watered) { 
+            this.isWatered = watered;
+            if (watered) {
+                this.lastWateredTime = gp.gameTime.getCurrentGameTime();
+            }
+            updateImage();
+        }
     }
 
     public void toSoil() {
@@ -222,7 +230,10 @@ public class LandTile extends SuperObj {
         this.isWatered = false;
         this.lastWateredTime = -1;
         this.plantedTime = -1;
+        this.lastKnownSeason = gp.gameTime.getCurrentSeason();
+        this.lastCheckedGameDay = gp.gameTime.getGameDay();
         System.out.println("Tile changed to SOIL at " + wX/gp.tileSize + "," + wY/gp.tileSize);
+        // gp.setGameState(GamePanel.playState);
         updateImage(); 
     }
 
@@ -234,6 +245,8 @@ public class LandTile extends SuperObj {
         this.isWatered = false;
         this.lastWateredTime = -1;
         this.plantedTime = -1;
+        this.lastKnownSeason = gp.gameTime.getCurrentSeason();
+        this.lastCheckedGameDay = gp.gameTime.getGameDay();
         System.out.println("Tile changed to LAND at " + wX/gp.tileSize + "," + wY/gp.tileSize);
         updateImage(); 
     }
@@ -247,11 +260,12 @@ public class LandTile extends SuperObj {
             return false;
         }
         
-        // Cek Musim
-        if (!type.canGrowInSeason(gp.gameTime.getCurrentSeason())) {
-            System.out.println("Cannot plant " + type.name() + " in " + gp.gameTime.getCurrentSeason() + " season.");
-            gp.ui.setDialog("It's not the right season to plant " + type.name() + "!");
+        Season currentSeasonForPlanting = gp.gameTime.getCurrentSeason();
+        if (!type.canGrowInSeason(currentSeasonForPlanting)) {
+            System.out.println("Cannot plant " + type.name() + " in " + currentSeasonForPlanting + " season.");
+            gp.ui.setDialog("Ini bukan waktu yang tepat untuk menanam " + type.name() + "!");
             gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
             return false;
         }
 
@@ -261,7 +275,9 @@ public class LandTile extends SuperObj {
             this.growthStage = 0; 
             this.isWatered = false; 
             this.plantedTime = gp.gameTime.getCurrentGameTime();
-            this.lastWateredTime = gp.gameTime.getCurrentGameTime();
+            this.lastWateredTime = -1;
+            this.lastKnownSeason = currentSeasonForPlanting;
+            this.lastCheckedGameDay = gp.gameTime.getGameDay();
             System.out.println("Planted " + type.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize);
             updateImage();
             return true;
@@ -275,6 +291,41 @@ public class LandTile extends SuperObj {
             return;
         }
 
+        
+        int currentGameDay = gp.gameTime.getGameDay();
+        Season currentSeason = gp.gameTime.getCurrentSeason();
+
+        if (currentGameDay != lastCheckedGameDay) {
+           
+            if (currentSeason != lastKnownSeason) {
+                System.out.println("Season berganti " + lastKnownSeason + " ke " + currentSeason + " untuk " + plantedCropType.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize);
+                if (!plantedCropType.canGrowInSeason(currentSeason)) {
+                    System.out.println(plantedCropType.name() + " wilted due to incompatible season: " + currentSeason);
+                    gp.ui.setDialog("Tanamanmu " + plantedCropType.name() + " mati karena pergantian season!");
+                    // gp.setGameState(GamePanel.dialogState);
+                    // gp.repaint();
+                    // if(gp.gameState != GamePanel.dialogState) {
+                    //     gp.setGameState(GamePanel.dialogState);
+                    //     // gp.repaint();
+                    // }
+                    // gp.repaint();
+                    toSoil(); 
+                   
+                    gp.setGameState(GamePanel.dialogState);
+                    gp.repaint();
+                    // gp.setGameState(GamePanel.playState);
+                    // return;   
+                }
+                this.lastKnownSeason = currentSeason; 
+            }
+
+            if (this.isWatered && gp.weatherManager.getWeatherForDay(currentGameDay) != WeatherType.RAINY) {
+                System.out.println(plantedCropType.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize + " dried overnight.");
+                setWatered(false); 
+            }
+            this.lastCheckedGameDay = currentGameDay;
+        }
+
         if (gp.weatherManager.getWeatherForDay(gp.gameTime.getGameDay()) == WeatherType.RAINY) {
             if (!isWatered) { 
                 setWatered(true);
@@ -283,37 +334,32 @@ public class LandTile extends SuperObj {
         }
 
 
-        if (!isWatered && plantedTime != -1) {
-            long timeSinceLastWatered = gp.gameTime.getCurrentGameTime() - lastWateredTime;
-            if (timeSinceLastWatered >= plantedCropType.getWiltingTimeMillis()) {
-                System.out.println(plantedCropType.name() + " mati");
-                gp.ui.setDialog("Your " + plantedCropType.name() + " wilted!"); 
-                gp.setGameState(GamePanel.dialogState);
-                toSoil();
-                return;
+        if ((currentState == TileState.PLANTED || currentState == TileState.WATERED || currentState == TileState.HARVESTABLE) // Ensure it's a planted state
+             && plantedCropType != PlantType.NONE) { 
+
+            if (isWatered) { 
+                long timeElapsed = gp.gameTime.getCurrentGameTime() - plantedTime;
+                long growthDurationStage1 = plantedCropType.getGrowthTimeStage1Millis(); 
+                long growthDurationStage2 = plantedCropType.getGrowthTimeStage2Millis();
+                int previousGrowthStage = growthStage; 
+
+                if (growthStage < 2 && timeElapsed >= growthDurationStage2) {
+                    growthStage = 2;
+                    currentState = TileState.HARVESTABLE; 
+                    System.out.println(plantedCropType.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize + " is now HARVESTABLE!");
+                } else if (growthStage < 1 && timeElapsed >= growthDurationStage1) {
+                    growthStage = 1;
+                    System.out.println(plantedCropType.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize + " grew to stage 1.");
+                }
+
+                if (growthStage != previousGrowthStage || (currentState == TileState.HARVESTABLE && img != wateredImagesMap.get(plantedCropType)[2])) { // If growth happened or became harvestable
+                    updateImage();
+                }
+            } else {
+                
             }
         }
-        
-        long timeElapsed = gp.gameTime.getCurrentGameTime() - plantedTime;
-
-        long growthDurationStage1 = plantedCropType.getGrowthTimeStage1Millis();
-        long growthDurationStage2 = plantedCropType.getGrowthTimeStage2Millis();
-
-
-        if (isWatered) { 
-            if (growthStage < 2 && timeElapsed >= growthDurationStage2) {
-                growthStage = 2;
-                currentState = TileState.HARVESTABLE;
-                System.out.println(plantedCropType.name() + " siap dipanen!");
-                updateImage();
-            } else if (growthStage < 1 && timeElapsed >= growthDurationStage1) {
-                growthStage = 1;
-                System.out.println(plantedCropType.name() + " sedang bertumbuh!");
-                updateImage();
-            }
-        } else {
- 
-        }
+        // gp.repaint();
     }
 
     public CropItem harvest() {

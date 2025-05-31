@@ -24,8 +24,8 @@ public class Player extends Character {
     public int hasKey = 0;
 
     public Rectangle interactionBox;
-    private int interactionTileRow;
-    private int interactionTileCol;
+    public int interactionTileRow;
+    public int interactionTileCol;
 
     public InventoryController inventory;
     public static final int MAX_ENERGY = 100;

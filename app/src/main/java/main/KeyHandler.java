@@ -138,8 +138,13 @@ public class KeyHandler implements KeyListener {
     }
 
     public void handleDialogState(int code) {
-        if (code == KeyEvent.VK_E) {
+        if (code == KeyEvent.VK_E || code == KeyEvent.VK_ENTER) {
             gp.setGameState(GamePanel.playState); 
+            gp.isTimePaused = false;
+            if (gp.ui != null) { 
+            gp.ui.clearDialog();
+            }
+            gp.repaint();
         }
     }
 
@@ -167,18 +172,17 @@ public class KeyHandler implements KeyListener {
 
                 if (gp.gameState == GamePanel.sleepState) {
 
-                    return; // Sangat penting: Hentikan eksekusi di sini.
+                    return; 
                 }
 
             } else {
                 gp.ui.setDialog("No item selected to gift.");
             }
 
-            // Baris-baris ini hanya akan dieksekusi jika pemain TIDAK pingsan
-            // (yaitu, jika blok if (gp.gameState == GamePanel.sleepState) di atas tidak dieksekusi).
+          
             gp.isGifting = false;
             gp.setGameState(GamePanel.dialogState);
-            // gp.repaint(); // Ini sudah ditangani oleh GamePanel loop utama.
+
 
             break;
         case KeyEvent.VK_ESCAPE:
@@ -332,8 +336,10 @@ public class KeyHandler implements KeyListener {
                 if (gp.npcController != null && gp.currNPC != null) {
                     if (gp.currNPC.isProposable(gp.player)){
                         System.out.println("DEBUG PROPOSAL: Bisa dilamar");
+                        gp.npcController.attemptPropose(gp.currNPC);
                     } else {
                         System.out.println("DEBUG PROPOSAL: Gabisa dilamar");
+                        gp.npcController.attemptPropose(gp.currNPC);
                     }
 
                     if (gp.player.inventory.hasItem("ring")) {

@@ -30,6 +30,7 @@ public class NPCController {
         if (energyAfterChat < Player.MIN_ENERGY_BEFORE_SLEEP) {
             gp.ui.setDialog("Kamu terlalu lelah untuk melakukan chat sekarang.");
             gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
             return;
         }
 
@@ -57,6 +58,12 @@ public void giftItemToNPC(IItem itemToGift) {
 
     if (itemToGift == null) {
         gp.ui.setDialog("Kamu tidak memiliki item yang dipilih untuk diberikan.");
+        gp.setGameState(GamePanel.dialogState);
+        return;
+    }
+
+    if (!gp.player.inventory.hasItem(itemToGift.getName())) {
+        gp.ui.setDialog("Kamu tidak memiliki item di inventaris.");
         gp.setGameState(GamePanel.dialogState);
         return;
     }
@@ -193,8 +200,13 @@ public void giftItemToNPC(IItem itemToGift) {
             reason = "You are already in a relationship!";
         }
         gp.ui.setDialog("Proposal to " + targetNPC.getName() + " was declined. " + reason);
-        if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState);
-        gp.repaint();
+        if (gp.gameState != GamePanel.dialogState) {
+            gp.setGameState(GamePanel.playState);
+            gp.repaint();
+            gp.setGameState(GamePanel.dialogState);
+            gp.repaint();
+        }
+        
         gp.currNPC = targetNPC;
     }
     System.out.println("Energy sesudah: " + gp.player.getEnergy());
@@ -219,7 +231,8 @@ public void giftItemToNPC(IItem itemToGift) {
 
     if (predictedEnergyAfterMarry < Player.MIN_ENERGY_BEFORE_SLEEP) {
         gp.ui.setDialog("Kamu terlalu lelah untuk menikah sekarang. Kamu butuh energi untuk upacara!");
-        if (gp.gameState != GamePanel.dialogState) gp.setGameState(GamePanel.dialogState);
+        if (gp.gameState != GamePanel.dialogState){}
+        gp.setGameState(GamePanel.dialogState);
         gp.repaint();
         return; // Hentikan proses pernikahan
     }
