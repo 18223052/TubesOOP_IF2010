@@ -9,6 +9,7 @@ public class FoodItem extends BaseItem implements IConsumable {
     public FoodItem(String foodName, int buyPrice, int sellPrice, int energyValue, GamePanel gp) {
         super(foodName, buyPrice, sellPrice, gp, "consumables");
         this.energyValue = energyValue;
+        this.sellable = true;
     }
     
     @Override

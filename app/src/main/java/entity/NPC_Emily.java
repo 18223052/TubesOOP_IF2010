@@ -12,7 +12,7 @@ public class NPC_Emily extends NPC {
         name = "Emily";
         gender = NPC.gender_female;
         heartPoints = MAX_HEART_POINTS;
-        setHatesAllUnlistedItems(true);
+        setHatesAllUnlistedItems(false);
         getCharacterImage();
         initializeGiftPreference(itemFactory);
         setDialogue();
@@ -72,11 +72,24 @@ public class NPC_Emily extends NPC {
 
     @Override
     public void initializeGiftPreference(ItemFactory itemFactory){
-        lovedItems.add(itemFactory.createFish("salmon"));
-        // likedItems.add(itemFactory.createFish("crimsonfish"));
-        // likedItems.add(itemFactory.createFish("glacierfish"));
-        // lovedItems.add(itemFactory.createFood("legend"));
-        // hatedItems.add(itemFactory.createFood("legend"));
+        lovedItems.add(itemFactory.createSeed("tomato"));
+        lovedItems.add(itemFactory.createSeed("parsnip"));
+        lovedItems.add(itemFactory.createSeed("melon"));
+        lovedItems.add(itemFactory.createSeed("blueberry"));
+        lovedItems.add(itemFactory.createSeed("cauliflower"));
+        lovedItems.add(itemFactory.createSeed("potato"));
+        lovedItems.add(itemFactory.createSeed("cranberry"));
+        lovedItems.add(itemFactory.createSeed("hotpepper"));
+        lovedItems.add(itemFactory.createSeed("pumpkin"));
+        lovedItems.add(itemFactory.createSeed("wheat"));
+        lovedItems.add(itemFactory.createSeed("grape"));
+
+        likedItems.add(itemFactory.createFish("catfish"));
+        likedItems.add(itemFactory.createFish("salmon"));
+        likedItems.add(itemFactory.createFish("sardine"));
+        
+        hatedItems.add(itemFactory.createFuelItem("coal"));
+        hatedItems.add(itemFactory.createFuelItem("firewood"));
     }
 
     public String getGiftReaction(BaseItem item, int pointsAwarded){

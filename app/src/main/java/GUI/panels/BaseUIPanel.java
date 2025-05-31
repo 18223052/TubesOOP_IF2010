@@ -133,6 +133,7 @@ public class BaseUIPanel {
             case "fish" -> new Color(180, 120, 255);
             case "seeds" -> new Color(255, 180, 120);
             case "fuel" -> new Color(255, 255, 120);
+            case "ring" -> new Color(255, 182, 193);
             default -> new Color(200, 200, 200); // Default gray
         };
     }

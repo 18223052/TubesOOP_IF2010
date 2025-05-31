@@ -20,6 +20,7 @@ public abstract class BaseItem implements IItem {
     protected boolean stackable = true;
     protected String category;
     protected GamePanel gp;
+    protected boolean sellable;
     
     public BaseItem(String name, int buyPrice, int sellPrice, GamePanel gp, String category) {
         this.name = name;
@@ -53,6 +54,11 @@ public abstract class BaseItem implements IItem {
     @Override
     public String getCategory() {
         return category;
+    }
+
+    @Override
+    public boolean isSellable(){
+        return sellable;
     }
     
     @Override

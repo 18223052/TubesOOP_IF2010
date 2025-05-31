@@ -13,6 +13,7 @@ import java.util.Objects;
 import GUI.panels.HUD;
 import GUI.panels.PauseScreen;
 import GUI.panels.DialogBox;
+import GUI.panels.EndGameStatsScreen;
 import GUI.panels.InventoryScreen;
 import GUI.panels.CharacterScreen;
 import GUI.panels.CookingMenu;
@@ -47,6 +48,7 @@ public class UI {
     private NPCContextMenu npcContextMenu;
     public TitleScreen titleScreen;
     public NameInputScreen nameInputScreen;
+    private EndGameStatsScreen endGameStatsScreen;
 
 
     public HelpScreen helpScreen;
@@ -94,6 +96,7 @@ public class UI {
         nameInputScreen = new NameInputScreen(gp, generalFont);
         helpScreen = new HelpScreen(gp, generalFont);
         creditsScreen = new CreditsScreen(gp, generalFont);
+        endGameStatsScreen = new EndGameStatsScreen(gp, generalFont);
     }
 
     private void setupDefaultGraphics(Graphics2D g2) {
@@ -151,6 +154,9 @@ public class UI {
                 break;
             case GamePanel.creditState:
                 creditsScreen.draw(g2);
+                break;
+            case GamePanel.endGameStatsState:
+                endGameStatsScreen.draw(g2);
                 break;
         }
     }

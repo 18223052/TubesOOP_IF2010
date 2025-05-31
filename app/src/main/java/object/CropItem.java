@@ -8,6 +8,7 @@ public class CropItem extends BaseItem implements IConsumable {
 
     public CropItem(String cropName, int buyPrice, int sellPrice, GamePanel gp) {
         super(cropName, buyPrice, sellPrice, gp, "crops");
+        sellable = true;
     }
 
     @Override

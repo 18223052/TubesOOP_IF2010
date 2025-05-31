@@ -4,6 +4,6 @@ import main.GamePanel;
 
 public class Hoe extends ToolItem {
     public Hoe(GamePanel gp) {
-        super("hoe", 100, 50, gp); 
+        super("hoe", -1, -1, gp); 
     }
 }

@@ -72,11 +72,13 @@ public class NPC_Caroline extends NPC {
 
     @Override
     public void initializeGiftPreference(ItemFactory itemFactory){
-        lovedItems.add(itemFactory.createFish("salmon"));
-        // likedItems.add(itemFactory.createFish("crimsonfish"));
-        // likedItems.add(itemFactory.createFish("glacierfish"));
-        // lovedItems.add(itemFactory.createFood("legend"));
-        // hatedItems.add(itemFactory.createFood("legend"));
+        lovedItems.add(itemFactory.createFuelItem("coal"));
+        lovedItems.add(itemFactory.createFuelItem("firewood"));
+
+        likedItems.add(itemFactory.createCrop("potato"));
+        likedItems.add(itemFactory.createCrop("wheat"));
+
+        hatedItems.add(itemFactory.createCrop("hotpepper"));
     }
 
     public String getGiftReaction(BaseItem item, int pointsAwarded){

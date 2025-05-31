@@ -72,11 +72,12 @@ public class NPC_Perry extends NPC {
 
     @Override
     public void initializeGiftPreference(ItemFactory itemFactory){
-        lovedItems.add(itemFactory.createFish("salmon"));
-        // likedItems.add(itemFactory.createFish("crimsonfish"));
-        // likedItems.add(itemFactory.createFish("glacierfish"));
-        // lovedItems.add(itemFactory.createFood("legend"));
-        // hatedItems.add(itemFactory.createFood("legend"));
+        lovedItems.add(itemFactory.createCrop("cranberry"));
+        lovedItems.add(itemFactory.createCrop("blueberry"));
+
+        likedItems.add(itemFactory.createFood("wine"));
+
+        // hatedItems.add(itemFactory.createCrop("hotpepper"));
     }
 
     public String getGiftReaction(BaseItem item, int pointsAwarded){

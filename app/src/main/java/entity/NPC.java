@@ -54,7 +54,6 @@ public abstract class NPC extends Character implements Interactable {
         this.likedItems = new ArrayList<>();
         this.hatedItems = new ArrayList<>();
         this.relationshipStatus = STATUS_SINGLE;
-        this.relationshipStatus = STATUS_SINGLE;
         this.dayBecameFiance = -1;
         this.hatesAllUnlistedItems = false;
         // setDialogue();
@@ -210,13 +209,12 @@ public abstract class NPC extends Character implements Interactable {
     // Di entity/NPC.java
     public boolean isProposable(Player player){
         if (player == null) return false;
-        // System.out.println("DEBUG isProposable for " + this.name + ":");
-        // System.out.println("  heartPoints >= MAX_HEART_POINTS: " + (this.heartPoints >= MAX_HEART_POINTS) + " (Current: " + this.heartPoints + ")");
-        // System.out.println("  relationshipStatus.equals(Single): " + this.relationshipStatus.equals(NPC.STATUS_SINGLE) + " (Current: " + this.relationshipStatus + ")");
-        // System.out.println("  !player.hasFiance(): " + !player.hasFiance());
-        // System.out.println("  !player.hasSpouse(): " + !player.hasSpouse());
-        // System.out.println("  this.gender == gender_female: " + (this.gender == gender_female) + " (Current Gender: " + this.gender + ")");
-        if (this.heartPoints >= MAX_HEART_POINTS && this.relationshipStatus.equals(NPC.STATUS_SINGLE) && !player.hasFiance() && !player.hasSpouse() && this.gender == NPC.gender_female){
+        System.out.println("DEBUG isProposable for " + this.name + ":");
+        System.out.println("  heartPoints >= MAX_HEART_POINTS: " + (this.heartPoints >= MAX_HEART_POINTS) + " (Current: " + this.heartPoints + ")");
+        System.out.println("  relationshipStatus.equals(Single): " + this.relationshipStatus.equals(NPC.STATUS_SINGLE) + " (Current: " + this.relationshipStatus + ")");
+        System.out.println("  !player.hasFiance(): " + !player.hasFiance());
+        System.out.println("  !player.hasSpouse(): " + !player.hasSpouse());
+        if (this.heartPoints >= MAX_HEART_POINTS && this.relationshipStatus.equals(NPC.STATUS_SINGLE) && !player.hasFiance() && !player.hasSpouse()){
             return true;
         } else {
             return false;

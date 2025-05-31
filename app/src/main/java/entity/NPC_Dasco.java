@@ -13,7 +13,7 @@ public class NPC_Dasco extends NPC {
         direction = "down";
         gender = NPC.gender_male;
         heartPoints = MAX_HEART_POINTS; 
-        setHatesAllUnlistedItems(true);
+        setHatesAllUnlistedItems(false);
         getCharacterImage();
         initializeGiftPreference(itemFactory);
         setDialogue();
@@ -72,11 +72,24 @@ public class NPC_Dasco extends NPC {
 
     @Override
     public void initializeGiftPreference(ItemFactory itemFactory){
-        lovedItems.add(itemFactory.createFish("salmon"));
-        // likedItems.add(itemFactory.createFish("crimsonfish"));
-        // likedItems.add(itemFactory.createFish("glacierfish"));
-        // lovedItems.add(itemFactory.createFood("legend"));
-        // hatedItems.add(itemFactory.createFood("legend"));
+        lovedItems.add(itemFactory.createFood("The Legend of Spakbor"));
+        lovedItems.add(itemFactory.createFood("Cooked Pigs Head"));
+        lovedItems.add(itemFactory.createFood("Wine"));
+        lovedItems.add(itemFactory.createFood("Fugu"));
+        lovedItems.add(itemFactory.createFood("Spakbor Salad"));
+
+        likedItems.add(itemFactory.createFood("Fish Sandwich"));
+        likedItems.add(itemFactory.createFood("Fish Stew"));
+        likedItems.add(itemFactory.createFood("Baguette"));
+        likedItems.add(itemFactory.createFood("Fish n Chips"));
+
+        hatedItems.add(itemFactory.createFish("Legendary Bass"));
+        hatedItems.add(itemFactory.createCrop("grape"));
+        hatedItems.add(itemFactory.createCrop("cauliflower"));
+        hatedItems.add(itemFactory.createCrop("wheat"));
+        hatedItems.add(itemFactory.createFish("Pufferfish"));
+        hatedItems.add(itemFactory.createFish("Salmon"));
+
     }
 
     public String getGiftReaction(IItem item, int pointsAwarded){

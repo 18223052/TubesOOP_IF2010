@@ -27,6 +27,12 @@ import controller.NPCController;
 
 
 import entity.NPC;
+import entity.NPC_Caroline;
+import entity.NPC_Dasco;
+import entity.NPC_Emily;
+import entity.NPC_Perry;
+import entity.NPC_abigail;
+import entity.NPC_mayortadi;
 import entity.Player;
 import environment.EnvironmentManager;
 import environment.GameTime;
@@ -93,6 +99,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int giftingState = 13;
     public static final int helpState = 14;
     public static final int creditState = 15;
+    public static final int endGameStatsState = 16;
     
 
     public volatile int gameState;
@@ -127,6 +134,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public ArrayList<SuperObj> obj = new ArrayList<>(); 
     public NPC npc[] = new NPC[6]; 
+    public Map<String, NPC> allGameNPCs;
     
   
     public SuperObj currObj;
@@ -134,6 +142,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public SaveManager saveManger; 
     
+    public boolean endGameStatisticsShown = false;
+
     public String playerNameInput = "";
     public boolean requestingNameInput = false;
 
@@ -147,6 +157,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     private Map<String, MapStateData> mapCache = new HashMap<>();
 
+    Sound sound = new Sound();
+
 
 
     public GamePanel() {
@@ -159,6 +171,10 @@ public class GamePanel extends JPanel implements Runnable {
         shippingBinController = new ShippingBinController(this);
         storeController = new StoreController(this);
         npcController = new NPCController(this);
+        itemFactory = new ItemFactory(this);
+        allGameNPCs = new HashMap<>(); 
+        initializeAllGameNPCs();
+
 
 
         saveManger = new SaveManager(this); // Perhatikan nama variabel 'saveManger'
@@ -196,6 +212,8 @@ public class GamePanel extends JPanel implements Runnable {
         currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
 
         player.inventory = inventoryController;
+
+            playMusic(0);
     
         tileM.setup();
         // setupMap(); 
@@ -213,6 +231,8 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.clearNPCs();
         aSetter.setObj(); 
         aSetter.setNPC();
+        stopMusic();
+        playMusic(1);
     }
 
     public void saveGame(){
@@ -249,7 +269,6 @@ public class GamePanel extends JPanel implements Runnable {
 
 
         obj.clear();
-        // aSetter.clearNPCs();
 
         // System.out.println("DEBUG (ChangeMap): --- SETELAH CLEARING ---");
         // System.out.println("DEBUG (ChangeMap): Jumlah objek setelah clear: " + obj.size());
@@ -282,6 +301,31 @@ public class GamePanel extends JPanel implements Runnable {
         farmingController.updatePlantGrowth();
         // debugCurrentObjects(); 
     }
+
+        private void initializeAllGameNPCs() {
+        // Inisialisasi semua NPC di sini, hanya sekali saat GamePanel dibuat
+        NPC mayortadi = new NPC_mayortadi(this, this.itemFactory);
+        allGameNPCs.put(mayortadi.getName(), mayortadi);
+
+        NPC emily = new NPC_Emily(this, this.itemFactory);
+        allGameNPCs.put(emily.getName(), emily);
+
+        NPC abigail = new NPC_abigail(this, this.itemFactory);
+        allGameNPCs.put(abigail.getName(), abigail);
+
+        NPC perry = new NPC_Perry(this, this.itemFactory);
+        allGameNPCs.put(perry.getName(), perry);
+
+        NPC caroline = new NPC_Caroline(this, this.itemFactory);
+        allGameNPCs.put(caroline.getName(), caroline);
+        
+        NPC dasco = new NPC_Dasco(this, this.itemFactory);
+        allGameNPCs.put(dasco.getName(), dasco);
+
+        // Pastikan setiap kelas NPC (misal: NPC_mayortadi) memiliki method getName()
+        // yang mengembalikan nama unik seperti "Mayortadi", "Emily", dll.
+    }
+
 
     private MapStateData saveCurrentMapState(){
         MapStateData data = new MapStateData();
@@ -344,8 +388,26 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
-        inventoryController.addItem(itemFactory.createCrop("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("potato"));
+        inventoryController.addItem(itemFactory.createMiscItem("18223052"));
+        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
+        // inventoryController.addItem(itemFactory.createSeed("wheat"));
+        // inventoryController.addItem(itemFactory.createSeed("pumpkin"));
+        // inventoryController.addItem(itemFactory.createSeed("potato"));
+        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
+        // inventoryController.addItem(itemFactory.createCrop("grape"));
+        // inventoryController.addItem(itemFactory.createCrop("grape"));
+        // inventoryController.addItem(itemFactory.createCrop("grape"));
+        // inventoryController.addItem(itemFactory.createFood("sashimi"));
+        // inventoryController.addItem(itemFactory.createCrop("hotpepper"));
+        // inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
 
+        // inventoryController.addItem(itemFactory.createMiscItem("ring"));
+        // inventoryController.addItem(itemFactory.createFuelItem("coal"));
+        // inventoryController.addItem(itemFactory.createFood("veggiesoup"));
+        // inventoryController.addItem(itemFactory.createFish("sardine"));
+        // inventoryController.addItem(itemFactory.createFish("angler"));
+        // inventoryController.addItem(itemFactory.createFish("potato"));
     }
  
     private void addStoreItems() {
@@ -515,6 +577,17 @@ public class GamePanel extends JPanel implements Runnable {
                     System.out.println("GamePanel: Sudah jam 2 pagi (" + currentHour + ":" + currentMinute + "), pemain pingsan! Status tidur saat ini: " + sleepController.isSleeping());
                     sleepController.forceSleep();
                 
+                }
+            }
+
+            if (!endGameStatisticsShown && player != null) {
+                boolean goldMilestoneReached = (player.getGold() >= 17209); //
+                boolean marriedMilestoneReached = player.hasSpouse(); //
+
+                if (goldMilestoneReached || marriedMilestoneReached) {
+                    System.out.println("Milestone tercapai! Menampilkan statistik akhir game.");
+                    endGameStatisticsShown = true; 
+                    setGameState(endGameStatsState); 
                 }
             }
 
@@ -759,6 +832,21 @@ public class GamePanel extends JPanel implements Runnable {
             case sleepState: return "SLEEP";
             default: return "UNKNOWN(" + state + ")";
         }
+    }
+
+    public void playMusic(int i){
+        sound.setFile(i);
+        sound.play();
+        sound.loop();
+    }
+
+    public void stopMusic(){
+        sound.stop();
+    }
+
+    public void playSE(int i){
+        sound.setFile(i);
+        sound.play();
     }
 
     private class EmptyTileManager extends TileManager {

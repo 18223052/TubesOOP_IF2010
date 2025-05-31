@@ -11,8 +11,8 @@ public class NPC_abigail extends NPC {
         super(gp);
         name = "Abigail";
         gender = NPC.gender_female;
-        heartPoints = MAX_HEART_POINTS;
-        setHatesAllUnlistedItems(true);
+        heartPoints = MAX_HEART_POINTS; // Test Propose & Marry
+        setHatesAllUnlistedItems(false);
         getCharacterImage();
         initializeGiftPreference(itemFactory);
         setDialogue();
@@ -72,11 +72,21 @@ public class NPC_abigail extends NPC {
 
     @Override
     public void initializeGiftPreference(ItemFactory itemFactory){
-        lovedItems.add(itemFactory.createFish("salmon"));
-        // likedItems.add(itemFactory.createFish("crimsonfish"));
-        // likedItems.add(itemFactory.createFish("glacierfish"));
-        // lovedItems.add(itemFactory.createFood("legend"));
-        // hatedItems.add(itemFactory.createFood("legend"));
+        lovedItems.add(itemFactory.createCrop("blueberry"));
+        lovedItems.add(itemFactory.createCrop("melon"));
+        lovedItems.add(itemFactory.createCrop("pumpkin"));
+        lovedItems.add(itemFactory.createCrop("grape"));
+        lovedItems.add(itemFactory.createCrop("cranberry"));
+
+        likedItems.add(itemFactory.createFood("Baguette"));
+        likedItems.add(itemFactory.createFood("Pumpkin Pie"));
+        likedItems.add(itemFactory.createFood("Wine"));
+
+        hatedItems.add(itemFactory.createCrop("hotpepper"));
+        hatedItems.add(itemFactory.createCrop("cauliflower"));
+        hatedItems.add(itemFactory.createCrop("parsnip"));
+        hatedItems.add(itemFactory.createCrop("wheat"));
+        
     }
 
     public String getGiftReaction(BaseItem item, int pointsAwarded){

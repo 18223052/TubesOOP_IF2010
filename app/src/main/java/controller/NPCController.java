@@ -184,7 +184,7 @@ public void giftItemToNPC(IItem itemToGift) {
         return;
     }
 
-    if (targetNPC.isProposable(gp.player) && NPC.gender_female.equals(targetNPC.getGender())) {
+    if (targetNPC.isProposable(gp.player)) {
         System.out.println("Selamat atas pernikahanmu Na Hee Do");
         targetNPC.becomeFiance(gp.player, gp.gameTime.getGameDay());
         gp.player.setFiance(targetNPC);

@@ -10,6 +10,7 @@ public class SeedItem extends BaseItem implements IUsable {
     public SeedItem(String cropType, int buyPrice, int sellPrice, GamePanel gp) {
         super(cropType + "seed", buyPrice, sellPrice, gp, "seeds");
         this.cropType = cropType;
+        this.sellable = true;
     }
     
 

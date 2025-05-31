@@ -192,9 +192,11 @@ public class InventoryScreen extends BaseUIPanel {
 
         // Prices with icons
         g2.setColor(TEXT_SECONDARY);
-        g2.drawString("Beli: " + item.getBuyPrice() + "g  |  Jual: " + item.getSellPrice() + "g",
-                x + DETAIL_PADDING, currentY);
-        currentY += LINE_HEIGHT_SMALL;
+        if(item.getBuyPrice() != -1 && item.getSellPrice() != -1){
+            g2.drawString("Beli: " + item.getBuyPrice() + "g  |  Jual: " + item.getSellPrice() + "g",
+                    x + DETAIL_PADDING, currentY);
+            currentY += LINE_HEIGHT_SMALL;
+        }
 
         // Quantity for stackable items
         if (item.isStackable()) {
@@ -226,8 +228,10 @@ public class InventoryScreen extends BaseUIPanel {
             g2.setColor(new Color(100, 255, 100)); // Green for action
             g2.drawString("[E] Berikan kepada " + gp.currNPC.getName(), x + DETAIL_PADDING, currentY);
         } else {
-            g2.setColor(new Color(100, 255, 100)); // Green for action
-            g2.drawString("[E] Gunakan/Lengkapi", x + DETAIL_PADDING, currentY);
+            if (!(item.getName().equalsIgnoreCase("ring")) && !(item.getCategory().equalsIgnoreCase("FUEL")) && !(item.getName().equalsIgnoreCase("Fathimah Nurhumaida (18223052)"))){
+                g2.setColor(new Color(100, 255, 100)); // Green for action
+                g2.drawString("[E] Gunakan/Lengkapi", x + DETAIL_PADDING, currentY);
+            }
         }
         currentY += LINE_HEIGHT_LARGE;
 
