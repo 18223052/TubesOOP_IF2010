@@ -426,7 +426,7 @@ public class ItemFactory {
             case "ring":
                 return new Ring(gp);
             case "18223052":
-                return new MiscItem("Fathimah Nurhumaida (18223052)", 0, 0, gp, "BEBAN" );
+                return new MiscItem("Fathimah Nurhumaida (18223052)", 0, 0, gp, "BEBAN", true );
             default:
                 System.err.println("Warning: Attempted to create unknown fuel item: " + itemName+ ". Returning null.");
                 return null; // Atau throw an exception

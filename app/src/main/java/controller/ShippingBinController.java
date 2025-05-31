@@ -23,15 +23,16 @@ public class ShippingBinController {
         return sellingItemsSize;
     }
 
-    public void addItem(IItem item) {
-        if(item.isSellable()){
-            if (sellingItems.size() < sellingItemsSize) {
-                sellingItems.add(item);
-                goldEarned = goldEarned + item.getSellPrice();
-                System.out.println("Added item: " + item.getName() + "(" + getItemCount(item.getName()) + ") to sellingItems");
-            } else {
-                System.out.println("Item already exists in sellingItems!");
-            }
+    public boolean addItem(IItem item) {
+        if (sellingItems.size() < sellingItemsSize) {
+            sellingItems.add(item);
+            goldEarned = goldEarned + item.getSellPrice(); 
+            System.out.println("Added item: " + item.getName() + " (" + getItemCount(item.getName()) + ") to sellingItems. Gold to be earned: " + item.getSellPrice());
+            return true; 
+        } else {
+            System.out.println("Shipping bin is full! Cannot add " + item.getName() + ".");
+
+            return false; 
         }
     }
 

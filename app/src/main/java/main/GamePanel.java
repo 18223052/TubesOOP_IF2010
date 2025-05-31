@@ -92,6 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int giftingState = 13;
     public static final int helpState = 14;
     public static final int creditState = 15;
+    public static final int endGameStatsState = 16;
     
 
     public volatile int gameState;
@@ -132,6 +133,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public SaveManager saveManger; 
     
+    public boolean endGameStatisticsShown = false;
+
     public String playerNameInput = "";
     public boolean requestingNameInput = false;
 
@@ -246,7 +249,6 @@ public class GamePanel extends JPanel implements Runnable {
 
 
         obj.clear();
-        aSetter.clearNPCs();
 
         // System.out.println("DEBUG (ChangeMap): --- SETELAH CLEARING ---");
         // System.out.println("DEBUG (ChangeMap): Jumlah objek setelah clear: " + obj.size());
@@ -335,6 +337,7 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createSeed("tomato"));
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
         inventoryController.addItem(itemFactory.createSeed("potato"));
+        inventoryController.addItem(itemFactory.createMiscItem("ring"));
         inventoryController.addItem(itemFactory.createMiscItem("18223052"));
         // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
         // inventoryController.addItem(itemFactory.createSeed("wheat"));
@@ -506,6 +509,17 @@ public class GamePanel extends JPanel implements Runnable {
                     System.out.println("GamePanel: Sudah jam 2 pagi (" + currentHour + ":" + currentMinute + "), pemain pingsan! Status tidur saat ini: " + sleepController.isSleeping());
                     sleepController.forceSleep();
                 
+                }
+            }
+
+            if (!endGameStatisticsShown && player != null) {
+                boolean goldMilestoneReached = (player.getGold() >= 17209); //
+                boolean marriedMilestoneReached = player.hasSpouse(); //
+
+                if (goldMilestoneReached || marriedMilestoneReached) {
+                    System.out.println("Milestone tercapai! Menampilkan statistik akhir game.");
+                    endGameStatisticsShown = true; 
+                    setGameState(endGameStatsState); 
                 }
             }
 

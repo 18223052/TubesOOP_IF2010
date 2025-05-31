@@ -80,6 +80,8 @@ public class KeyHandler implements KeyListener {
             handleStoreState(code);
         } else if (gp.gameState == GamePanel.npcContextMenuState) { 
             handleNpcContextMenuState(code);
+        } else if (gp.gameState == GamePanel.endGameStatsState) { //
+            handleEndGameStatsState(code);
         }
     }
 
@@ -484,6 +486,12 @@ public class KeyHandler implements KeyListener {
             gp.repaint();
         }
     }
+
+    public void handleEndGameStatsState(int code) {
+        if (code == KeyEvent.VK_E || code == KeyEvent.VK_ENTER) {
+            gp.setGameState(GamePanel.playState); // Kembali ke permainan
+        }
+}
 
     @Override
     public void keyReleased(KeyEvent e) {
