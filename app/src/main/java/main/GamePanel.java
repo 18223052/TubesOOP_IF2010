@@ -388,26 +388,6 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
-        inventoryController.addItem(itemFactory.createSeed("potato"));
-        inventoryController.addItem(itemFactory.createMiscItem("18223052"));
-        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
-        // inventoryController.addItem(itemFactory.createSeed("wheat"));
-        // inventoryController.addItem(itemFactory.createSeed("pumpkin"));
-        // inventoryController.addItem(itemFactory.createSeed("potato"));
-        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
-        // inventoryController.addItem(itemFactory.createCrop("grape"));
-        // inventoryController.addItem(itemFactory.createCrop("grape"));
-        // inventoryController.addItem(itemFactory.createCrop("grape"));
-        // inventoryController.addItem(itemFactory.createFood("sashimi"));
-        // inventoryController.addItem(itemFactory.createCrop("hotpepper"));
-        // inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
-
-        // inventoryController.addItem(itemFactory.createMiscItem("ring"));
-        // inventoryController.addItem(itemFactory.createFuelItem("coal"));
-        // inventoryController.addItem(itemFactory.createFood("veggiesoup"));
-        // inventoryController.addItem(itemFactory.createFish("sardine"));
-        // inventoryController.addItem(itemFactory.createFish("angler"));
-        // inventoryController.addItem(itemFactory.createFish("potato"));
     }
  
     private void addStoreItems() {

@@ -12,7 +12,7 @@ public class NPC_Dasco extends NPC {
         name = "Dasco";
         direction = "down";
         gender = NPC.gender_male;
-        heartPoints = MAX_HEART_POINTS; 
+        heartPoints = 0; 
         setHatesAllUnlistedItems(false);
         getCharacterImage();
         initializeGiftPreference(itemFactory);

@@ -12,7 +12,7 @@ public class NPC_mayortadi extends NPC {
         name = "Mayortadi";
         direction = "down";
         gender = NPC.gender_male;
-        heartPoints = 0; //Debug
+        heartPoints = 0;
         setHatesAllUnlistedItems(true);
         getCharacterImage();
         initializeGiftPreference(itemFactory);
