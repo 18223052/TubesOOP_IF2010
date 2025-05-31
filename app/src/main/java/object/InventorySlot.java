@@ -4,7 +4,7 @@ package object;
 public class InventorySlot {
     private IItem item;
     private int quantity;
-    private final int maxStackSize = 10;
+    private final int maxStackSize = 15;
 
     public InventorySlot(IItem item, int quantity) {
         this.item = item;

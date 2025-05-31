@@ -133,9 +133,6 @@ public class Player extends Character {
         energy = 100;
         gold = 100;
         totalExpenditure = 0;
-        // name = "bobi";
-        // farmMap = "anjoy";
-        // partner = null;
     }
 
     private IItem activeItem = null;

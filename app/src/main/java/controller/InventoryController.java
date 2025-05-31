@@ -13,6 +13,14 @@ import object.SeedItem;
 import object.ToolItem;
 import GUI.panels.InventoryScreen;
 
+
+/**
+ * Kelas InventoryController merupakan kelas
+ * yang mengontrol semua hal mengenai inventory player
+ * 
+ * Kelas terkait : - InventorySlot (Object), berfungsi sebagai representasi tambahan item dengan kuantitas (stackable)
+ */
+
 public class InventoryController {
 
     private GamePanel gp;
@@ -80,21 +88,20 @@ public class InventoryController {
     private void removeItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             IItem removedItem = inventory.get(index).getItem();
-            inventory.remove(index); // Ini menghapus seluruh slot
+            inventory.remove(index); 
             System.out.println("Item " + removedItem.getName() + " dihapus dari inventory pada indeks: " + index + " (seluruh slot)");
 
-            // Logika untuk active item jika item yang DIHAPUS (seluruh slot) adalah item aktif
+
             if (gp.player.getActiveItem() == removedItem) {
                  gp.player.setActiveItem(new NoItem(gp));
-                 // Anda mungkin ingin memberi tahu pemain bahwa item dilepas
-                 // gp.ui.setDialog(removedItem.getName() + " dilepas dari tangan.");
+
             }
 
             if (selectedSlot >= inventory.size() && !inventory.isEmpty()) {
                 selectedSlot = inventory.size() - 1;
             } else if (inventory.isEmpty()) {
                 selectedSlot = 0;
-                gp.player.setActiveItem(new NoItem(gp)); // Pastikan NoItem aktif jika inventory kosong
+                gp.player.setActiveItem(new NoItem(gp)); 
             }
             if (inventoryScreen != null) {
                 inventoryScreen.adjustScrollToSelectedItem();
@@ -118,7 +125,6 @@ public class InventoryController {
 
                 if (slot.isEmpty()) {
                     iterator.remove(); 
-    
                     if (gp.player.getActiveItem() == itemInSlot) {
                         gp.player.setActiveItem(new NoItem(gp)); 
                         gp.ui.setDialog("Item unequipped.");
@@ -320,7 +326,7 @@ public class InventoryController {
                 }
             } else if (item instanceof IConsumable) {
                 System.out.println("Mengonsumsi: " + item.getName());
-                eatingController.consume((IConsumable) item);
+                eatingController.consume(slot);
 
                 if (gp.player.getActiveItem() == item) {
                     gp.player.setActiveItem(new NoItem(gp));

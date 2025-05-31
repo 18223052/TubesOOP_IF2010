@@ -134,7 +134,7 @@ public class Recipe {
                 },
                 "Fish Stew",
                 RecipeRequirementType.HAS_ITEM_IN_INVENTORY, // Memiliki "Hot Pepper"
-                "Hot Pepper", // Nama item
+                "hotpepper", // Nama item
                 1 // Cukup 1 Hot Pepper
         ));
 

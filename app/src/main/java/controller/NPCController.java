@@ -5,6 +5,12 @@ import entity.Player;
 import main.GamePanel;
 import object.IItem;
 
+/**
+ * Kelas NPCController merupakan kelas
+ * yang mengontrol semua hal mengenai aktivitas player dengan npc
+ */
+
+
 public class NPCController {
     
     private GamePanel gp;
@@ -37,8 +43,8 @@ public class NPCController {
         gp.player.deductEnergy(NPC.CHAT_ENERGY_COST);
 
         if (gp.gameState != GamePanel.sleepState) {
-            gp.gameTime.addTime(10); // Gunakan konstanta
-            gp.currNPC.addHeartPoints(10); // Gunakan konstanta
+            gp.gameTime.addTime(10); 
+            gp.currNPC.addHeartPoints(10); 
             gp.currNPC.recordChatSession();
             gp.currNPC.speak();
             gp.player.incrementChattingCount();

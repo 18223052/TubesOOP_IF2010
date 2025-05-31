@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 
 import controller.CookingController;
+import controller.EatingController;
 import controller.FarmingController;
 import controller.ShippingBinController;
 import controller.SleepController;
@@ -115,6 +116,7 @@ public class GamePanel extends JPanel implements Runnable {
     public NPCController npcController;
     public FarmingController farmingController;
     public FishingController fishingController;
+    public EatingController eatingController;
     public boolean isGifting = false;
 
     public ItemFactory itemFactory;
@@ -187,6 +189,7 @@ public class GamePanel extends JPanel implements Runnable {
         watchingController = new WatchingController(this);
         farmingController = new FarmingController(this, gameTime);
         fishingController = new FishingController(this);
+        eatingController = new EatingController(this);
 
         // Weather
         weatherManager = new WeatherManager();
@@ -246,7 +249,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 
         obj.clear();
-        aSetter.clearNPCs();
+        // aSetter.clearNPCs();
 
         // System.out.println("DEBUG (ChangeMap): --- SETELAH CLEARING ---");
         // System.out.println("DEBUG (ChangeMap): Jumlah objek setelah clear: " + obj.size());
@@ -326,42 +329,48 @@ public class GamePanel extends JPanel implements Runnable {
         inventoryController.addItem(itemFactory.createTool("wateringcan"));
         inventoryController.addItem(itemFactory.createTool("fishingpole"));
         inventoryController.addItem(itemFactory.createTool("pickaxe"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createFish("salmon"));
-        inventoryController.addItem(itemFactory.createSeed("tomato"));
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
-        inventoryController.addItem(itemFactory.createSeed("potato"));
-        inventoryController.addItem(itemFactory.createMiscItem("18223052"));
-        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
-        // inventoryController.addItem(itemFactory.createSeed("wheat"));
-        // inventoryController.addItem(itemFactory.createSeed("pumpkin"));
-        // inventoryController.addItem(itemFactory.createSeed("potato"));
-        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
-        // inventoryController.addItem(itemFactory.createCrop("grape"));
-        // inventoryController.addItem(itemFactory.createCrop("grape"));
-        // inventoryController.addItem(itemFactory.createCrop("grape"));
-        // inventoryController.addItem(itemFactory.createFood("sashimi"));
-        // inventoryController.addItem(itemFactory.createCrop("hotpepper"));
-        // inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createSeed("parsnip"));
+        inventoryController.addItem(itemFactory.createCrop("parsnip"));
 
-        // inventoryController.addItem(itemFactory.createMiscItem("ring"));
-        // inventoryController.addItem(itemFactory.createFuelItem("coal"));
-        // inventoryController.addItem(itemFactory.createFood("veggiesoup"));
-        // inventoryController.addItem(itemFactory.createFish("sardine"));
-        // inventoryController.addItem(itemFactory.createFish("angler"));
-        // inventoryController.addItem(itemFactory.createFish("potato"));
     }
  
     private void addStoreItems() {
-        // storeController.addItem(itemFactory.createFood("veggiesoup"));
-        // storeController.addItem(itemFactory.createFood("veggiesoup"));
-        // storeController.addItem(itemFactory.createFood("salmon"));
-        // storeController.addItem(itemFactory.createFood("salmon"));
+
         storeController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
+        storeController.addItem(itemFactory.createRecipeItem("recipe_fish_sandwich"));
+        storeController.addItem(itemFactory.createSeed("parsnip"));
+        storeController.addItem(itemFactory.createSeed("cauliflower"));
+        storeController.addItem(itemFactory.createSeed("potato"));
+        storeController.addItem(itemFactory.createSeed("wheat"));
+        storeController.addItem(itemFactory.createSeed("blueberry"));
+        storeController.addItem(itemFactory.createSeed("tomato"));
+        storeController.addItem(itemFactory.createSeed("hotpepper"));
+        storeController.addItem(itemFactory.createSeed("melon"));
+        storeController.addItem(itemFactory.createSeed("cranberry"));
+        storeController.addItem(itemFactory.createSeed("pumpkin"));
+        storeController.addItem(itemFactory.createSeed("wheat"));
+        storeController.addItem(itemFactory.createSeed("grape"));
+        storeController.addItem(itemFactory.createCrop("eggplant"));
+        storeController.addItem(itemFactory.createCrop("egg"));
+        storeController.addItem(itemFactory.createMiscItem("18223052"));
+        storeController.addItem(itemFactory.createFuelItem("coal"));
+        storeController.addItem(itemFactory.createFuelItem("firewood"));
+        storeController.addItem(itemFactory.createMiscItem("ring"));
+        
     }
 
     public void startGameThread() {

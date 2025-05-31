@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 
+import GUI.panels.StoreMenu;
 import main.GamePanel;
 import object.IItem;
 
@@ -10,8 +11,9 @@ public class StoreController {
     private GamePanel gp;
     private ArrayList<IItem> storeItems;
     private int selectedSlot;
-    private final int storeItemsSize = 12;
+    private final int storeItemsSize = 50;
     public int goldSpent = 0;
+    private StoreMenu storeMenu;
 
     public StoreController(GamePanel gp) {
         this.gp = gp;
@@ -28,10 +30,7 @@ public class StoreController {
         System.out.println("Added item: " + item.getName() + "(" + getItemCount(item.getName()) + ") to storeItems");
     }
 
-    /**
-     * Mendapatkan jumlah total item dalam kategori tertentu. Berguna untuk "Any
-     * Fish".
-     */
+
     public int getItemCount(String itemName) {
         int count = 0;
         for (IItem item : storeItems) {
@@ -50,28 +49,57 @@ public class StoreController {
     }
 
     public void moveSelectionUp() {
+    if (!storeItems.isEmpty()) {
+        int prevSelectedSlot = selectedSlot; 
         if (selectedSlot - 4 >= 0) {
             selectedSlot -= 4;
         }
-    }
 
-    public void moveSelectionDown() {
+        if (selectedSlot != prevSelectedSlot && storeMenu != null) {
+            storeMenu.adjustScrollToSelectedItem();
+        }
+    }
+}
+
+public void moveSelectionDown() {
+    if (!storeItems.isEmpty()) {
+        int prevSelectedSlot = selectedSlot;
         if (selectedSlot + 4 < storeItems.size()) {
             selectedSlot += 4;
         }
-    }
 
-    public void moveSelectionLeft() {
+        if (selectedSlot != prevSelectedSlot && storeMenu != null) {
+            storeMenu.adjustScrollToSelectedItem();
+        }
+    }
+}
+
+public void moveSelectionLeft() {
+    if (!storeItems.isEmpty()) {
+        int prevSelectedSlot = selectedSlot;
         if (selectedSlot % 4 != 0) {
             selectedSlot--;
         }
-    }
 
-    public void moveSelectionRight() {
+        if (selectedSlot != prevSelectedSlot && storeMenu != null) {
+            storeMenu.adjustScrollToSelectedItem();
+        }
+    }
+}
+
+public void moveSelectionRight() {
+    if (!storeItems.isEmpty()) {
+        int prevSelectedSlot = selectedSlot;
+        // Pastikan tidak melampaui batas kanan kolom dan tidak melampaui jumlah item
         if ((selectedSlot + 1) % 4 != 0 && selectedSlot + 1 < storeItems.size()) {
             selectedSlot++;
         }
+
+        if (selectedSlot != prevSelectedSlot && storeMenu != null) {
+            storeMenu.adjustScrollToSelectedItem();
+        }
     }
+}
 
     public int getSelectedSlot() {
         return selectedSlot;
@@ -99,5 +127,13 @@ public class StoreController {
 
     public ArrayList<IItem> storeItems() {
         return storeItems;
+    }
+
+    public void setStoreMenu(StoreMenu storeMenu) {
+        this.storeMenu = storeMenu;
+        // Setelah StoreMenu diset, pastikan scroll diawal disesuaikan
+        if (!storeItems.isEmpty()) {
+            storeMenu.adjustScrollToSelectedItem();
+        }
     }
 }

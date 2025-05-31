@@ -16,6 +16,16 @@ import object.FishItem.FishCategory;
 import object.FishLocation;
 
 
+/**
+ * Kelas FishingController merupakan kelas
+ * yang mengontrol semua hal mengenai proses memancing
+ * 
+ * Proses memancing dilakukan dengan menebak angka sesuai dengan kategori ikannya :
+ * - common : menebak 1 - 10
+ * - reguler : menebak 1 - 100
+ * - legendary : menebak 1 - 500
+ */
+
 
 public class FishingController {
     GamePanel gp;

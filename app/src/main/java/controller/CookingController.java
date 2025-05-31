@@ -16,6 +16,15 @@ import java.util.List;
 import java.util.Queue;
 
 
+/**
+ * Kelas CookingController merupakan kelas
+ * yang mengontrol semua hal mengenai proses masak memasak
+ * 
+ * Kelas terkait : - CookingQueueEntry (urutan proses memasak)
+ *                 - CookingMenu (Interface memasak)
+ *                 - Recipe (patokan memasak)
+ */
+
 public class CookingController {
     private GamePanel gp;
     private Queue<CookingQueueEntry> cookingQueue;
@@ -25,10 +34,20 @@ public class CookingController {
         this.cookingQueue = new LinkedList<>();
     }
 
+    /**
+     * Constraint resep yang harus terbuka dengan beberapa parameter
+     * ada lima parameter utama : 
+     * - dibeli dari store
+     * - fishing counter >= 10
+     * - item constraint (cek item spesifik ada di inventory)
+     * - menangkap ikan spesifik
+     * - memanen pertama kali
+     */
+
     public boolean isRecipeUnlocked(Recipe recipe){
         switch (recipe.requirementType) {
             case NONE:
-                return true; // Resep bawaan selalu terbuka
+                return true; 
             case BOUGHT_FROM_STORE:
                 boolean unlocked = gp.player.isRecipeUnlocked(recipe.id);
                 return unlocked;
@@ -63,6 +82,11 @@ public class CookingController {
         }
         return cookableRecipeList;
     }
+
+
+    /**
+     * Constraint check untuk memasak seperti bahan (bahan makananan dan fuel)
+     */
 
     public boolean hasEnoughIngredients(Recipe recipe, InventoryController playerInventory) {
         for (Ingredient requiredIngredient : recipe.ingredients) {
@@ -115,6 +139,11 @@ public class CookingController {
         // }
         // return totalFuelCapacity >= fuelAmountNeeded;
     }
+
+
+    /**
+     * Proses memasak
+     */
 
      public boolean cookRecipe(Recipe recipe) {
         if (recipe == null) {

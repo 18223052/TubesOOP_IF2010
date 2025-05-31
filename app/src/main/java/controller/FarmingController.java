@@ -13,6 +13,15 @@ import object.SeedItem;
 import object.SuperObj;
 import object.CropItem;
 
+/**
+ * Kelas FarmingController, kelas yang mengatur 
+ * proses bercocok tanam
+ * 
+ * kelas berkaitan erat :  LandTile (Object)
+ * 
+ */
+
+
 public class FarmingController {
 
     private GamePanel gp;
@@ -26,6 +35,9 @@ public class FarmingController {
         this.gameTime = gameTime;
     }
 
+    /**
+     * method yang mengurus interaksi dengan tile (tile based interaction)
+     */
 
     public void handleTileInteraction(Player player, LandTile targetTile) {
         IItem activeItem = player.getActiveItem();
@@ -85,6 +97,9 @@ public class FarmingController {
         }
     }
 
+    /**
+     * method yang mengurus interaksi menggarap tanah
+     */
 
     public void tillage(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof Hoe)) {
@@ -123,6 +138,9 @@ public class FarmingController {
         }
     }
 
+    /**
+     * method yang mengurus interaksi memulihkan tanah
+     */
 
     public void recoverLand(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof Pickaxe)) {
@@ -159,6 +177,9 @@ public class FarmingController {
         }
     }
 
+    /**
+     * method yang mengurus interaksi menanam tanaman
+     */
 
     public void plant(Player player, LandTile targetTile, SeedItem seed) {
         if (!(player.getActiveItem() instanceof SeedItem) ||
@@ -211,6 +232,9 @@ public class FarmingController {
         }
     }
 
+    /**
+     * method yang mengurus interaksi menyiram tanaman
+     */
 
     public void water(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof WateringCan)) {
@@ -257,6 +281,9 @@ public class FarmingController {
         }
     }
 
+    /**
+     * method yang mengurus interaksi memanen tanaman
+     */
 
     public void harvest(Player player, LandTile targetTile) {
         IItem activeItem = player.getActiveItem();

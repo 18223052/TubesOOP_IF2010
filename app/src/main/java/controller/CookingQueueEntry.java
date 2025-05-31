@@ -4,6 +4,13 @@ import entity.Recipe;
 import main.GamePanel;
 import object.FoodItem;
 
+
+/**
+ * Kelas CookingQueueEntry merupakan kelas
+ * yang mengontrol urutan masuknya foodItem ke inventory setelah memasak
+ * 
+ */
+
 public class CookingQueueEntry {
     private Recipe recipe;
     private long completionTimeInMinutes; 

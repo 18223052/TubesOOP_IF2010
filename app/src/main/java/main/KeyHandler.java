@@ -3,7 +3,9 @@ package main;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import object.IConsumable;
 import object.IItem;
+import object.InventorySlot;
 
 public class KeyHandler implements KeyListener {
 
@@ -240,10 +242,17 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_A, KeyEvent.VK_LEFT -> gp.inventoryController.moveSelectionLeft();
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> gp.inventoryController.moveSelectionRight();
             case KeyEvent.VK_E -> {
-                if (gp.inventoryController.getSelectedSlotItem() != null) {
-                    gp.inventoryController.useItem(gp.inventoryController.getSelectedSlotIndex());
+            InventorySlot selectedSlot = gp.inventoryController.getSelectedSlotItem();
+                if (selectedSlot != null) {
+                    IItem item = selectedSlot.getItem();
+                    if (item instanceof IConsumable) {
+                        gp.eatingController.consume(selectedSlot); 
+                    } else {
+
+                        gp.inventoryController.useItem(gp.inventoryController.getSelectedSlotIndex());
+                    }
                 }
-                useItemPressed = true; 
+                useItemPressed = true;
             }
             case KeyEvent.VK_DELETE -> {
                 if (gp.inventoryController.getSelectedSlotItem() != null) {

@@ -30,49 +30,50 @@ public class ItemFactory {
 
         switch (seedType.toLowerCase()) {
             case "tomato":
-                buyPrice = 100;
-                sellPrice = 50;
+                buyPrice = 50;
+                sellPrice = 20;
                 break;
             case "parsnip":
-                buyPrice = 100;
-                sellPrice = 50;
+                buyPrice = 20;
+                sellPrice = 10;
             break;
             case "melon":
-                buyPrice = 100;
+                buyPrice = 80;
                 sellPrice = 50;
                 break;
             case "blueberry":
-                buyPrice = 100;
+                buyPrice = 80;
                 sellPrice = 50;
             break;
             case "cauliflower":
-                buyPrice = 100;
+                buyPrice = 80;
                 sellPrice = 50;
                 break;
             case "potato":
-                buyPrice = 100;
-                sellPrice = 50;
+                buyPrice = 50;
+                sellPrice = 20;
             break;
             case "cranberry":
                 buyPrice = 100;
-                sellPrice = 50;
+                sellPrice = 70;
                 break;
             case "hotpepper":
-                buyPrice = 100;
-                sellPrice = 50;
+                buyPrice = 40;
+                sellPrice = 10;
             break;
             case "pumpkin":
-                buyPrice = 100;
-                sellPrice = 50;
+                buyPrice = 150;
+                sellPrice = 120;
                 break;
             case "wheat":
-                buyPrice = 100;
-                sellPrice = 50;
+                buyPrice = 60;
+                sellPrice = 30;
             break;
             case "grape":
-                buyPrice = 100;
-                sellPrice = 50;
+                buyPrice = 60;
+                sellPrice = 30;
                 break;
+
             default:
                 System.err.println("Unknown seed type: " + seedType + ". Creating a default seed.");
                 buyPrice = 10;
@@ -148,6 +149,14 @@ public class ItemFactory {
                 break;
             case "grape":
                 buyPrice = 100;
+                sellPrice = 10;
+                break;
+            case "eggplant":
+                buyPrice = 20;
+                sellPrice = 10;
+                break;
+            case "egg":
+                buyPrice = 20;
                 sellPrice = 10;
                 break;
             default:
@@ -424,7 +433,7 @@ public class ItemFactory {
     public MiscItem createMiscItem (String itemName){
         switch(itemName.toLowerCase()){
             case "ring":
-                return new MiscItem("ring", 0, 0, gp, itemName);
+                return new MiscItem("ring", 250, 0, gp, itemName);
             case "18223052":
                 return new MiscItem("Fathimah Nurhumaida (18223052)", 0, 0, gp, "BEBAN" );
             default:

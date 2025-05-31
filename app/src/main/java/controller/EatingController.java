@@ -2,22 +2,41 @@ package controller;
 
 import main.GamePanel;
 import object.IConsumable;
+import object.InventorySlot; 
 
-public class EatingController{
+
+/**
+ * Kelas EatingController merupakan kelas
+ * yang mengontrol cara player memakan makanan dari inventory
+ * 
+ */
+
+public class EatingController {
 
     private GamePanel gp;
 
-    public EatingController(GamePanel gp){
+    public EatingController(GamePanel gp) {
         this.gp = gp;
     }
 
-    public void consume(IConsumable item){
+    public void consume(InventorySlot inventorySlot) {
+        if (inventorySlot == null || !(inventorySlot.getItem() instanceof IConsumable)) {
+            System.out.println("Invalid item for consumption or not a consumable.");
+            return;
+        }
 
-        System.out.println("Mulai proses konsumsi..");
+        IConsumable consumableItem = (IConsumable) inventorySlot.getItem();
+        String itemName = inventorySlot.getItem().getName();
 
-        item.consume(gp);
-        
+        System.out.println("Mulai proses konsumsi " + itemName + "...");
 
-        System.out.println("Consumed item and restored " + item.getEnergyRestoration() + " energy.");
+
+        consumableItem.consume(gp);
+
+        System.out.println("Consumed item: " + itemName +
+                           " and restored " + consumableItem.getEnergyRestoration() + " energy.");
+
+        gp.inventoryController.removeItems(itemName, 1);
+
     }
 }
