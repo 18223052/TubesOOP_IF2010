@@ -76,7 +76,6 @@ public class NPC_mayortadi extends NPC {
         likedItems.add(itemFactory.createFish("glacierfish"));
         likedItems.add(itemFactory.createFish("angler"));
         lovedItems.add(itemFactory.createFood("legend"));
-        this.hatesAllUnlistedItems = true;
     }
 
     public String getGiftReaction(IItem item, int pointsAwarded){
