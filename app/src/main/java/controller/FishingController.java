@@ -100,14 +100,14 @@ public class FishingController {
     private void promptForGuess(){
         System.out.println("DEBUG: Entering promptForGuess(). Kesempatan tersisa: " + attemptsLeft);
         SwingUtilities.invokeLater(() -> {
-            System.out.println("DEBUG: Running JOptionPane on EDT.");
+            // System.out.println("DEBUG: Running JOptionPane on EDT.");
             String input = JOptionPane.showInputDialog(
                 gp, 
                 "Tebak angka dari 1 hingga " + maxNumber + ".\nKesempatan tersisa: " + attemptsLeft,
                 "Fishing Minigame - Guess the Fish!",
                 JOptionPane.PLAIN_MESSAGE
             );
-            System.out.println("DEBUG: JOptionPane returned. Input: " + (input != null ? input : "null"));
+            // System.out.println("DEBUG: JOptionPane returned. Input: " + (input != null ? input : "null"));
 
             if (input != null && !input.trim().isEmpty()) {
                 try {
@@ -130,7 +130,7 @@ public class FishingController {
                 endFishing(false);
             }
         });
-        System.out.println("DEBUG: Exiting promptForGuess().");
+        // System.out.println("DEBUG: Exiting promptForGuess().");
     }
 
     public void processGuess(int guess) {

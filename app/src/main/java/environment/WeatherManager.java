@@ -31,12 +31,12 @@ public class WeatherManager {
     }
 
     // In WeatherManager.java
-    public WeatherType getWeatherForDay(int dayInSeason) { // dayInSeason should be 1-10
+    public WeatherType getWeatherForDay(int dayInSeason) { 
         if (dayInSeason < 1 || dayInSeason > daysPerSeason) {
             System.err.println("WeatherManager: Invalid dayInSeason requested: " + dayInSeason + ". Defaulting to SUNNY.");
-            return WeatherType.SUNNY; // Default fallback
+            return WeatherType.SUNNY; 
         }
-        return weatherPerDay[dayInSeason - 1]; // Access array with 0-9 index
+        return weatherPerDay[dayInSeason - 1]; 
     }
 
 }

@@ -76,7 +76,7 @@ public class TitleScreen extends BaseUIPanel {
         }
     }
     
-    // Helper method (already exists)
+    // Helper method 
     private int getXforCenteredText(Graphics2D g2, String text, int frameWidth) {
         FontMetrics fm = g2.getFontMetrics();
         int length = fm.stringWidth(text);
@@ -84,18 +84,18 @@ public class TitleScreen extends BaseUIPanel {
         return x;
     }
     
-    // --- UPDATED NAVIGATION METHODS ---
+
     public void moveSelectionUp() {
         commandNum--;
         if (commandNum < 0) {
-            commandNum = 3; // Loop back to "QUIT" (last option)
+            commandNum = 3; 
         }
     }
     
     public void moveSelectionDown() {
         commandNum++;
-        if (commandNum > 3) { // Total 4 options (0-3)
-            commandNum = 0; // Loop back to "START GAME"
+        if (commandNum > 3) { 
+            commandNum = 0; 
         }
     }
 }

@@ -6,7 +6,7 @@ import entity.NPC;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints; // Import for antialiasing
+import java.awt.RenderingHints;
 
 public class NPCContextMenu extends BaseUIPanel {
 
@@ -41,9 +41,9 @@ public class NPCContextMenu extends BaseUIPanel {
             textY += lineHeight * 1.25;
 
             // Options
-            g2.drawString("[E] Bicara", textX, textY); // Updated text
+            g2.drawString("[E] Bicara", textX, textY); 
             textY += lineHeight;
-            g2.drawString("[G] Beri Hadiah", textX, textY); // Updated text
+            g2.drawString("[G] Beri Hadiah", textX, textY); 
             textY += lineHeight;
 
             boolean canDisplayProposeOption = gp.player.inventory.hasItem("ring") && gp.player.getFiance() != gp.currNPC && !gp.player.hasSpouse();
@@ -57,7 +57,7 @@ public class NPCContextMenu extends BaseUIPanel {
                     String proposeHint = "[P] Propose (?)";
                     if (!gp.currNPC.getRelationshipStatus().equals(NPC.STATUS_SINGLE) && !"neutral".equals(gp.currNPC.getRelationshipStatus())) {
                         proposeHint = "[P] Propose (Not Single)";
-                    } else if (gp.currNPC.getHeartPoints() < gp.currNPC.getMaxHeartPoint()) { //
+                    } else if (gp.currNPC.getHeartPoints() < gp.currNPC.getMaxHeartPoint()) { 
                         proposeHint = "[P] Propose (Low Hearts)";
                     }
                     g2.drawString(proposeHint, textX, textY);
@@ -73,9 +73,8 @@ public class NPCContextMenu extends BaseUIPanel {
 
 
             // --- Opsi Marry ---
-            // Syarat: NPC adalah tunangan, bisa menikah hari ini, dan pemain punya cincin
-            if (gp.player.getFiance() == gp.currNPC && //
-                gp.currNPC.canMarryPlayer(gp.player, gp.gameTime.getGameDay())) { //
+            if (gp.player.getFiance() == gp.currNPC && 
+                gp.currNPC.canMarryPlayer(gp.player, gp.gameTime.getGameDay())) { 
 
                 if (gp.player.inventory.hasItem("ring")) {
                     g2.setColor(Color.CYAN);

@@ -26,7 +26,7 @@ public class Store extends SuperObj{
 
     @Override
     public void onInteract (GamePanel gp, Player player){
-        System.out.println("DEBUG INTERACTABLE STORE");
+        // System.out.println("DEBUG INTERACTABLE STORE");
         gp.gameState = GamePanel.storeState;
         
     }

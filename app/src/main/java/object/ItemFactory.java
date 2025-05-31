@@ -173,27 +173,27 @@ public class ItemFactory {
             case "Baguette":
                 buyPrice = 100;
                 sellPrice = 80;
-                energyValue = 30;
+                energyValue = 25;
                 break;
             case "Sashimi":
                 buyPrice = 300;
                 sellPrice = 275;
-                energyValue = 75;
+                energyValue = 70;
                 break;
             case "Fugu":
                 buyPrice = 0;
                 sellPrice = 135;
-                energyValue = 40;
+                energyValue = 50;
                 break;
             case "Wine":
                 buyPrice = 100;
                 sellPrice = 90;
-                energyValue = 25;
+                energyValue = 20;
                 break;
             case "Pumpkin Pie":
                 buyPrice = 120;
                 sellPrice = 100;
-                energyValue = 45;
+                energyValue = 35;
                 break;
             case "Veggie Soup":
                 buyPrice = 140;
@@ -208,7 +208,7 @@ public class ItemFactory {
             case "Spakbor Salad":
                 buyPrice = 0;
                 sellPrice = 250;
-                energyValue = 60;
+                energyValue = 70;
                 break;
             case "Fish Sandwich":
                 buyPrice = 200;
@@ -276,12 +276,12 @@ public class ItemFactory {
             "Sardine", 0,
             null, 
             null, 
-            Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(18, 0))), // Morning to Evening
+            Arrays.asList(new TimeRange(new GameTime(6, 0), new GameTime(18, 0))), 
             new FishLocation[]{FishLocation.OCEAN},
             FishItem.FishCategory.COMMON,1, gp
         ));
 
-        // --- REGULAR FISH ---
+
         allFishItems.add(new FishItem(
             "Salmon", 0,
             new Season[]{Season.FALL},
@@ -425,9 +425,9 @@ public class ItemFactory {
         switch(itemName.toLowerCase()){
             case "ring":
                 return new Ring(gp);
-        
+            case "18223052":
+                return new MiscItem("Fathimah Nurhumaida (18223052)", 0, 0, gp, "BEBAN" );
             default:
-
                 System.err.println("Warning: Attempted to create unknown fuel item: " + itemName+ ". Returning null.");
                 return null; // Atau throw an exception
         }

@@ -86,7 +86,7 @@ public abstract class BaseItem implements IItem {
         try {
 
             // DEBUG
-            System.out.println("Attempting to load image: " + imagePath);
+            // System.out.println("Attempting to load image: " + imagePath);
         
             InputStream is = getClass().getResourceAsStream(imagePath);
             

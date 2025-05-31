@@ -5,7 +5,7 @@ import main.GamePanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints; // Import for antialiasing
+import java.awt.RenderingHints; 
 
 public class DialogBox extends BaseUIPanel {
 

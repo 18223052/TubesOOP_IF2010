@@ -271,7 +271,7 @@ public class TileManager {
 
 
             if (energyAfterTeleport < Player.MIN_ENERGY_BEFORE_SLEEP) {
-                System.out.println("DEBUG (Teleport): Teleportasi DIBATALKAN (silent) - energi tidak cukup. Energi saat ini: " + gp.player.getEnergy()); // Log untuk developer
+                // System.out.println("DEBUG (Teleport): Teleportasi DIBATALKAN (silent) - energi tidak cukup. Energi saat ini: " + gp.player.getEnergy()); // Log untuk developer
                 
                 gp.keyH.interactPressed = false; 
 
@@ -280,7 +280,7 @@ public class TileManager {
         }
 
 
-        System.out.println("DEBUG (Teleport): Memproses teleportasi ke: " + newMapPath); 
+        // System.out.println("DEBUG (Teleport): Memproses teleportasi ke: " + newMapPath); 
 
         gp.player.wX = destX * gp.tileSize;
         gp.player.wY = destY * gp.tileSize;

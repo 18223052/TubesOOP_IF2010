@@ -45,6 +45,9 @@ public class Player extends Character {
     private int visitingCounter =0;
     private int harvestCounter =0;
     private int giftingCounter =0;
+    private int chattingCounter =0;
+    private int goldEarnedFromSelling = 0;
+    
     // private NPC partner;
     private NPC fiance = null;
     private NPC spouse = null;
@@ -125,6 +128,8 @@ public class Player extends Character {
         speed = 4;
         direction = "down";
 
+        // farmMap = getName() + "'s Map";
+
         energy = 100;
         gold = 100;
         totalExpenditure = 0;
@@ -184,10 +189,10 @@ public class Player extends Character {
         this.energy -= amount;
 
         if (this.energy <= MIN_ENERGY_BEFORE_SLEEP){
-            System.out.println("DEBUG: Energi <= MIN_ENERGY_BEFORE_SLEEP. Memanggil forceSleep()");
+            // System.out.println("DEBUG: Energi <= MIN_ENERGY_BEFORE_SLEEP. Memanggil forceSleep()");
             System.out.println("Energy mencapai " + MIN_ENERGY_BEFORE_SLEEP + "! Player harus tidur.");
             gp.sleepController.forceSleep();
-            System.out.println("DEBUG: GameState setelah forceSleep dipanggil (dari deductEnergy): " + gp.gameState);
+            // System.out.println("DEBUG: GameState setelah forceSleep dipanggil (dari deductEnergy): " + gp.gameState);
         }
         System.out.println("Energi player berkurang " + amount + ". Energi tersisa: " + this.energy);
         return true;
@@ -215,16 +220,25 @@ public class Player extends Character {
 
     public void incrementVisitingCount(){
         this.visitingCounter ++;
-        System.out.println("jumlah teleport : " + this.visitingCounter);
+        System.out.println("jumlah visiting : " + this.visitingCounter);
     }
 
     public int getVisitingCount() {
         return this.visitingCounter;
     }
 
+    public void addGoldEarnedFromSelling(int amount){
+        this.goldEarnedFromSelling += amount;
+        System.out.println("Player earned " + amount + " gold from selling. Total gold earned from selling: " + this.goldEarnedFromSelling);
+    }
+
+    public int getGoldEarnedFromSelling() {
+        return this.goldEarnedFromSelling;
+    }
+
     public void incrementHarvestCount(){
         this.harvestCounter ++;
-        System.out.println("jumlah teleport : " + this.harvestCounter);
+        System.out.println("jumlah harvest : " + this.harvestCounter);
     }
 
     public int getharvestCount() {
@@ -233,11 +247,20 @@ public class Player extends Character {
 
     public void incrementGiftingCount(){
         this.giftingCounter ++;
-        System.out.println("jumlah teleport : " + this.giftingCounter);
+        System.out.println("jumlah gifting : " + this.giftingCounter);
     }
 
     public int getGiftingCount() {
         return this.giftingCounter;
+    }
+
+    public void incrementChattingCount(){
+        this.chattingCounter ++;
+        System.out.println("jumlah chatting : " + this.chattingCounter);
+    }
+
+    public int getChattingCount() {
+        return this.chattingCounter;
     }
 
     // untuk masak

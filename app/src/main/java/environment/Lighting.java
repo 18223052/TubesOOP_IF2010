@@ -18,13 +18,13 @@ public class Lighting {
     BufferedImage darknessFilter;
     GameTime gameTime = new GameTime();
 
-    // Konstanta waktu dalam nanodetik (10 detik per transisi)
+
     final long TRANSITION_DURATION = 10_000_000_000L;
 
-    // Alpha filter untuk efek kegelapan (0f = terang, 1f = gelap)
+
     private float filterAlpha = 0f;
 
-    // Target alpha untuk transisi yang sedang berlangsung
+  
     private float targetAlpha = 0f;
     private float startAlpha = 0f;
 

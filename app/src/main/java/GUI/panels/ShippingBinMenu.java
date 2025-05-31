@@ -40,7 +40,6 @@ public class ShippingBinMenu extends BaseUIPanel {
         g2.setColor(HEADER_COLOR); 
         drawCenteredString(g2, "Kotak Pengiriman", FRAME_X, FRAME_Y - 17, FRAME_WIDTH); 
 
-        // Draw main Shipping Bin window
         drawSubWindow(g2, FRAME_X, FRAME_Y, FRAME_WIDTH, FRAME_HEIGHT);
         g2.setFont(uiFont.deriveFont(Font.BOLD, 12)); 
         g2.setColor(TEXT_PRIMARY); 

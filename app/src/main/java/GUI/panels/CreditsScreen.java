@@ -52,7 +52,6 @@ public class CreditsScreen {
             y += gp.tileSize; 
         }
 
-        // Pesan untuk kembali
         String returnText = "Press ESC to return";
         g2.setFont(font.deriveFont(Font.PLAIN, 25F));
         x = getXforCenteredText(returnText, g2);

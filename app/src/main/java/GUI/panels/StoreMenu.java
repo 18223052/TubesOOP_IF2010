@@ -13,7 +13,6 @@ import java.awt.RenderingHints;
 
 public class StoreMenu extends BaseUIPanel {
 
-    // Constants for layout
     private final int FRAME_X;
     private final int FRAME_Y;
     private final int FRAME_WIDTH;
@@ -23,7 +22,7 @@ public class StoreMenu extends BaseUIPanel {
     private final int SLOT_GAP_X = 5;
     private final int SLOT_GAP_Y = 25;
 
-    // Item Details UI Constants (Copied from InventoryScreen)
+
     private final int DETAIL_FRAME_WIDTH;
     private final int DETAIL_FRAME_HEIGHT;
     private final int DETAIL_PADDING = 15;

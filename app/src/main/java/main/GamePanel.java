@@ -216,68 +216,69 @@ public class GamePanel extends JPanel implements Runnable {
         saveManger.saveGameState();
     }
     
-    public void debugCurrentObjects() {
-        System.out.println("=== CURRENT OBJECTS DEBUG ===");
-        System.out.println("Current map: " + currMap);
-        System.out.println("Total objects: " + obj.size());
-        int landTileCount = 0;
-        for (SuperObj o : obj) {
-            if (o instanceof LandTile) {
-                landTileCount++;
-                LandTile lt = (LandTile) o;
-                if (lt.getCurrentState() != TileState.LAND) {
-                    System.out.println("Modified LandTile at " + lt.wX + "," + lt.wY + " - " + lt.getCurrentState());
-                }
-            }
+    // DEBUG HELPER
+    // public void debugCurrentObjects() {
+    //     // System.out.println("=== CURRENT OBJECTS DEBUG ===");
+    //     // System.out.println("Current map: " + currMap);
+    //     // System.out.println("Total objects: " + obj.size());
+    //     int landTileCount = 0;
+    //     for (SuperObj o : obj) {
+    //         if (o instanceof LandTile) {
+    //             landTileCount++;
+    //             LandTile lt = (LandTile) o;
+    //             if (lt.getCurrentState() != TileState.LAND) {
+    //                 System.out.println("Modified LandTile at " + lt.wX + "," + lt.wY + " - " + lt.getCurrentState());
+    //             }
+    //         }
+    //     }
+    //     // System.out.println("LandTile count: " + landTileCount);
+    //     // System.out.println("=== END DEBUG ===");
+    // }
+
+
+
+    public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) {
+
+        mapCache.put(petaLamaUntukDisimpan, saveCurrentMapState());
+        // System.out.println("DEBUG (ChangeMap): State Peta lama disimpan ke cache: " + petaLamaUntukDisimpan);
+        // System.out.println("DEBUG (ChangeMap): Jumlah objek sebelum clear: " + obj.size() + " di " + petaLamaUntukDisimpan);
+        // System.out.println("DEBUG (ChangeMap): NPC pertama sebelum clear: " + (npc[0] != null ? npc[0].getName() : "null"));
+
+
+        obj.clear();
+        aSetter.clearNPCs();
+
+        // System.out.println("DEBUG (ChangeMap): --- SETELAH CLEARING ---");
+        // System.out.println("DEBUG (ChangeMap): Jumlah objek setelah clear: " + obj.size());
+        // System.out.println("DEBUG (ChangeMap): NPC pertama setelah clear: " + (npc[0] != null ? npc[0].getName() : "null"));
+
+
+
+        this.currMap = petaBaruUntukDimuat;
+        this.tileM.loadMap(petaBaruUntukDimuat);
+        this.tileM.setCurrentMap(petaBaruUntukDimuat);
+        // System.out.println("DEBUG (ChangeMap): Peta baru dimuat: " + petaBaruUntukDimuat);
+
+
+        if (mapCache.containsKey(petaBaruUntukDimuat)) {
+            loadMapStateFromCache(mapCache.get(petaBaruUntukDimuat));
+            // System.out.println("DEBUG (ChangeMap): State peta baru dimuat dari cache: " + petaBaruUntukDimuat);
+        } else {
+            // System.out.println("DEBUG (ChangeMap): Melakukan setup ASET untuk PETA BARU: " + petaBaruUntukDimuat);
+            aSetter.setObj();
+            aSetter.setNPC();
+            mapCache.put(petaBaruUntukDimuat, saveCurrentMapState());
+            // System.out.println("DEBUG (ChangeMap): State peta baru setelah setup awal disimpan ke cache: " + petaBaruUntukDimuat);
         }
-        System.out.println("LandTile count: " + landTileCount);
-        System.out.println("=== END DEBUG ===");
+
+        // System.out.println("DEBUG (ChangeMap): --- AKHIR changeMap ---");
+        // System.out.println("DEBUG (ChangeMap): Jumlah objek setelah load/setup: " + obj.size());
+        // System.out.println("DEBUG (ChangeMap): NPC pertama setelah load/setup: " + (npc[0] != null ? npc[0].getName() : "null"));
+
+
+        farmingController.updatePlantGrowth();
+        // debugCurrentObjects(); 
     }
-
-
-
-public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) {
-
-    mapCache.put(petaLamaUntukDisimpan, saveCurrentMapState());
-    System.out.println("DEBUG (ChangeMap): State Peta lama disimpan ke cache: " + petaLamaUntukDisimpan);
-    System.out.println("DEBUG (ChangeMap): Jumlah objek sebelum clear: " + obj.size() + " di " + petaLamaUntukDisimpan);
-    System.out.println("DEBUG (ChangeMap): NPC pertama sebelum clear: " + (npc[0] != null ? npc[0].getName() : "null"));
-
-
-    obj.clear();
-    aSetter.clearNPCs();
-
-    System.out.println("DEBUG (ChangeMap): --- SETELAH CLEARING ---");
-    System.out.println("DEBUG (ChangeMap): Jumlah objek setelah clear: " + obj.size());
-    System.out.println("DEBUG (ChangeMap): NPC pertama setelah clear: " + (npc[0] != null ? npc[0].getName() : "null"));
-
-
-
-    this.currMap = petaBaruUntukDimuat;
-    this.tileM.loadMap(petaBaruUntukDimuat);
-    this.tileM.setCurrentMap(petaBaruUntukDimuat);
-    System.out.println("DEBUG (ChangeMap): Peta baru dimuat: " + petaBaruUntukDimuat);
-
-
-    if (mapCache.containsKey(petaBaruUntukDimuat)) {
-        loadMapStateFromCache(mapCache.get(petaBaruUntukDimuat));
-        System.out.println("DEBUG (ChangeMap): State peta baru dimuat dari cache: " + petaBaruUntukDimuat);
-    } else {
-        System.out.println("DEBUG (ChangeMap): Melakukan setup ASET untuk PETA BARU: " + petaBaruUntukDimuat);
-        aSetter.setObj();
-        aSetter.setNPC();
-        mapCache.put(petaBaruUntukDimuat, saveCurrentMapState());
-        System.out.println("DEBUG (ChangeMap): State peta baru setelah setup awal disimpan ke cache: " + petaBaruUntukDimuat);
-    }
-
-    System.out.println("DEBUG (ChangeMap): --- AKHIR changeMap ---");
-    System.out.println("DEBUG (ChangeMap): Jumlah objek setelah load/setup: " + obj.size());
-    System.out.println("DEBUG (ChangeMap): NPC pertama setelah load/setup: " + (npc[0] != null ? npc[0].getName() : "null"));
-
-
-    farmingController.updatePlantGrowth();
-    debugCurrentObjects(); 
-}
 
     private MapStateData saveCurrentMapState(){
         MapStateData data = new MapStateData();
@@ -287,7 +288,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         for (int i = 0; i < this.npc.length; i++) {
             data.npcs[i] = this.npc[i]; 
         }
-        System.out.println("DEBUG (Cache): Menyimpan state untuk " + currMap + ": " + data.objects.size() + " obj, " + countNonNullNPCs(data.npcs) + " NPC.");
+        // System.out.println("DEBUG (Cache): Menyimpan state untuk " + currMap + ": " + data.objects.size() + " obj, " + countNonNullNPCs(data.npcs) + " NPC.");
     return data;
     }
 
@@ -298,20 +299,21 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         for (int i = 0; i < data.npcs.length; i++){
             this.npc[i] = data.npcs[i];
         }
-        System.out.println("DEBUG (Cache): Memuat state dari cache untuk " + currMap + ": " + data.objects.size() + " obj, " + countNonNullNPCs(data.npcs) + " NPC.");
+        // System.out.println("DEBUG (Cache): Memuat state dari cache untuk " + currMap + ": " + data.objects.size() + " obj, " + countNonNullNPCs(data.npcs) + " NPC.");
     }
 
-    private int countNonNullNPCs(NPC[] npcArray) {
-    int count = 0;
-    if (npcArray != null) {
-        for (NPC n : npcArray) {
-            if (n != null) {
-                count++;
-            }
-        }
-    }
-    return count;
-}
+    // DEBUG HELPER
+    //     private int countNonNullNPCs(NPC[] npcArray) {
+    //     int count = 0;
+    //     if (npcArray != null) {
+    //         for (NPC n : npcArray) {
+    //             if (n != null) {
+    //                 count++;
+    //             }
+    //         }
+    //     }
+    //     return count;
+    // }
 
     private static class MapStateData implements java.io.Serializable{
         public ArrayList<SuperObj> objects;
@@ -333,24 +335,25 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         inventoryController.addItem(itemFactory.createSeed("tomato"));
         inventoryController.addItem(itemFactory.createSeed("parsnip"));
         inventoryController.addItem(itemFactory.createSeed("potato"));
-        inventoryController.addItem(itemFactory.createSeed("cauliflower"));
-        inventoryController.addItem(itemFactory.createSeed("wheat"));
-        inventoryController.addItem(itemFactory.createSeed("pumpkin"));
-        inventoryController.addItem(itemFactory.createSeed("potato"));
-        inventoryController.addItem(itemFactory.createSeed("cauliflower"));
-        inventoryController.addItem(itemFactory.createCrop("grape"));
-        inventoryController.addItem(itemFactory.createCrop("grape"));
-        inventoryController.addItem(itemFactory.createCrop("grape"));
-        inventoryController.addItem(itemFactory.createFood("sashimi"));
-        inventoryController.addItem(itemFactory.createCrop("hotpepper"));
-        inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
+        inventoryController.addItem(itemFactory.createMiscItem("18223052"));
+        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
+        // inventoryController.addItem(itemFactory.createSeed("wheat"));
+        // inventoryController.addItem(itemFactory.createSeed("pumpkin"));
+        // inventoryController.addItem(itemFactory.createSeed("potato"));
+        // inventoryController.addItem(itemFactory.createSeed("cauliflower"));
+        // inventoryController.addItem(itemFactory.createCrop("grape"));
+        // inventoryController.addItem(itemFactory.createCrop("grape"));
+        // inventoryController.addItem(itemFactory.createCrop("grape"));
+        // inventoryController.addItem(itemFactory.createFood("sashimi"));
+        // inventoryController.addItem(itemFactory.createCrop("hotpepper"));
+        // inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
 
-        inventoryController.addItem(itemFactory.createMiscItem("ring"));
-        inventoryController.addItem(itemFactory.createFuelItem("coal"));
-        inventoryController.addItem(itemFactory.createFood("veggiesoup"));
-        inventoryController.addItem(itemFactory.createFish("sardine"));
-        inventoryController.addItem(itemFactory.createFish("angler"));
-        inventoryController.addItem(itemFactory.createFish("potato"));
+        // inventoryController.addItem(itemFactory.createMiscItem("ring"));
+        // inventoryController.addItem(itemFactory.createFuelItem("coal"));
+        // inventoryController.addItem(itemFactory.createFood("veggiesoup"));
+        // inventoryController.addItem(itemFactory.createFish("sardine"));
+        // inventoryController.addItem(itemFactory.createFish("angler"));
+        // inventoryController.addItem(itemFactory.createFish("potato"));
     }
  
     private void addStoreItems() {
@@ -454,7 +457,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         }
     }
 
-    // Optional: Force resume from external sources  
+    // Optional
     public void forceGameResume() {
         synchronized (pauseLock) {
             resumeGameThread();
@@ -774,6 +777,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
     public void startGame() {
 
         player.setName(playerNameInput);
+        player.setFarmMap(player.getName() + "'s Map");
         System.out.println("Player Name: " + player.getName());
 
         int randIndex = random.nextInt(farmMapVariations.length);

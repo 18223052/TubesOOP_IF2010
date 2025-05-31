@@ -26,12 +26,7 @@ public class FarmingController {
         this.gameTime = gameTime;
     }
 
-    /**
-     * Entry point for player interaction with a LandTile.
-     * Delegates to specific farming actions based on the active item.
-     * @param player The player interacting.
-     * @param targetTile The LandTile being interacted with.
-     */
+
     public void handleTileInteraction(Player player, LandTile targetTile) {
         IItem activeItem = player.getActiveItem();
 
@@ -90,11 +85,7 @@ public class FarmingController {
         }
     }
 
-    /**
-     * Attempts to till a LandTile into Soil.
-     * @param player The player performing the action.
-     * @param targetTile The LandTile to till.
-     */
+
     public void tillage(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof Hoe)) {
             System.out.println("Kamu butuh Hoe untuk menggarap tanah.");
@@ -132,11 +123,7 @@ public class FarmingController {
         }
     }
 
-    /**
-     * Attempts to recover a LandTile back to its natural state.
-     * @param player The player performing the action.
-     * @param targetTile The LandTile to recover.
-     */
+
     public void recoverLand(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof Pickaxe)) {
             System.out.println("Kamu butuh pickaxe untuk memulihkan tanah.");
@@ -172,12 +159,7 @@ public class FarmingController {
         }
     }
 
-    /**
-     * Attempts to plant a seed on a LandTile.
-     * @param player The player performing the action.
-     * @param targetTile The LandTile to plant on.
-     * @param seed The SeedItem to plant.
-     */
+
     public void plant(Player player, LandTile targetTile, SeedItem seed) {
         if (!(player.getActiveItem() instanceof SeedItem) ||
              !((SeedItem)player.getActiveItem()).getCropType().equals(seed.getCropType())) {
@@ -229,11 +211,7 @@ public class FarmingController {
         }
     }
 
-    /**
-     * Attempts to water a planted LandTile.
-     * @param player The player performing the action.
-     * @param targetTile The LandTile to water.
-     */
+
     public void water(Player player, LandTile targetTile) {
         if (!(player.getActiveItem() instanceof WateringCan)) {
             System.out.println("Kamu butuh penyiram tanaman untuk menyiram tanaman.");
@@ -279,11 +257,7 @@ public class FarmingController {
         }
     }
 
-    /**
-     * Attempts to harvest crops from a LandTile.
-     * @param player The player performing the action.
-     * @param targetTile The LandTile to harvest from.
-     */
+
     public void harvest(Player player, LandTile targetTile) {
         IItem activeItem = player.getActiveItem();
         if (!(activeItem.getName().equals("Hand") || activeItem.getName().equals("No Item"))) {
@@ -330,10 +304,7 @@ public class FarmingController {
         }
     }
 
-    /**
-     * Updates the growth stage of all planted LandTiles in the game world.
-     * This method should be called periodically by GamePanel's update loop.
-     */
+
     public void updatePlantGrowth() {
         for (SuperObj obj : gp.obj) {
             if (obj instanceof LandTile) {

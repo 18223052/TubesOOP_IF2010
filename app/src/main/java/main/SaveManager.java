@@ -63,7 +63,7 @@ public class SaveManager {
         
 
         Runtime.getRuntime().addShutdownHook(shutdownHook);
-        System.out.println("DEBUG: Shutdown hook telah didaftarkan");
+        // System.out.println("DEBUG: Shutdown hook telah didaftarkan");
     }
 
     private String getSaveFilePath(String mapName) {
@@ -76,18 +76,18 @@ public class SaveManager {
         String currentMapFilePath = gp.currMap;
         String saveFilePath = getSaveFilePath(currentMapFilePath);
 
-        System.out.println("=== SAVE DEBUG START ===");
-        System.out.println("DEBUG: Menyimpan state untuk map: " + currentMapFilePath);
-        System.out.println("DEBUG: Save file path: " + saveFilePath);
-        System.out.println("DEBUG: Jumlah total objek di GamePanel.obj: " + gp.obj.size());
+        // System.out.println("=== SAVE DEBUG START ===");
+        // System.out.println("DEBUG: Menyimpan state untuk map: " + currentMapFilePath);
+        // System.out.println("DEBUG: Save file path: " + saveFilePath);
+        // System.out.println("DEBUG: Jumlah total objek di GamePanel.obj: " + gp.obj.size());
 
         List<LandTileData> allLandTileData = new ArrayList<>();
 
         for (SuperObj obj : gp.obj) {
             if (obj instanceof LandTile) {
                 LandTile tile = (LandTile) obj;
-                System.out.println("DEBUG: Menyimpan LandTile di wX=" + tile.wX + ", wY=" + tile.wY +
-                                 ", State=" + tile.getCurrentState() + ", Crop=" + tile.getPlantedCropType());
+                // System.out.println("DEBUG: Menyimpan LandTile di wX=" + tile.wX + ", wY=" + tile.wY +
+                //                  ", State=" + tile.getCurrentState() + ", Crop=" + tile.getPlantedCropType());
                
                 LandTileData data = new LandTileData(
                     tile.wX,
@@ -103,32 +103,32 @@ public class SaveManager {
             }
         }
 
-        System.out.println("DEBUG: Jumlah LandTile yang dikumpulkan untuk disimpan: " + allLandTileData.size());
+        // System.out.println("DEBUG: Jumlah LandTile yang dikumpulkan untuk disimpan: " + allLandTileData.size());
 
         try {
             File saveDir = new File("saves");
             if (!saveDir.exists()) {
                 boolean created = saveDir.mkdirs();
-                System.out.println("DEBUG: Created saves directory: " + created);
+                // System.out.println("DEBUG: Created saves directory: " + created);
             }
 
             try (FileWriter writer = new FileWriter(saveFilePath)) {
                 gson.toJson(allLandTileData, writer);
                 writer.flush();
-                System.out.println("DEBUG: Game saved successfully to " + new File(saveFilePath).getAbsolutePath());
+                // System.out.println("DEBUG: Game saved successfully to " + new File(saveFilePath).getAbsolutePath());
                
                 activeSaveFiles.add(saveFilePath);
-                System.out.println("DEBUG: File ditambahkan ke tracking list: " + saveFilePath);
+                // System.out.println("DEBUG: File ditambahkan ke tracking list: " + saveFilePath);
                
-                File savedFile = new File(saveFilePath);
-                System.out.println("DEBUG: File exists after save: " + savedFile.exists());
-                System.out.println("DEBUG: File size: " + savedFile.length() + " bytes");
+                // File savedFile = new File(saveFilePath);
+                // System.out.println("DEBUG: File exists after save: " + savedFile.exists());
+                // System.out.println("DEBUG: File size: " + savedFile.length() + " bytes");
             }
         } catch (IOException e) {
             System.err.println("ERROR: Error saving game state for map " + currentMapFilePath + ": " + e.getMessage());
             e.printStackTrace();
         }
-        System.out.println("=== SAVE DEBUG END ===");
+        // System.out.println("=== SAVE DEBUG END ===");
     }
 
 
@@ -233,7 +233,7 @@ public class SaveManager {
     public void disableAutoDelete() {
         try {
             Runtime.getRuntime().removeShutdownHook(shutdownHook);
-            System.out.println("DEBUG: Shutdown hook telah dinonaktifkan");
+            // System.out.println("DEBUG: Shutdown hook telah dinonaktifkan");
         } catch (IllegalStateException e) {
             System.out.println("DEBUG: Shutdown hook tidak dapat dinonaktifkan: " + e.getMessage());
         }
