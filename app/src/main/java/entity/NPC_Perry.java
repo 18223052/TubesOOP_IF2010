@@ -2,6 +2,7 @@ package entity;
 
 import main.GamePanel;
 import object.BaseItem;
+import object.IItem;
 import object.ItemFactory;
 
 
@@ -77,7 +78,13 @@ public class NPC_Perry extends NPC {
 
         likedItems.add(itemFactory.createFood("wine"));
 
-        // hatedItems.add(itemFactory.createCrop("hotpepper"));
+        if (itemFactory != null) {
+            for (IItem fish : itemFactory.getAllFishItems()) {
+                if (fish.getCategory().equalsIgnoreCase("fish")) { // Pastikan hanya item ikan yang ditambahkan
+                    hatedItems.add(fish);
+                }
+            }
+        }
     }
 
     public String getGiftReaction(BaseItem item, int pointsAwarded){
