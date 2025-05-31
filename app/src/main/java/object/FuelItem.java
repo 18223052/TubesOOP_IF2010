@@ -11,6 +11,7 @@ public abstract class FuelItem extends BaseItem {
         this.currentFuelValue = initialFuelValue;
         this.maxFuelValue = initialFuelValue;
         setStackable(false);
+        this.sellable = true;
     }
 
     public int getCurrentFuelValue() {

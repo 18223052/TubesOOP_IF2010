@@ -13,6 +13,7 @@ public class ToolItem extends BaseItem implements IUsable {
         super(toolType, buyPrice, sellPrice, gp, "tools");
         this.toolType = toolType;
         setStackable(false); 
+        this.sellable = false;
     }
     
 

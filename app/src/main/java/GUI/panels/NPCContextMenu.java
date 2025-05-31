@@ -46,20 +46,16 @@ public class NPCContextMenu extends BaseUIPanel {
             g2.drawString("[G] Beri Hadiah", textX, textY); // Updated text
             textY += lineHeight;
 
-            boolean canDisplayProposeOption = gp.player.inventory.hasItem("ring") && // Akses InventoryController langsung dari Player
-                                            gp.currNPC.getGender().equals(NPC.gender_female) && // Asumsi ada getGender() di NPC
-                                            gp.player.getFiance() != gp.currNPC && //
-                                            !gp.player.hasSpouse(); //
+            boolean canDisplayProposeOption = gp.player.inventory.hasItem("ring") && gp.player.getFiance() != gp.currNPC && !gp.player.hasSpouse();
 
             if (canDisplayProposeOption) {
-                if (gp.currNPC.isProposable(gp.player)) { // isProposable mengecek hati, status NPC, dan status pemain
+                if (gp.currNPC.isProposable(gp.player)) {
                     g2.setColor(Color.PINK);
                     g2.drawString("[P] Propose", textX, textY);
                 } else {
                     g2.setColor(Color.ORANGE);
-                    // Beri petunjuk yang lebih spesifik jika memungkinkan
                     String proposeHint = "[P] Propose (?)";
-                    if (!gp.currNPC.getRelationshipStatus().equals(NPC.STATUS_SINGLE) && !"neutral".equals(gp.currNPC.getRelationshipStatus())) { // Asumsi ada getRelationshipStatus dan STATUS_SINGLE
+                    if (!gp.currNPC.getRelationshipStatus().equals(NPC.STATUS_SINGLE) && !"neutral".equals(gp.currNPC.getRelationshipStatus())) {
                         proposeHint = "[P] Propose (Not Single)";
                     } else if (gp.currNPC.getHeartPoints() < gp.currNPC.getMaxHeartPoint()) { //
                         proposeHint = "[P] Propose (Low Hearts)";
@@ -68,11 +64,7 @@ public class NPCContextMenu extends BaseUIPanel {
                 }
                 g2.setColor(Color.WHITE);
                 textY += lineHeight;
-            } else if (gp.player != null && !gp.player.inventory.hasItem("ring") && //
-                    gp.currNPC.getGender().equals(NPC.gender_female) && //
-                    gp.player.getFiance() != gp.currNPC && //
-                    !gp.player.hasSpouse()) { //
-                // Tidak punya cincin, tapi kondisi lain untuk propose terpenuhi
+            } else if (gp.player != null && !gp.player.inventory.hasItem("ring") && gp.player.getFiance() != gp.currNPC && !gp.player.hasSpouse()) {
                 g2.setColor(Color.GRAY);
                 g2.drawString("[P] Propose (Need Ring)", textX, textY);
                 g2.setColor(Color.WHITE);
@@ -85,7 +77,7 @@ public class NPCContextMenu extends BaseUIPanel {
             if (gp.player.getFiance() == gp.currNPC && //
                 gp.currNPC.canMarryPlayer(gp.player, gp.gameTime.getGameDay())) { //
 
-                if (gp.player.inventory.hasItem("ring")) { // Akses InventoryController dari Player
+                if (gp.player.inventory.hasItem("ring")) {
                     g2.setColor(Color.CYAN);
                     g2.drawString("[M] Marry", textX, textY);
                 } else {

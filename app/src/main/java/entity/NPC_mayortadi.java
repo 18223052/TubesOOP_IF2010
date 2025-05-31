@@ -72,11 +72,11 @@ public class NPC_mayortadi extends NPC {
 
     @Override
     public void initializeGiftPreference(ItemFactory itemFactory){
-        lovedItems.add(itemFactory.createFish("salmon"));
-        // likedItems.add(itemFactory.createFish("crimsonfish"));
-        // likedItems.add(itemFactory.createFish("glacierfish"));
-        // lovedItems.add(itemFactory.createFood("legend"));
-        // hatedItems.add(itemFactory.createFood("legend"));
+        likedItems.add(itemFactory.createFish("crimsonfish"));
+        likedItems.add(itemFactory.createFish("glacierfish"));
+        likedItems.add(itemFactory.createFish("angler"));
+        lovedItems.add(itemFactory.createFood("legend"));
+        this.hatesAllUnlistedItems = true;
     }
 
     public String getGiftReaction(IItem item, int pointsAwarded){

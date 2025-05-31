@@ -272,11 +272,13 @@ public class KeyHandler implements KeyListener {
                 gp.repaint();
             }
             case KeyEvent.VK_ENTER -> {
-                if (gp.inventoryController.getSelectedSlotItem() != null) {
-                    gp.inventoryController.sellItem(gp.inventoryController.getSelectedSlotIndex());
+                if(gp.inventoryController.getSelectedSlotItem().getItem().isSellable()){
+                    if (gp.inventoryController.getSelectedSlotItem() != null) {
+                        gp.inventoryController.sellItem(gp.inventoryController.getSelectedSlotIndex());
+                    }
+                    sellItemPressed = true;
+                    gp.repaint();
                 }
-                sellItemPressed = true;
-                gp.repaint();
             }
         }
     }

@@ -424,7 +424,7 @@ public class ItemFactory {
     public MiscItem createMiscItem (String itemName){
         switch(itemName.toLowerCase()){
             case "ring":
-                return new MiscItem("ring", 0, 0, gp, itemName);
+                return new Ring(gp);
         
             default:
 
