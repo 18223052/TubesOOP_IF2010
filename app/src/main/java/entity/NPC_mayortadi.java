@@ -75,7 +75,7 @@ public class NPC_mayortadi extends NPC {
         likedItems.add(itemFactory.createFish("crimsonfish"));
         likedItems.add(itemFactory.createFish("glacierfish"));
         likedItems.add(itemFactory.createFish("angler"));
-        lovedItems.add(itemFactory.createFood("legend"));
+        lovedItems.add(itemFactory.createFish("Legendary Bass"));
     }
 
     public String getGiftReaction(IItem item, int pointsAwarded){
