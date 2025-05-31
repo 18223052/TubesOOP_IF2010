@@ -11,7 +11,7 @@ public class NPC_abigail extends NPC {
         super(gp);
         name = "Abigail";
         gender = NPC.gender_female;
-        heartPoints = MAX_HEART_POINTS; // Test Propose & Marry
+        heartPoints =0;
         setHatesAllUnlistedItems(false);
         getCharacterImage();
         initializeGiftPreference(itemFactory);

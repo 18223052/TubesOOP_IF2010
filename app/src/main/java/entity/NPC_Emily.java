@@ -11,7 +11,7 @@ public class NPC_Emily extends NPC {
         super(gp);
         name = "Emily";
         gender = NPC.gender_female;
-        heartPoints = MAX_HEART_POINTS;
+        heartPoints = 0;
         setHatesAllUnlistedItems(false);
         getCharacterImage();
         initializeGiftPreference(itemFactory);
