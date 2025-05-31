@@ -198,22 +198,41 @@ public class AssetSetter {
             gp.npc[0].wY = gp.tileSize*20;
         }
         else if(gp.currMap.equals("/maps/worldmap.txt")) {
-            // Set NPCs for river map
-            // gp.npc[0] = new NPC_caroline(gp);
-            // gp.npc[0].wX = gp.tileSize*18;
+
+            // gp.npc[0] = new NPC_abigail(gp, gp.itemFactory);
+            // gp.npc[0].wX = gp.tileSize*19;
             // gp.npc[0].wY = gp.tileSize*29;
 
-            gp.npc[0] = new NPC_abigail(gp, gp.itemFactory);
-            gp.npc[0].wX = gp.tileSize*19;
-            gp.npc[0].wY = gp.tileSize*29;
+        }
 
-            // gp.npc[2] = new NPC_perry(gp);
-            // gp.npc[2].wX = gp.tileSize*20;
-            // gp.npc[2].wY = gp.tileSize*29;
+        else if (gp.currMap.equals("/maps/rumahabigail.txt")){
+            gp.npc[0] = new NPC_abigail(gp,gp.itemFactory);
+            gp.npc[0].wX = gp.tileSize*28;
+            gp.npc[0].wY = gp.tileSize*28;
+        }
 
-            // gp.npc[3] = new NPC_dasco(gp);
-            // gp.npc[3].wX = gp.tileSize*21;
-            // gp.npc[3].wY = gp.tileSize*29;
+        else if (gp.currMap.equals("/maps/rumahperry.txt")){
+            gp.npc[0] = new NPC_Perry(gp,gp.itemFactory);
+            gp.npc[0].wX = gp.tileSize*28;
+            gp.npc[0].wY = gp.tileSize*28;
+        }
+
+        else if (gp.currMap.equals("/maps/rumahmayortadi.txt")){
+            gp.npc[0] = new NPC_mayortadi(gp,gp.itemFactory);
+            gp.npc[0].wX = gp.tileSize*28;
+            gp.npc[0].wY = gp.tileSize*28;
+        }
+
+        else if (gp.currMap.equals("/maps/rumahcaroline.txt")){
+            gp.npc[0] = new NPC_Caroline(gp,gp.itemFactory);
+            gp.npc[0].wX = gp.tileSize*28;
+            gp.npc[0].wY = gp.tileSize*28;
+        }
+
+        else if (gp.currMap.equals("/maps/rumahdasco.txt")){
+            gp.npc[0] = new NPC_Dasco(gp,gp.itemFactory);
+            gp.npc[0].wX = gp.tileSize*28;
+            gp.npc[0].wY = gp.tileSize*28;
         }
     }
 }

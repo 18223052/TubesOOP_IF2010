@@ -397,7 +397,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
             }
 
             if (timer >= 1000000000) {
-                // System.out.println("FPS: " + drawCnt);
+
                 timer = 0;
             }
         }
@@ -412,7 +412,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         if (gameTime != null) {
             gameTime.pause();
         }
-        synchronized (pauseLock){}
+        // synchronized (pauseLock){}
     }
 
     public void resumeGameThread(){
@@ -437,13 +437,14 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
     }
 
 
+
     public void forceGamePause() {
         synchronized (pauseLock) {
             pauseGameThread();
         }
     }
 
-
+    // Optional: Force resume from external sources  
     public void forceGameResume() {
         synchronized (pauseLock) {
             resumeGameThread();
@@ -451,49 +452,58 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
     }
 
     public void update() {
+        
         if (gameState == playState) {
-            player.update();
-            interactionTileCol = player.interactionBox.x / tileSize;
-            interactionTileRow = player.interactionBox.y / tileSize;
-            tileM.checkTeleport(interactionTileCol, interactionTileRow);
-            eManager.update();
-            cookingController.update();
-            
-           
-            farmingController.updatePlantGrowth(); 
 
-            // Game time update every n frames
             currentMinute = gameTime.getGameMinute();
             currentHour = gameTime.getGameHour();
             currentDay = gameTime.getGameDay();
 
-            if (currentDay != lastCheckedGameDay){
+        
+            if (currentDay != lastCheckedGameDay) {
                 handleNewDayEvents();
                 lastCheckedGameDay = currentDay;
             }
 
 
+            player.update();
+            interactionTileCol = player.interactionBox.x / tileSize;
+            interactionTileRow = player.interactionBox.y / tileSize;
+            tileM.checkTeleport(interactionTileCol, interactionTileRow);
+
+        
+            eManager.update();
+
 
             if (eManager != null && eManager.isLightingSetup()) {
                 Lighting lighting = eManager.getLighting();
-
                 if (currentHour == 5 && currentMinute == 0) {
-                    lighting.triggerTransition(Lighting.DAWN); 
-                }
-                else if (currentHour == 6 && currentMinute == 0) {
+                    lighting.triggerTransition(Lighting.DAWN); // Transisi terang
+                } else if (currentHour == 6 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DAY); 
-                }
-                else if (currentHour == 17 && currentMinute == 0) {
+                } else if (currentHour == 17 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.DUSK); 
-                }
-                else if (currentHour == 18 && currentMinute == 0) {
+                } else if (currentHour == 18 && currentMinute == 0) {
                     lighting.triggerTransition(Lighting.NIGHT); 
                 }
             }
 
+            if (currentHour == 2 && currentMinute == 0) {
+                if (!sleepController.isSleeping()) { 
+                    System.out.println("GamePanel: Sudah jam 2 pagi (" + currentHour + ":" + currentMinute + "), pemain pingsan! Status tidur saat ini: " + sleepController.isSleeping());
+                    sleepController.forceSleep();
+                
+                }
+            }
+
+            if (gameState == playState) {
+                cookingController.update();
+                farmingController.updatePlantGrowth();
+            }
+
         } else if (gameState == inventoryState) {
             inventoryController.update();
-        } else if (gameState == sleepState){
+        } else if (gameState == sleepState) {
             sleepController.update();
         }
 
@@ -593,7 +603,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         if (gameTime != null) gameTime.pause();
 
         javax.swing.SwingUtilities.invokeLater(() -> {
-            // Input hari (boleh kosong)
+
             String dayInput = javax.swing.JOptionPane.showInputDialog(
                 this,
                 "Masukkan hari baru (kosongkan jika tidak ingin mengubah):",
@@ -601,7 +611,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
                 javax.swing.JOptionPane.PLAIN_MESSAGE
             );
 
-            // Input waktu (boleh kosong)
+
             String timeInput = javax.swing.JOptionPane.showInputDialog(
                 this,
                 "Masukkan waktu baru (format: HH:MM, kosongkan jika tidak ingin mengubah):",
@@ -616,12 +626,12 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
             try {
                 int day = Integer.parseInt(dayInput.trim());
                 if (day > 0) {
-                    // Store previous day for new day events check
+     
                     int previousDay = gameTime.getGameDay(); 
                     gameTime.setGameDay(day);
-                    // Manually trigger new day events if day changed
+
                     if (gameTime.getGameDay() > previousDay) {
-                         // Only trigger if new day is actually greater (jumped forward)
+
                         handleNewDayEvents(); 
                     }
                 } else {
@@ -642,10 +652,10 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
                     int hour = Integer.parseInt(parts[0]);
                     int minute = Integer.parseInt(parts[1]);
                     if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
-                        // Store previous day for new day events check (if time changes across midnight)
+
                         int previousDay = gameTime.getGameDay(); 
                         gameTime.setTime(hour, minute);
-                        // Manually trigger new day events if day changed
+
                         if (gameTime.getGameDay() > previousDay) {
                             handleNewDayEvents(); 
                         }
@@ -666,13 +676,12 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         if (valid) {
             System.out.println("Cheat berhasil diterapkan.");
             
-            // --- ADD THIS LINE ---
-            // Force an immediate update of all plants based on the new time
-            farmingController.updatePlantGrowth(); 
-            // --- END ADDITION ---
 
-            saveGame(); // Save state with new time
-            saveManger.loadGameState(); // Reload state to update visuals and logic
+            farmingController.updatePlantGrowth(); 
+
+
+            saveGame(); 
+            saveManger.loadGameState(); 
         }
 
         isTimePaused = false;

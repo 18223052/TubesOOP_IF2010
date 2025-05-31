@@ -125,11 +125,10 @@ public class TileManager {
                     teleportPlayer("/maps/rumah.txt", 26, 36); 
                     return;
                 }
-                // To River
-                // Note: Your river teleport check is a range (28-31 for col), so we check that
+
                 if ((checkCol >= coords[2] && checkCol <= coords[2] + 3) && checkRow == coords[3]) {
-                    gp.prevFarmMap = gp.currMap; // Store the current farm map
-                    teleportPlayer("/maps/river.txt", 22, 1); // Fixed entry point for River
+                    gp.prevFarmMap = gp.currMap; 
+                    teleportPlayer("/maps/river.txt", 22, 1); 
                     return;
                 }
                 // To Worldmap
@@ -141,7 +140,7 @@ public class TileManager {
             }
         }
 
-        if (currentMap.equals("/maps/rumah.txt")) {
+        if (gp.currMap.equals("/maps/rumah.txt")) {
             if ((checkCol >= 24 && checkCol <= 27) && checkRow == 38) { 
                 int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
                 if (coords != null) {
@@ -156,7 +155,7 @@ public class TileManager {
 
         } 
         
-        if (currentMap.equals("/maps/river.txt")) {
+        if (gp.currMap.equals("/maps/river.txt")) {
             if ((checkCol >= 21 && checkCol <= 24) && checkRow == 0) { 
                 int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
                 if (coords != null) {
@@ -169,7 +168,7 @@ public class TileManager {
             }
         }
 
-        if (currentMap.equals("/maps/worldmap.txt")) {
+        if (gp.currMap.equals("/maps/worldmap.txt")) {
             if (checkCol == 0 && checkRow == 30) { 
                 int[] coords = farmMapTeleportCoords.get(gp.prevFarmMap);
                 if (coords != null) {
@@ -180,19 +179,70 @@ public class TileManager {
                 }
                 return;
             }
+            
 
             if ((checkCol == 24 || checkCol == 25) && checkRow == 50){
-                teleportPlayer("/maps/lake.txt", 25, 1);
+                teleportPlayer("/maps/lake.txt", 25, 2);
+                return;
+            }
+
+            if (checkCol == 18 && checkRow == 28){
+                teleportPlayer("/maps/rumahabigail.txt", 28, 30);
+                return;
+            }
+
+            if (checkCol == 21 && checkRow == 28){
+                teleportPlayer("/maps/rumahmayortadi.txt", 28, 30);
+                return;
+            }
+
+            if (checkCol == 21 && checkRow == 18){
+                teleportPlayer("/maps/rumahdasco.txt", 28, 30);
+                return;
+            }
+
+            if (checkCol == 18 && checkRow == 17){
+                teleportPlayer("/maps/rumahperry.txt", 28, 30);
                 return;
             }
         }
 
-        if (currentMap.equals("/maps/lake.txt")){
-            if ((checkCol == 25 || checkCol == 26) && checkRow == 0){
-                teleportPlayer("/maps/worldmap.txt", 24 , 48);
-                return;
-            }
+    if (gp.currMap.equals("/maps/lake.txt")){
+        if ((checkCol == 25 || checkCol == 26) && checkRow == 0){
+            teleportPlayer("/maps/worldmap.txt", 24 , 48);
+            return;
         }
+    }
+
+    if (gp.currMap.equals("/maps/rumahperry.txt")){
+        if ((checkCol == 27||checkCol == 28) && checkRow == 32){
+            teleportPlayer("/maps/worldmap.txt", 18, 18);
+        }
+    }
+
+    if (gp.currMap.equals("/maps/rumahdasco.txt")){
+        if ((checkCol == 27||checkCol == 28) && checkRow == 32){
+            teleportPlayer("/maps/worldmap.txt", 21, 18);
+        }
+    }
+
+    if (gp.currMap.equals("/maps/rumahcaroline.txt")){
+        if ((checkCol == 27||checkCol == 28) && checkRow == 32){
+            teleportPlayer("/maps/worldmap.txt", 19, 21);
+        }
+    }
+
+    if (gp.currMap.equals("/maps/rumahabigail.txt")){
+        if ((checkCol == 27||checkCol == 28) && checkRow == 32){
+            teleportPlayer("/maps/worldmap.txt", 18, 29);
+        }
+    }
+
+    if (gp.currMap.equals("/maps/rumahmayortadi.txt")){
+        if ((checkCol == 27||checkCol == 28) && checkRow == 32){
+            teleportPlayer("/maps/worldmap.txt", 21, 29);
+        }
+    }
 
     }
 
