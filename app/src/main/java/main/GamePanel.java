@@ -413,7 +413,7 @@ public void changeMap(String petaLamaUntukDisimpan, String petaBaruUntukDimuat) 
         if (gameTime != null) {
             gameTime.pause();
         }
-        synchronized (pauseLock){}
+        // synchronized (pauseLock){}
     }
 
     public void resumeGameThread(){

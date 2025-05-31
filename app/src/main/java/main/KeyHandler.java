@@ -159,40 +159,46 @@ public class KeyHandler implements KeyListener {
     }
 
     private void handleGiftingInventoryState(int code) {
-        switch (code) {
-            case KeyEvent.VK_E:
-                IItem selectedItem = gp.inventoryController.getSelectedItem();
-                if (selectedItem != null) { 
-                    gp.npcController.giftItemToNPC(selectedItem);
-                } else {
-                    gp.ui.setDialog("No item selected to gift.");
-                    // gp.setGameState(GamePanel.dialogState); 
-                    // gp.repaint(); 
+    switch (code) {
+        case KeyEvent.VK_E:
+            IItem selectedItem = gp.inventoryController.getSelectedItem();
+            if (selectedItem != null) {
+                gp.npcController.giftItemToNPC(selectedItem);
+
+                if (gp.gameState == GamePanel.sleepState) {
+
+                    return; // Sangat penting: Hentikan eksekusi di sini.
                 }
-                gp.isGifting = false;
-                gp.setGameState(GamePanel.dialogState); 
-                // gp.repaint(); 
-            
-                break;
-            case KeyEvent.VK_ESCAPE:
-                gp.isGifting = false;
-                gp.setGameState(GamePanel.playState); 
-            
-                break;
-            case KeyEvent.VK_W, KeyEvent.VK_UP:
-                gp.inventoryController.moveSelectionUp();
-                break;
-            case KeyEvent.VK_S, KeyEvent.VK_DOWN:
-                gp.inventoryController.moveSelectionDown();
-                break;
-            case KeyEvent.VK_A, KeyEvent.VK_LEFT:
-                gp.inventoryController.moveSelectionLeft();
-                break;
-            case KeyEvent.VK_D, KeyEvent.VK_RIGHT:
-                gp.inventoryController.moveSelectionRight();
-                break;
-        }
+
+            } else {
+                gp.ui.setDialog("No item selected to gift.");
+            }
+
+            // Baris-baris ini hanya akan dieksekusi jika pemain TIDAK pingsan
+            // (yaitu, jika blok if (gp.gameState == GamePanel.sleepState) di atas tidak dieksekusi).
+            gp.isGifting = false;
+            gp.setGameState(GamePanel.dialogState);
+            // gp.repaint(); // Ini sudah ditangani oleh GamePanel loop utama.
+
+            break;
+        case KeyEvent.VK_ESCAPE:
+            gp.isGifting = false;
+            gp.setGameState(GamePanel.playState);
+            break;
+        case KeyEvent.VK_W, KeyEvent.VK_UP:
+            gp.inventoryController.moveSelectionUp();
+            break;
+        case KeyEvent.VK_S, KeyEvent.VK_DOWN:
+            gp.inventoryController.moveSelectionDown();
+            break;
+        case KeyEvent.VK_A, KeyEvent.VK_LEFT:
+            gp.inventoryController.moveSelectionLeft();
+            break;
+        case KeyEvent.VK_D, KeyEvent.VK_RIGHT:
+            gp.inventoryController.moveSelectionRight();
+            break;
     }
+}
 
     private void handleNormalInventoryState(int code) {
         switch (code) {
@@ -323,7 +329,7 @@ public class KeyHandler implements KeyListener {
             
                 break;
             case KeyEvent.VK_P: // Propose
-                if (gp.npcController != null) {
+                if (gp.npcController != null && gp.currNPC != null) {
                     if (gp.currNPC.isProposable(gp.player)){
                         System.out.println("DEBUG PROPOSAL: Bisa dilamar");
                     } else {

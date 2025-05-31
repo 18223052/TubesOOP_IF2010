@@ -53,6 +53,7 @@ public class SleepController {
 
     public void forceSleep() {
         if (!isSleeping) {
+            gp.setGameState(GamePanel.sleepState);
             System.out.println("Player pingsan...");
             isSleeping = true;
             inTransition = true;
@@ -60,7 +61,7 @@ public class SleepController {
             transitionStartTime = System.nanoTime();
             transitionAlpha = 0f;
             isFainted = true;
-            gp.gameState = GamePanel.sleepState;
+            // gp.setGameState(GamePanel.sleepState);
         }
     }
     

@@ -165,8 +165,10 @@ public class Player extends Character {
         this.energy -= amount;
 
         if (this.energy <= MIN_ENERGY_BEFORE_SLEEP){
+            System.out.println("DEBUG: Energi <= MIN_ENERGY_BEFORE_SLEEP. Memanggil forceSleep()");
             System.out.println("Energy mencapai " + MIN_ENERGY_BEFORE_SLEEP + "! Player harus tidur.");
             gp.sleepController.forceSleep();
+            System.out.println("DEBUG: GameState setelah forceSleep dipanggil (dari deductEnergy): " + gp.gameState);
         }
         System.out.println("Energi player berkurang " + amount + ". Energi tersisa: " + this.energy);
         return true;
