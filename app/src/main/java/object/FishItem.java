@@ -1,6 +1,8 @@
 package object;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import environment.GameTime;
 import environment.Season;
@@ -16,6 +18,7 @@ public class FishItem extends BaseItem implements IFishAttributes, IConsumable {
     private FishLocation[] availLocation;
     private int energyValue;
     private FishCategory fishCategory;
+    private Map<FishCategory, Integer> fishCountPerCategory;
 
 
     private static final int TOTAL_SEASON = 4;

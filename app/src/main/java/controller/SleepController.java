@@ -116,7 +116,7 @@ public class SleepController {
         int currEnergy = gp.player.getEnergy();
         
         if (currEnergy <= 0) {
-            gp.player.addEnergy(30); 
+            gp.player.setEnergy(10);
             System.out.println("Energi sangat rendah, ditambahkan 10. Energi sekarang: " + gp.player.getEnergy());
         } else if (currEnergy < 0.1 * Player.MAX_ENERGY) { 
             gp.player.addEnergy(50); 

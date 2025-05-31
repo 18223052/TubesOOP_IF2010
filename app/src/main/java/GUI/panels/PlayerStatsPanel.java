@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO; // Jangan lupa import jika memuat gambar langsung di sini
+import javax.imageio.ImageIO; 
 
 public class PlayerStatsPanel extends BaseUIPanel {
 
@@ -49,7 +49,7 @@ public class PlayerStatsPanel extends BaseUIPanel {
             int maxEnergy = gp.player.getMaxEnergy();
             int currentEnergy = gp.player.getEnergy();
 
-            // Teks "Energy" atau ikon
+    
             if (energyIcon != null) {
                 g2.drawImage(energyIcon, currentX, currentY, 32, 32, null);
             } else {

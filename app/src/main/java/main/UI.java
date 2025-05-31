@@ -21,7 +21,13 @@ import GUI.panels.StoreMenu;
 import GUI.panels.TitleScreen;
 import GUI.panels.NPCContextMenu;
 import GUI.panels.NameInputScreen;
-import GUI.panels.PlayerStatsPanel; 
+import GUI.panels.PlayerStatsPanel;
+
+// --- Impor HelpScreen dan CreditsScreen ---
+import GUI.panels.HelpScreen;
+import GUI.panels.CreditsScreen;
+
+
 public class UI {
 
     GamePanel gp;
@@ -43,6 +49,11 @@ public class UI {
     private NPCContextMenu npcContextMenu;
     public TitleScreen titleScreen;
     private NameInputScreen nameInputScreen;
+
+    // --- Deklarasikan HelpScreen dan CreditsScreen ---
+    public HelpScreen helpScreen;
+    public CreditsScreen creditsScreen;
+
 
     public String currentDialog = "";
 
@@ -72,7 +83,7 @@ public class UI {
 
 
         hud = new HUD(gp, generalFont);
-        playerStatsPanel = new PlayerStatsPanel(gp, generalFont); 
+        playerStatsPanel = new PlayerStatsPanel(gp, generalFont);
         pauseScreen = new PauseScreen(gp, generalFont);
         dialogBox = new DialogBox(gp, dialogFont);
         inventoryScreen = new InventoryScreen(gp, inventoryFont);
@@ -83,6 +94,8 @@ public class UI {
         npcContextMenu = new NPCContextMenu(gp, generalFont);
         titleScreen = new TitleScreen(gp, generalFont);
         nameInputScreen = new NameInputScreen(gp, generalFont);
+        helpScreen = new HelpScreen(gp, generalFont);
+        creditsScreen = new CreditsScreen(gp, generalFont);
     }
 
     private void setupDefaultGraphics(Graphics2D g2) {
@@ -104,7 +117,7 @@ public class UI {
                 break;
             case GamePanel.playState:
                 hud.draw(g2);
-                playerStatsPanel.draw(g2); 
+                playerStatsPanel.draw(g2);
                 break;
             case GamePanel.pauseState:
                 pauseScreen.draw(g2);
@@ -134,6 +147,12 @@ public class UI {
                 break;
             case GamePanel.fishingState:
                 dialogBox.draw(g2, currentDialog, null, false);
+                break;
+            case GamePanel.helpState:
+                helpScreen.draw(g2);
+                break;
+            case GamePanel.creditState:
+                creditsScreen.draw(g2);
                 break;
         }
     }

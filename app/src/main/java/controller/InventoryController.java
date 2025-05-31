@@ -77,30 +77,24 @@ public class InventoryController {
         }
     }
 
-    public void removeItem(int index) {
+    private void removeItem(int index) {
         if (index >= 0 && index < inventory.size()) {
-            InventorySlot slot = inventory.get(index);
-            IItem removedItem = slot.getItem(); // Keep track of the item being removed
+            IItem removedItem = inventory.get(index).getItem();
+            inventory.remove(index); // Ini menghapus seluruh slot
+            System.out.println("Item " + removedItem.getName() + " dihapus dari inventory pada indeks: " + index + " (seluruh slot)");
 
-            if (slot.getItem().isStackable() && slot.getQuantity() > 1) {
-                slot.decrementQuantity();
-                System.out.println("Mengurangi kuantitas item: " + slot.getItem().getName() + ". Sisa: " + slot.getQuantity());
-            } else {
-                inventory.remove(index);
-                System.out.println("Menghapus item: " + removedItem.getName() + " dari inventory");
-                
-                if (gp.player.getActiveItem() == removedItem) {
-                    gp.player.setActiveItem(new NoItem(gp)); 
-                    gp.ui.setDialog("Item unequipped.");
-                }
+            // Logika untuk active item jika item yang DIHAPUS (seluruh slot) adalah item aktif
+            if (gp.player.getActiveItem() == removedItem) {
+                 gp.player.setActiveItem(new NoItem(gp));
+                 // Anda mungkin ingin memberi tahu pemain bahwa item dilepas
+                 // gp.ui.setDialog(removedItem.getName() + " dilepas dari tangan.");
             }
 
-            // Adjust selected slot
-            if (selectedSlot >= inventory.size() && inventory.size() > 0) {
+            if (selectedSlot >= inventory.size() && !inventory.isEmpty()) {
                 selectedSlot = inventory.size() - 1;
             } else if (inventory.isEmpty()) {
-                selectedSlot = 0; // If inventory is empty, reset selected slot to 0
-                gp.player.setActiveItem(new NoItem(gp)); // If inventory becomes empty, ensure NoItem is active
+                selectedSlot = 0;
+                gp.player.setActiveItem(new NoItem(gp)); // Pastikan NoItem aktif jika inventory kosong
             }
             if (inventoryScreen != null) {
                 inventoryScreen.adjustScrollToSelectedItem();
@@ -108,12 +102,13 @@ public class InventoryController {
         }
     }
 
+
     public void removeItems(String itemName, int quantity) {
         int removedCount = 0;
         Iterator<InventorySlot> iterator = inventory.iterator();
         while (iterator.hasNext() && removedCount < quantity) {
             InventorySlot slot = iterator.next();
-            IItem itemInSlot = slot.getItem(); // Get item from slot
+            IItem itemInSlot = slot.getItem(); 
             if (itemInSlot.getName().equalsIgnoreCase(itemName)) {
                 int available = slot.getQuantity();
                 int toRemoveFromStack = Math.min(available, quantity - removedCount);
@@ -122,10 +117,10 @@ public class InventoryController {
                 System.out.println("Menghapus " + toRemoveFromStack + "x " + itemInSlot.getName() + " (counter: " + removedCount + "/" + quantity + ")");
 
                 if (slot.isEmpty()) {
-                    iterator.remove(); // Remove the slot if quantity drops to 0
-                    // If the item just removed was the active item, and it's completely gone:
+                    iterator.remove(); 
+    
                     if (gp.player.getActiveItem() == itemInSlot) {
-                        gp.player.setActiveItem(new NoItem(gp)); // Set active item to NoItem
+                        gp.player.setActiveItem(new NoItem(gp)); 
                         gp.ui.setDialog("Item unequipped.");
                     }
                 }
@@ -134,12 +129,12 @@ public class InventoryController {
         if (removedCount < quantity) {
             System.out.println("Warning: Tidak bisa menhapus " + quantity + " dari " + itemName + ". Only " + removedCount + " found.");
         }
-        // Adjust selected slot
+
         if (selectedSlot >= inventory.size() && inventory.size() > 0) {
             selectedSlot = inventory.size() - 1;
         } else if (inventory.isEmpty()) {
             selectedSlot = 0;
-            gp.player.setActiveItem(new NoItem(gp)); // If inventory becomes empty, ensure NoItem is active
+            gp.player.setActiveItem(new NoItem(gp));
         }
         if (inventoryScreen != null) {
             inventoryScreen.adjustScrollToSelectedItem();
@@ -161,9 +156,9 @@ public class InventoryController {
 
                 if (slot.isEmpty()) {
                     iterator.remove();
-                    // If the item just removed was the active item, and it's completely gone:
+
                     if (gp.player.getActiveItem() == itemInSlot) {
-                        gp.player.setActiveItem(new NoItem(gp)); // Set active item to NoItem
+                        gp.player.setActiveItem(new NoItem(gp)); 
                         gp.ui.setDialog("Item unequipped.");
                     }
                 }
@@ -172,12 +167,12 @@ public class InventoryController {
         if (removedCount < quantity) {
             System.out.println("Warning: Tidak bisa menghapus " + quantity + " items dari kategori " + category + ". Only " + removedCount + " found.");
         }
-        // Adjust selected slot
+
         if (selectedSlot >= inventory.size() && inventory.size() > 0) {
             selectedSlot = inventory.size() - 1;
         } else if (inventory.isEmpty()) {
             selectedSlot = 0;
-            gp.player.setActiveItem(new NoItem(gp)); // If inventory becomes empty, ensure NoItem is active
+            gp.player.setActiveItem(new NoItem(gp)); 
         }
         if (inventoryScreen != null) {
             inventoryScreen.adjustScrollToSelectedItem();
@@ -222,7 +217,7 @@ public class InventoryController {
 
     public IItem getSelectedItem() {
         InventorySlot selectedSlotObj = getSelectedSlotItem();
-        // If no item is selected or inventory is empty, return NoItem
+
         return (selectedSlotObj != null) ? selectedSlotObj.getItem() : new NoItem(gp);
     }
 
@@ -299,68 +294,110 @@ public class InventoryController {
     }
 
     public void useItem(int index) {
-    if (index >= 0 && index < inventory.size()) {
-        InventorySlot slot = inventory.get(index);
-        IItem item = slot.getItem();
+        if (index >= 0 && index < inventory.size()) {
+            InventorySlot slot = inventory.get(index);
+            IItem item = slot.getItem();
 
-        if (item instanceof ToolItem) {
-            if (gp.player.getActiveItem() == item) {
-                gp.player.setActiveItem(new NoItem(gp)); 
-                gp.ui.setDialog("Unequipped " + item.getName() + "."); 
-                System.out.println("Melepas equip: " + item.getName());
-            } else {
+            if (item instanceof ToolItem) {
+                if (gp.player.getActiveItem() == item) {
+                    gp.player.setActiveItem(new NoItem(gp)); 
+                    gp.ui.setDialog("Unequipped " + item.getName() + "."); 
+                    System.out.println("Melepas equip: " + item.getName());
+                } else {
 
+                    System.out.println("Menggunakan: " + item.getName());
+                    gp.player.setActiveItem(item); 
+                    gp.ui.setDialog("Equipped " + item.getName() + "."); 
+                }
+            } else if (item instanceof RecipeItem){
+                System.out.println("Mennggunakan resep: " + item.getName());
+                RecipeItem recipeItem = (RecipeItem) item;
+
+                recipeItem.use(gp.player,gp);
+
+                if (gp.player.isRecipeUnlocked(recipeItem.getRecipeToUnlock()) && !recipeItem.getName().equals("Unknown Recipe")){
+                    removeItem(index);
+                }
+            } else if (item instanceof IConsumable) {
+                System.out.println("Mengonsumsi: " + item.getName());
+                eatingController.consume((IConsumable) item);
+
+                if (gp.player.getActiveItem() == item) {
+                    gp.player.setActiveItem(new NoItem(gp));
+                }
+                removeItem(index); 
+            } else if (item instanceof SeedItem){
+                if (gp.player.getActiveItem() == item) {
+                    gp.player.setActiveItem(new NoItem(gp)); 
+                    gp.ui.setDialog("Unequipped " + item.getName() + "."); 
+                    System.out.println("Melepas equip: " + item.getName());
+                } else {
                 System.out.println("Menggunakan: " + item.getName());
-                gp.player.setActiveItem(item); 
-                gp.ui.setDialog("Equipped " + item.getName() + "."); 
+                    gp.player.setActiveItem(item); 
+                    gp.ui.setDialog("Equipped " + item.getName() + "."); }
             }
-        } else if (item instanceof RecipeItem){
-            System.out.println("Mennggunakan resep: " + item.getName());
-            RecipeItem recipeItem = (RecipeItem) item;
-
-            recipeItem.use(gp.player,gp);
-
-            if (gp.player.isRecipeUnlocked(recipeItem.getRecipeToUnlock()) && !recipeItem.getName().equals("Unknown Recipe")){
-                removeItem(index);
+            else {
+                gp.ui.setDialog("You can't use " + item.getName() + " this way.");
+                System.out.println("Item ini bisa dijual: " + item.getName());
             }
-        } else if (item instanceof IConsumable) {
-            System.out.println("Mengonsumsi: " + item.getName());
-            eatingController.consume((IConsumable) item);
-
-            if (gp.player.getActiveItem() == item) {
-                gp.player.setActiveItem(new NoItem(gp));
-            }
-            removeItem(index); 
-        } else if (item instanceof SeedItem){
-            if (gp.player.getActiveItem() == item) {
-                gp.player.setActiveItem(new NoItem(gp)); 
-                gp.ui.setDialog("Unequipped " + item.getName() + "."); 
-                System.out.println("Melepas equip: " + item.getName());
-            } else {
-            System.out.println("Menggunakan: " + item.getName());
-                gp.player.setActiveItem(item); 
-                gp.ui.setDialog("Equipped " + item.getName() + "."); }
-        }
-        else {
-            gp.ui.setDialog("You can't use " + item.getName() + " this way.");
-            System.out.println("Item ini bisa dijual: " + item.getName());
         }
     }
-}
 
     public void sellItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             InventorySlot slot = inventory.get(index);
-            IItem item = slot.getItem();
-            int goldGained = item.getSellPrice();
-            gp.shippingBinController.addItem(item);
-            System.out.println("Menjual " + item.getName() + " untuk " + goldGained + " gold");
-
-
-            if (gp.player.getActiveItem() == item) {
-                gp.player.setActiveItem(new NoItem(gp));
+            if (slot == null || slot.getItem() == null || slot.isEmpty()) { // Tambahkan pengecekan slot.isEmpty()
+                System.out.println("Tidak ada item di slot yang dipilih untuk dijual atau slot kosong.");
+                return;
             }
-            removeItem(index); 
+            IItem itemToSell = slot.getItem();
+
+
+            boolean successfullyAddedToBin = gp.shippingBinController.addItem(itemToSell);
+
+            if (successfullyAddedToBin) {
+                System.out.println("Menempatkan 1x " + itemToSell.getName() + " di shipping bin.");
+
+                boolean wasActiveItem = (gp.player.getActiveItem() == itemToSell);
+
+                slot.decrementQuantity();
+
+                if (slot.isEmpty()) { 
+                    inventory.remove(index); 
+                    System.out.println("Stack " + itemToSell.getName() + " habis, slot dihapus dari inventory.");
+                    if (wasActiveItem) {
+                        gp.player.setActiveItem(new NoItem(gp));
+                        gp.ui.setDialog(itemToSell.getName() + " dijual (stack habis), item dilepas.");
+                    }
+
+                  
+                    if (selectedSlot >= inventory.size() && !inventory.isEmpty()) {
+                        selectedSlot = inventory.size() - 1;
+                    } else if (inventory.isEmpty()) {
+                        selectedSlot = 0;
+               
+                        if(gp.player.getActiveItem() != null && !(gp.player.getActiveItem() instanceof NoItem)){
+                            gp.player.setActiveItem(new NoItem(gp));
+                        }
+                    }
+                } else {
+
+                    System.out.println("Sisa " + itemToSell.getName() + " di inventory: " + slot.getQuantity());
+              
+                }
+                
+  
+                if (inventoryScreen != null) {
+                    inventoryScreen.adjustScrollToSelectedItem();
+                }
+
+            } else {
+                System.out.println("Gagal menjual " + itemToSell.getName() + ". Shipping bin mungkin penuh.");
+                gp.ui.setDialog("Gagal menjual " + itemToSell.getName() + ". Shipping bin mungkin penuh.");
+
+            }
+        } else {
+            System.out.println("Indeks inventory tidak valid untuk menjual item.");
         }
     }
 

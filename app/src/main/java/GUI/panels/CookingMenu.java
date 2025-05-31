@@ -8,14 +8,14 @@ import java.util.List;
 
 import entity.Ingredient;
 import entity.Recipe;
-import main.GamePanel; // Import for antialiasing
+import main.GamePanel;
 
 public class CookingMenu extends BaseUIPanel {
 
     public int cookingMenuSelection = 0;
-    public int selectRecipe = 0; // 0 for list, >0 for detail, -1 for fail message, -2 for locked message
+    public int selectRecipe = 0; 
     public boolean doneCooking = false;
-    // public boolean hasIngradients = true; // Properti ini tidak lagi diperlukan
+
 
     public CookingMenu(GamePanel gp, Font uiFont) {
         super(gp, uiFont);
@@ -27,9 +27,7 @@ public class CookingMenu extends BaseUIPanel {
 
         String text;
         List<Recipe> allRecipes = Recipe.getRecipeList();
-        // cookableRecipes tidak lagi digunakan secara langsung di draw() karena pengecekan dilakukan per resep
-        // List<Recipe> cookableRecipes = gp.cookingController.getCookableRecipe(); // Tidak perlu lagi di sini
-
+      
         int frameX = gp.tileSize;
         int frameY = gp.tileSize;
         int frameWidth = gp.screenWidth / 2 - gp.tileSize;
@@ -66,7 +64,7 @@ public class CookingMenu extends BaseUIPanel {
             textY += lineHeight * 2;
             g2.drawString("Tekan ENTER untuk kembali.", textX, textY);
 
-        } else if (selectRecipe == 0) { // Recipe List View
+        } else if (selectRecipe == 0) {
             g2.setFont(uiFont.deriveFont(Font.BOLD, 24f));
             text = "DAFTAR RESEP";
             drawCenteredString(g2, text, frameX, textY, frameWidth);
@@ -107,7 +105,7 @@ public class CookingMenu extends BaseUIPanel {
             textY += lineHeight * 0.9;
             g2.drawString("ENTER: Lihat Detail", textX, textY);
             textY += lineHeight * 0.9;
-            g2.drawString("K atau ESC: Keluar", textX, textY);
+            g2.drawString("E: Keluar", textX, textY);
 
         } else if (selectRecipe == -1) { 
             g2.setFont(uiFont.deriveFont(Font.BOLD, 24f));
@@ -221,7 +219,7 @@ public class CookingMenu extends BaseUIPanel {
             textY += lineHeight * 0.9;
             g2.drawString("0 atau BACKSPACE: Kembali ke Daftar", textX, textY);
             textY += lineHeight * 0.9;
-            g2.drawString("K atau ESC: Keluar Menu", textX, textY);
+            g2.drawString("E: Keluar Menu", textX, textY);
         }
     }
 
@@ -254,10 +252,10 @@ public class CookingMenu extends BaseUIPanel {
         }
         Recipe chosenRecipe = allRecipes.get(cookingMenuSelection);
         if (gp.cookingController.isRecipeUnlocked(chosenRecipe)) {
-            this.selectRecipe = cookingMenuSelection + 1; // Go to detail view
+            this.selectRecipe = cookingMenuSelection + 1;
             this.doneCooking = false;
         } else {
-            this.selectRecipe = -2; // Indicate locked recipe
+            this.selectRecipe = -2; 
             this.doneCooking = false;
         }
     }
@@ -271,10 +269,9 @@ public class CookingMenu extends BaseUIPanel {
         }
         Recipe recipeToCook = allRecipes.get(selectRecipe - 1);
 
-        // Pengecekan pertama: Apakah resepnya sudah terbuka?
         if (!gp.cookingController.isRecipeUnlocked(recipeToCook)) {
             System.out.println("Resep " + recipeToCook.title + " belum terbuka.");
-            this.selectRecipe = -2; // Set state untuk pesan "terkunci"
+            this.selectRecipe = -2; 
             this.doneCooking = false;
             return;
         }

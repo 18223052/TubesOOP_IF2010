@@ -51,6 +51,11 @@ public class KeyHandler implements KeyListener {
         } else if (gp.gameState == GamePanel.nameInputState) {
             handleNameInputState(code);
         }
+        else if (gp.gameState == GamePanel.helpState) {
+            handleHelpState(code);
+        } else if (gp.gameState == GamePanel.creditState) {
+            handleCreditsState(code);
+        }
         else if (gp.gameState == GamePanel.playState) {
             gp.isTimePaused = false;
             handlePlayState(code);
@@ -75,23 +80,43 @@ public class KeyHandler implements KeyListener {
     }
 
 
-
     public void handleTitleState(int code) {
         if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
-            gp.ui.titleScreen.moveSelectionUp(); 
-            gp.repaint(); 
+            gp.ui.titleScreen.moveSelectionUp();
+            gp.repaint();
         }
         if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
-            gp.ui.titleScreen.moveSelectionDown(); 
-            gp.repaint(); 
+            gp.ui.titleScreen.moveSelectionDown();
+            gp.repaint();
         }
         if (code == KeyEvent.VK_ENTER) {
-            if (gp.ui.getCommandNum() == 0) { 
+            int selectedCommand = gp.ui.getCommandNum();
+            if (selectedCommand == 0) {
                 gp.setGameState(GamePanel.nameInputState); 
-
-            } else if (gp.ui.getCommandNum() == 1) { 
+            } else if (selectedCommand == 1) {
+                gp.setGameState(GamePanel.helpState);
+                gp.repaint();
+            } else if (selectedCommand == 2) {
+                gp.setGameState(GamePanel.creditState);
+                gp.repaint();
+            } else if (selectedCommand == 3) {
                 System.exit(0);
             }
+        }
+    }
+
+    public void handleHelpState(int code) {
+
+        if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_ENTER) {
+            gp.setGameState(GamePanel.titleState);
+        }
+    }
+
+
+    public void handleCreditsState(int code) {
+
+        if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_ENTER) {
+            gp.setGameState(GamePanel.titleState);
         }
     }
 
@@ -101,9 +126,7 @@ public class KeyHandler implements KeyListener {
             if (!gp.playerNameInput.trim().isEmpty()) {
                 gp.startGame(); 
             } else {
-
-                gp.ui.setDialog("Nama tidak boleh kosong!");
-                gp.setGameState(GamePanel.dialogState);
+                
             }
         }
     }
@@ -138,8 +161,13 @@ public class KeyHandler implements KeyListener {
     }
 
     public void handleDialogState(int code) {
-        if (code == KeyEvent.VK_E) {
+        if (code == KeyEvent.VK_E || code == KeyEvent.VK_ENTER) {
             gp.setGameState(GamePanel.playState); 
+            gp.isTimePaused = false;
+            if (gp.ui != null) { 
+            gp.ui.clearDialog();
+            }
+            gp.repaint();
         }
     }
 
@@ -167,18 +195,17 @@ public class KeyHandler implements KeyListener {
 
                 if (gp.gameState == GamePanel.sleepState) {
 
-                    return; // Sangat penting: Hentikan eksekusi di sini.
+                    return; 
                 }
 
             } else {
                 gp.ui.setDialog("No item selected to gift.");
             }
 
-            // Baris-baris ini hanya akan dieksekusi jika pemain TIDAK pingsan
-            // (yaitu, jika blok if (gp.gameState == GamePanel.sleepState) di atas tidak dieksekusi).
+          
             gp.isGifting = false;
             gp.setGameState(GamePanel.dialogState);
-            // gp.repaint(); // Ini sudah ditangani oleh GamePanel loop utama.
+
 
             break;
         case KeyEvent.VK_ESCAPE:
@@ -334,8 +361,10 @@ public class KeyHandler implements KeyListener {
                 if (gp.npcController != null && gp.currNPC != null) {
                     if (gp.currNPC.isProposable(gp.player)){
                         System.out.println("DEBUG PROPOSAL: Bisa dilamar");
+                        gp.npcController.attemptPropose(gp.currNPC);
                     } else {
                         System.out.println("DEBUG PROPOSAL: Gabisa dilamar");
+                        gp.npcController.attemptPropose(gp.currNPC);
                     }
 
                     if (gp.player.inventory.hasItem("ring")) {

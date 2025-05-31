@@ -145,6 +145,7 @@ public class FishingController {
             gp.player.getInventory().addItem(currentFish);
             gp.player.incrementFishCaughtCount();
             gp.player.addCaughtFishType(currentFish.getName());
+            gp.player.recordCaughtFish(currentFish);
             endFishing(true);
         } else if (attemptsLeft <= 0) {
             gp.ui.setDialog("Gabisa main lagi! kesempatan kamu sudah habis " + currentFish.getName() + " maburrrr.");

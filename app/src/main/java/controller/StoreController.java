@@ -80,14 +80,18 @@ public class StoreController {
     public void sellItem(int index) {
         if (index >= 0 && index < storeItems.size()) {
             IItem item = storeItems.get(index);
-            System.out.println(gp.player.getGold() >= item.getBuyPrice());
-            if (gp.player.getGold() >= item.getBuyPrice()) {
-                System.out.println("Sell item: " + item.getName() + " from storeItems");
-                gp.inventoryController.addItem(item);
-                gp.player.addGold(-item.getBuyPrice());
-                goldSpent += item.getBuyPrice();
+            int itemPrice = item.getBuyPrice();
+
+            if (gp.player.deductGold(itemPrice)){
+                System.out.println("Player bought: " + item.getName() + " for " + itemPrice + " gold.");
+
+                gp.player.inventory.addItem(item);
+
+                goldSpent += itemPrice;
                 selectedSlot = 0;
-            } else {
+            }
+
+            else {
                 System.out.println("your money is not enough to buy " + item.getName());
             }
         }

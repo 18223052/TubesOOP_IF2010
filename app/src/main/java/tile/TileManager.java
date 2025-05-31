@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import javax.imageio.ImageIO;
+
+import entity.Player;
+
 import java.util.Map;
 import java.util.HashMap;
 
@@ -248,30 +251,52 @@ public class TileManager {
 
     
     public void teleportPlayer(String newMapPath, int destX, int destY) {
+
+        if (gp.player == null || gp.ui == null || gp.gameTime == null || gp.currMap == null || gp.keyH == null) {
+            System.err.println("TeleportController: Teleportasi DIBATALKAN (silent) - komponen penting null."); // Log untuk developer
+            if (gp.keyH != null) {
+                gp.keyH.interactPressed = false; 
+            }
+            return; 
+        }
+
         String mapPathYangAkanDisimpan = gp.currMap;
-         System.out.println("DEBUG (Teleport): Akan menyimpan peta: " + mapPathYangAkanDisimpan + " dan pindah ke: " + newMapPath);
+    
 
-        // gp.currMap = newMapPath;        
-        // this.currentMap = newMapPath;   
+        boolean isTeleportCostly = !mapPathYangAkanDisimpan.equals("/maps/rumah.txt") && !newMapPath.equals("/maps/rumah.txt");
 
-        // loadMap(newMapPath);            
+        if (isTeleportCostly) {
+            final int TELEPORT_ENERGY_COST = 10; 
+            int energyAfterTeleport = gp.player.getEnergy() - TELEPORT_ENERGY_COST;
+
+
+            if (energyAfterTeleport < Player.MIN_ENERGY_BEFORE_SLEEP) {
+                System.out.println("DEBUG (Teleport): Teleportasi DIBATALKAN (silent) - energi tidak cukup. Energi saat ini: " + gp.player.getEnergy()); // Log untuk developer
+                
+                gp.keyH.interactPressed = false; 
+
+                return; 
+            }
+        }
+
+
+        System.out.println("DEBUG (Teleport): Memproses teleportasi ke: " + newMapPath); 
 
         gp.player.wX = destX * gp.tileSize;
         gp.player.wY = destY * gp.tileSize;
 
-        
         gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
 
-        // gp.aSetter.setNPC(); // Pertimbangkan jika NPC perlu di-reset di peta baru
-        // gp.aSetter.setObj(); // Pertimbangkan jika objek perlu di-reset di peta baru
+        gp.player.incrementVisitingCount();
 
-
-        if (!mapPathYangAkanDisimpan.equals("/maps/rumah.txt") && !newMapPath.equals("/maps/rumah.txt")) {
-            gp.player.deductEnergy(10);
-            gp.gameTime.addTime(15);
+        if (isTeleportCostly) {
+            final int TELEPORT_ENERGY_COST = 10;
+            final int TELEPORT_TIME_COST = 15;  
+            gp.player.deductEnergy(TELEPORT_ENERGY_COST);
+            gp.gameTime.addTime(TELEPORT_TIME_COST);
         }
-        
-    }
+        System.out.println("Teleportasi berhasil ke: " + newMapPath + " di (" + destX + "," + destY + ")");
+}
     
     public void loadMap(String filePath) {
         try {
