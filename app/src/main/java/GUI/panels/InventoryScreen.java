@@ -142,9 +142,9 @@ public class InventoryScreen extends BaseUIPanel {
             int slotX = INV_FRAME_X + 20 + (col * (INV_SLOT_SIZE + INV_SLOT_PADDING));
             int slotY = startY + (row * (INV_SLOT_SIZE + INV_SLOT_PADDING));
 
-            // Draw slot background using the method from BaseUIPanel
+
             boolean isSelected = gp.inventoryController.getSelectedSlotItem() == slot;
-            drawItemSlot(g2, slotX, slotY, INV_SLOT_SIZE, isSelected); // Changed from drawSlot to drawItemSlot
+            drawItemSlot(g2, slotX, slotY, INV_SLOT_SIZE, isSelected); 
 
             // Draw item image
             if (item.getImage() != null) {
@@ -159,38 +159,38 @@ public class InventoryScreen extends BaseUIPanel {
                 g2.drawImage(item.getImage(), imageX, imageY, imageSize, imageSize, null);
             }
 
-            // Draw quantity badge for stackable items using the method from BaseUIPanel
+    
             if (item.isStackable() && slot.getQuantity() > 1) {
                 drawQuantityBadge(g2, slotX + INV_SLOT_SIZE - 20, slotY - 5, slot.getQuantity());
             }
 
-            // Removed: drawCategoryIndicator(g2, slotX, slotY + INV_SLOT_SIZE + 5, item.getCategory());
+
         }
-        g2.setClip(oldClip); // Restore the old clip after drawing inventory slots
+        g2.setClip(oldClip);
     }
 
     private void drawEnhancedItemDetails(Graphics2D g2, IItem item, int quantity, int x, int y, boolean isGifting) {
-        // Using the enhanced drawSubWindow from BaseUIPanel
+
         drawSubWindow(g2, x, y, DETAIL_FRAME_WIDTH, DETAIL_FRAME_HEIGHT);
 
         int currentY = y + DETAIL_PADDING + 5;
 
-        // Item name with enhanced styling
-        g2.setFont(uiFont.deriveFont(Font.BOLD, 18f)); // Slightly larger font for name
-        g2.setColor(SELECTED_SLOT_COLOR); // Use theme goldish color for name
+     
+        g2.setFont(uiFont.deriveFont(Font.BOLD, 18f)); 
+        g2.setColor(SELECTED_SLOT_COLOR); 
         g2.drawString(item.getName(), x + DETAIL_PADDING, currentY);
-        currentY += LINE_HEIGHT_MEDIUM + 5; // Add a bit more space after name
+        currentY += LINE_HEIGHT_MEDIUM + 5;
 
-        // Item details with better formatting
-        g2.setFont(uiFont.deriveFont(Font.PLAIN, 13f)); // Slightly larger font for details
+    
+        g2.setFont(uiFont.deriveFont(Font.PLAIN, 13f)); 
         g2.setColor(TEXT_SECONDARY);
 
-        // Category with colored indicator (still in details, but not below item slots)
+
         g2.setColor(getCategoryColor(item.getCategory()));
         g2.drawString("Kategori: " + item.getCategory().toUpperCase(), x + DETAIL_PADDING, currentY);
         currentY += LINE_HEIGHT_SMALL;
 
-        // Prices with icons
+   
         g2.setColor(TEXT_SECONDARY);
         if(item.getBuyPrice() != -1 && item.getSellPrice() != -1){
             g2.drawString("Beli: " + item.getBuyPrice() + "g  |  Jual: " + item.getSellPrice() + "g",
@@ -198,14 +198,14 @@ public class InventoryScreen extends BaseUIPanel {
             currentY += LINE_HEIGHT_SMALL;
         }
 
-        // Quantity for stackable items
+    
         if (item.isStackable()) {
             g2.setColor(TEXT_PRIMARY);
             g2.drawString("Kuantitas: " + quantity, x + DETAIL_PADDING, currentY);
             currentY += LINE_HEIGHT_SMALL;
         }
 
-        // Specific item attributes
+
         if (item instanceof IConsumable) {
             g2.setColor(new Color(100, 255, 100)); // Green for energy
             g2.drawString("Energi: +" + ((IConsumable) item).getEnergyRestoration(),
@@ -215,27 +215,27 @@ public class InventoryScreen extends BaseUIPanel {
 
         if (item instanceof IFishAttributes) {
             IFishAttributes fishItem = (IFishAttributes) item;
-            g2.setFont(uiFont.deriveFont(Font.ITALIC, 11f)); // Slightly larger italic for fish attributes
-            g2.setColor(new Color(150, 200, 255)); // Blue for fish attributes
+            g2.setFont(uiFont.deriveFont(Font.ITALIC, 11f)); 
+            g2.setColor(new Color(150, 200, 255)); 
             g2.drawString("Musim: " + fishItem.getSeason() + "  Cuaca: " + fishItem.getWeather(),
                     x + DETAIL_PADDING, currentY);
             currentY += LINE_HEIGHT_MEDIUM;
         }
 
-        currentY += 10; // Extra space before actions
-        g2.setFont(uiFont.deriveFont(Font.BOLD, 12f)); // Slightly larger font for actions
+        currentY += 10; 
+        g2.setFont(uiFont.deriveFont(Font.BOLD, 12f));
         if (isGifting) {
-            g2.setColor(new Color(100, 255, 100)); // Green for action
+            g2.setColor(new Color(100, 255, 100)); 
             g2.drawString("[E] Berikan kepada " + gp.currNPC.getName(), x + DETAIL_PADDING, currentY);
         } else {
             if (!(item.getName().equalsIgnoreCase("ring")) && !(item.getCategory().equalsIgnoreCase("FUEL")) && !(item.getName().equalsIgnoreCase("Fathimah Nurhumaida (18223052)"))){
-                g2.setColor(new Color(100, 255, 100)); // Green for action
+                g2.setColor(new Color(100, 255, 100)); 
                 g2.drawString("[E] Gunakan/Lengkapi", x + DETAIL_PADDING, currentY);
             }
         }
         currentY += LINE_HEIGHT_LARGE;
 
-        g2.setColor(new Color(255, 150, 150)); // Red for back button
+        g2.setColor(new Color(255, 150, 150)); 
         g2.drawString("[ESC] Kembali", x + DETAIL_PADDING, currentY);
     }
 
@@ -245,11 +245,11 @@ public class InventoryScreen extends BaseUIPanel {
         int width = gp.screenWidth / 2 - gp.tileSize;
         int height = gp.tileSize * 2;
 
-        // Using the enhanced drawSubWindow from BaseUIPanel
+ 
         drawSubWindow(g2, x, y, width, height);
 
         g2.setFont(uiFont.deriveFont(Font.BOLD, 18f));
-        g2.setColor(SELECTED_SLOT_COLOR); // Use theme goldish color
+        g2.setColor(SELECTED_SLOT_COLOR);
 
         int textX = x + 25;
         int textY = y + 35;
@@ -263,11 +263,11 @@ public class InventoryScreen extends BaseUIPanel {
         g2.drawString("Pilih item untuk diberikan", textX, textY);
         textY += lineHeight;
 
-        g2.setColor(new Color(100, 255, 100)); // Green for action
+        g2.setColor(new Color(100, 255, 100)); 
         g2.drawString("[E] Konfirmasi Hadiah", textX, textY);
         textY += lineHeight;
 
-        g2.setColor(new Color(255, 150, 150)); // Red for exit
+        g2.setColor(new Color(255, 150, 150)); 
         g2.drawString("[ESC] Batalkan", textX, textY);
     }
 
@@ -285,37 +285,37 @@ public class InventoryScreen extends BaseUIPanel {
         }
     }
 
-    // Method to adjust scroll when selection moves
+
     public void adjustScrollToSelectedItem() {
         InventorySlot selectedSlotObj = gp.inventoryController.getSelectedSlotItem();
         if (selectedSlotObj == null) {
-            scrollOffsetRow = 0; // If no item selected, reset scroll to top
+            scrollOffsetRow = 0; 
             return;
         }
 
         ArrayList<InventorySlot> allSlots = gp.inventoryController.getInventorySlots();
         int selectedIndex = allSlots.indexOf(selectedSlotObj);
 
-        if (selectedIndex == -1) { // Should not happen if selectedSlotObj is valid
+        if (selectedIndex == -1) { 
             return;
         }
 
         int selectedRow = selectedIndex / INV_COLS;
 
-        // If the selected row is above the current view, scroll up
+
         if (selectedRow < scrollOffsetRow) {
             scrollOffsetRow = selectedRow;
         }
-        // If the selected row is below the current view, scroll down
+   
         else if (selectedRow >= scrollOffsetRow + visibleRows) {
             scrollOffsetRow = selectedRow - visibleRows + 1;
         }
 
-        // Ensure scrollOffsetRow doesn't go below zero
+
         if (scrollOffsetRow < 0) {
             scrollOffsetRow = 0;
         }
-        // Ensure scrollOffsetRow doesn't go beyond the last possible scroll position
+      
         int totalRows = (int) Math.ceil((double) allSlots.size() / INV_COLS);
         int maxScrollOffset = Math.max(0, totalRows - visibleRows);
         if (scrollOffsetRow > maxScrollOffset) {

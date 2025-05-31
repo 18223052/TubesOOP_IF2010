@@ -32,13 +32,13 @@ public class KeyHandler implements KeyListener {
             if (Character.isLetterOrDigit(c) || c == ' '){
                 if (gp.playerNameInput.length() < 12){ 
                     gp.playerNameInput += String.valueOf(c);
-                    // Clear error message when user starts typing
+
                     gp.ui.nameInputScreen.setErrorMessage(""); 
                 }
             } else if (c == KeyEvent.VK_BACK_SPACE){
                 if (gp.playerNameInput.length() > 0){
                     gp.playerNameInput = gp.playerNameInput.substring(0,gp.playerNameInput.length() - 1);
-                    // Clear error message when user starts typing
+                    
                     gp.ui.nameInputScreen.setErrorMessage(""); 
                 }
             }
@@ -131,10 +131,10 @@ public class KeyHandler implements KeyListener {
     public void handleNameInputState(int code) {
         if (code == KeyEvent.VK_ENTER) {
             if (!gp.playerNameInput.trim().isEmpty()) {
-                gp.ui.nameInputScreen.setErrorMessage(""); // Clear error on successful input
+                gp.ui.nameInputScreen.setErrorMessage(""); 
                 gp.startGame(); 
             } else {
-                gp.ui.nameInputScreen.setErrorMessage("Nama tidak boleh kosong!"); // Set error message
+                gp.ui.nameInputScreen.setErrorMessage("Nama tidak boleh kosong!"); 
                 gp.repaint();
             }
         }

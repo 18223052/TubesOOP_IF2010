@@ -130,7 +130,7 @@ public class CharacterScreen extends BaseUIPanel {
         currentTextY += lineHeight;
 
         // Visiting freq (Teleport count)
-        value = String.valueOf(gp.player.getVisitingCount()); // Menggunakan metode yang sudah kita buat
+        value = String.valueOf(gp.player.getVisitingCount()); 
         valueTextX = getXforAllignToRight(value, tailX, g2);
         g2.drawString(value, valueTextX, currentTextY);
         currentTextY += lineHeight;
@@ -143,7 +143,7 @@ public class CharacterScreen extends BaseUIPanel {
 
 
         // Fish caught
-        value = String.valueOf(gp.player.getFishCaughtCount()); // Asumsi metode ini ada
+        value = String.valueOf(gp.player.getFishCaughtCount()); 
         valueTextX = getXforAllignToRight(value, tailX, g2);
         g2.drawString(value, valueTextX, currentTextY);
     }

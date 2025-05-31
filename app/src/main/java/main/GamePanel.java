@@ -303,7 +303,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
         private void initializeAllGameNPCs() {
-        // Inisialisasi semua NPC di sini, hanya sekali saat GamePanel dibuat
         NPC mayortadi = new NPC_mayortadi(this, this.itemFactory);
         allGameNPCs.put(mayortadi.getName(), mayortadi);
 
@@ -322,8 +321,7 @@ public class GamePanel extends JPanel implements Runnable {
         NPC dasco = new NPC_Dasco(this, this.itemFactory);
         allGameNPCs.put(dasco.getName(), dasco);
 
-        // Pastikan setiap kelas NPC (misal: NPC_mayortadi) memiliki method getName()
-        // yang mengembalikan nama unik seperti "Mayortadi", "Emily", dll.
+
     }
 
 

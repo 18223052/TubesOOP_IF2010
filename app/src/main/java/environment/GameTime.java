@@ -42,7 +42,7 @@ public class GameTime implements Runnable {
         long lastGameMinuteUpdate = getTotalGameMinutes();
         while (true) {
             try {
-                Thread.sleep(1000);  // 1 detik = 5 menit game (atur sesuai kebutuhan)
+                Thread.sleep(1000);  // 1 detik = 5 menit game
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 e.printStackTrace();

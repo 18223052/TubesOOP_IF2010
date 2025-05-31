@@ -492,8 +492,8 @@ public class Player extends Character {
             switch (direction) {
                 case "up":
 
-                    itemOffsetX = -gp.tileSize / 4; // Geser sedikit ke kiri
-                    itemOffsetY = -gp.tileSize / 2; // Geser lebih jauh ke atas
+                    itemOffsetX = -gp.tileSize / 4; 
+                    itemOffsetY = -gp.tileSize / 2; 
 
                     break;
                 case "down":
@@ -574,8 +574,8 @@ public class Player extends Character {
 
     public void setFiance(NPC npc) {
         this.fiance = npc;
-        if (npc != null) { // Jika menetapkan tunangan baru
-            this.spouse = null; // Pastikan tidak bisa memiliki pasangan dan tunangan sekaligus
+        if (npc != null) { 
+            this.spouse = null; 
         }
     }
 
@@ -589,9 +589,9 @@ public class Player extends Character {
 
     public void setSpouse(NPC npc) {
         this.spouse = npc;
-        if (npc != null) { // Jika menetapkan pasangan baru
-            if (this.fiance == npc) { // Jika menikah dengan tunangan saat ini
-                this.fiance = null; // Hapus status tunangan
+        if (npc != null) { 
+            if (this.fiance == npc) { 
+                this.fiance = null; 
             }
         }
     }

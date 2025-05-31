@@ -56,7 +56,7 @@ public class NPC_abigail extends NPC {
                 }
                 break;
         }
-        if (dialogues[0] == null && gp.player != null) { // Tambahkan null check untuk gp.player
+        if (dialogues[0] == null && gp.player != null) { 
             dialogues[0] = "Hello, " + gp.player.getName() + ".";
         } else if (dialogues[0] == null) {
             dialogues[0] = "Hello there.";

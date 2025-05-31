@@ -291,7 +291,6 @@ public class CookingMenu extends BaseUIPanel {
         this.selectRecipe = 0; // Kembali ke tampilan daftar resep
         this.doneCooking = false; // Reset status memasak selesai
         this.cookingMenuSelection = 0; // Reset seleksi ke resep pertama
-        // Jika ada pesan error/status sebelumnya, pastikan juga direset di sini
-        // Misalnya, jika Anda memiliki variabel String untuk pesan yang ditampilkan
+
     }
 }

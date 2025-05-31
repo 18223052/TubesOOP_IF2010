@@ -57,7 +57,7 @@ public class NPC_Perry extends NPC {
                 }
                 break;
         }
-        if (dialogues[0] == null && gp.player != null) { // Tambahkan null check untuk gp.player
+        if (dialogues[0] == null && gp.player != null) {
             dialogues[0] = "Hello, " + gp.player.getName() + ".";
         } else if (dialogues[0] == null) {
             dialogues[0] = "Hello there.";
@@ -80,7 +80,7 @@ public class NPC_Perry extends NPC {
 
         if (itemFactory != null) {
             for (IItem fish : itemFactory.getAllFishItems()) {
-                if (fish.getCategory().equalsIgnoreCase("fish")) { // Pastikan hanya item ikan yang ditambahkan
+                if (fish.getCategory().equalsIgnoreCase("fish")) { 
                     hatedItems.add(fish);
                 }
             }

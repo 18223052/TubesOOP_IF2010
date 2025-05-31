@@ -80,7 +80,7 @@ public abstract class BaseItem implements IItem {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         
-        // Construct the image path
+
         String imagePath = "/items/" + name.toLowerCase().replace(" ", "_") + ".png";
         
         try {

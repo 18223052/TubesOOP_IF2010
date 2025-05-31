@@ -224,35 +224,34 @@ public abstract class NPC extends Character implements Interactable {
     public void becomeFiance(Player player, int currentDay) {
         this.relationshipStatus = NPC.STATUS_FIANCE;
         this.dayBecameFiance = currentDay;
-        // player.setFiance(this); // Ini akan diatur dari sisi controller/player untuk menghindari circular dependency langsung
+
     }
 
     public boolean canMarryPlayer(Player player, int currentDay) {
         if (player == null) return false;
         return this.relationshipStatus.equals(STATUS_FIANCE) &&
-            player.getFiance() == this && // Memastikan pemain bertunangan DENGAN NPC INI
-            currentDay > this.dayBecameFiance; // Sudah lewat minimal 1 hari
+            player.getFiance() == this && 
+            currentDay > this.dayBecameFiance; 
     }
 
     public void marryPlayer(Player player) {
         this.relationshipStatus = STATUS_MARRIED;
-        // dayBecameFiance bisa dibiarkan sebagai catatan atau direset
-        // player.setSpouse(this); // Ini akan diatur dari sisi controller/player
+
     }
 
     public String getProposalDeclineMessage() {
-        // Logika default berdasarkan kondisi umum penolakan
+
         if (this.getHeartPoints() < this.getMaxHeartPoint()) {
-            // Jika heart points belum cukup
+
             return getName() + " berkata, 'Aku belum siap untuk komitmen sebesar itu. Kita butuh lebih banyak waktu bersama.'";
         } else if (!STATUS_SINGLE.equals(this.getRelationshipStatus())) {
-            // Jika sudah terikat dengan orang lain (meskipun di game Anda mungkin hanya "single")
+
             return getName() + " berkata, 'Maaf, aku sudah terikat dengan orang lain.'";
         } else if (!gender_female.equals(this.getGender())) {
-            // Contoh penolakan berdasarkan gender jika proposal hanya untuk wanita
+
             return getName() + " berkata, 'Aku menghargai perasaanmu, tapi aku tidak bisa menerimanya. Aku bukan tipe mu.'";
         } else {
-            // Pesan default lainnya jika tidak ada kondisi di atas yang cocok
+
             return getName() + " berkata, 'Aku menghargai tawaranmu, tapi aku rasa kita lebih baik sebagai teman saja.'";
         }
     }

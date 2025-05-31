@@ -131,7 +131,6 @@ public void moveSelectionRight() {
 
     public void setStoreMenu(StoreMenu storeMenu) {
         this.storeMenu = storeMenu;
-        // Setelah StoreMenu diset, pastikan scroll diawal disesuaikan
         if (!storeItems.isEmpty()) {
             storeMenu.adjustScrollToSelectedItem();
         }

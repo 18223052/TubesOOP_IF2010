@@ -16,7 +16,7 @@ public class WeatherManager {
         weatherPerDay = new WeatherType[daysPerSeason];
         ArrayList<Integer> rainyDays = new ArrayList<>();
 
-        // Pilih minimal 2 hari secara acak untuk hujan
+  
         while (rainyDays.size() < 2) {
             int day = rand.nextInt(daysPerSeason);
             if (!rainyDays.contains(day)) {
@@ -30,7 +30,7 @@ public class WeatherManager {
         }
     }
 
-    // In WeatherManager.java
+
     public WeatherType getWeatherForDay(int dayInSeason) { 
         if (dayInSeason < 1 || dayInSeason > daysPerSeason) {
             System.err.println("WeatherManager: Invalid dayInSeason requested: " + dayInSeason + ". Defaulting to SUNNY.");
