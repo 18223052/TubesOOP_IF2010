@@ -74,7 +74,7 @@ public class NPC_Dasco extends NPC {
     public void initializeGiftPreference(ItemFactory itemFactory){
         lovedItems.add(itemFactory.createFood("The Legend of Spakbor"));
         lovedItems.add(itemFactory.createFood("Cooked Pigs Head"));
-        lovedItems.add(itemFactory.createFood("Wiwne"));
+        lovedItems.add(itemFactory.createFood("Wine"));
         lovedItems.add(itemFactory.createFood("Fugu"));
         lovedItems.add(itemFactory.createFood("Spakbor Salad"));
 

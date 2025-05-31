@@ -26,6 +26,12 @@ import controller.NPCController;
 
 
 import entity.NPC;
+import entity.NPC_Caroline;
+import entity.NPC_Dasco;
+import entity.NPC_Emily;
+import entity.NPC_Perry;
+import entity.NPC_abigail;
+import entity.NPC_mayortadi;
 import entity.Player;
 import environment.EnvironmentManager;
 import environment.GameTime;
@@ -126,6 +132,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public ArrayList<SuperObj> obj = new ArrayList<>(); 
     public NPC npc[] = new NPC[6]; 
+    public Map<String, NPC> allGameNPCs;
     
   
     public SuperObj currObj;
@@ -162,6 +169,10 @@ public class GamePanel extends JPanel implements Runnable {
         shippingBinController = new ShippingBinController(this);
         storeController = new StoreController(this);
         npcController = new NPCController(this);
+        itemFactory = new ItemFactory(this);
+        allGameNPCs = new HashMap<>(); 
+        initializeAllGameNPCs();
+
 
 
         saveManger = new SaveManager(this); // Perhatikan nama variabel 'saveManger'
@@ -288,6 +299,31 @@ public class GamePanel extends JPanel implements Runnable {
         // debugCurrentObjects(); 
     }
 
+        private void initializeAllGameNPCs() {
+        // Inisialisasi semua NPC di sini, hanya sekali saat GamePanel dibuat
+        NPC mayortadi = new NPC_mayortadi(this, this.itemFactory);
+        allGameNPCs.put(mayortadi.getName(), mayortadi);
+
+        NPC emily = new NPC_Emily(this, this.itemFactory);
+        allGameNPCs.put(emily.getName(), emily);
+
+        NPC abigail = new NPC_abigail(this, this.itemFactory);
+        allGameNPCs.put(abigail.getName(), abigail);
+
+        NPC perry = new NPC_Perry(this, this.itemFactory);
+        allGameNPCs.put(perry.getName(), perry);
+
+        NPC caroline = new NPC_Caroline(this, this.itemFactory);
+        allGameNPCs.put(caroline.getName(), caroline);
+        
+        NPC dasco = new NPC_Dasco(this, this.itemFactory);
+        allGameNPCs.put(dasco.getName(), dasco);
+
+        // Pastikan setiap kelas NPC (misal: NPC_mayortadi) memiliki method getName()
+        // yang mengembalikan nama unik seperti "Mayortadi", "Emily", dll.
+    }
+
+
     private MapStateData saveCurrentMapState(){
         MapStateData data = new MapStateData();
         data.objects = new ArrayList<>(this.obj);
@@ -353,7 +389,8 @@ public class GamePanel extends JPanel implements Runnable {
         // inventoryController.addItem(itemFactory.createCrop("grape"));
         // inventoryController.addItem(itemFactory.createCrop("grape"));
         // inventoryController.addItem(itemFactory.createCrop("grape"));
-        // inventoryController.addItem(itemFactory.createFood("sashimi"));
+        inventoryController.addItem(itemFactory.createFood("sashimi"));
+                inventoryController.addItem(itemFactory.createFood("sashimi"));
         // inventoryController.addItem(itemFactory.createCrop("hotpepper"));
         // inventoryController.addItem(itemFactory.createRecipeItem("recipe_fish_n_chips"));
 

@@ -54,7 +54,6 @@ public abstract class NPC extends Character implements Interactable {
         this.likedItems = new ArrayList<>();
         this.hatedItems = new ArrayList<>();
         this.relationshipStatus = STATUS_SINGLE;
-        this.relationshipStatus = STATUS_SINGLE;
         this.dayBecameFiance = -1;
         this.hatesAllUnlistedItems = false;
         // setDialogue();
