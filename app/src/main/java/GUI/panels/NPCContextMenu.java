@@ -20,9 +20,9 @@ public class NPCContextMenu extends BaseUIPanel {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         int x = gp.tileSize * 2;
-        int y = gp.tileSize * 8;
+        int y = gp.tileSize * 7;
         int width = gp.screenWidth - (gp.tileSize * 4);
-        int height = gp.tileSize * 3;
+        int height = gp.tileSize * 4;
 
         drawSubWindow(g2, x, y, width, height);
 
