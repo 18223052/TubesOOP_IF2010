@@ -13,6 +13,9 @@ public class BaseUIPanel {
     protected GamePanel gp;
     protected Font uiFont;
 
+    protected Font titleTextFont;
+    protected Font menuTextFont;
+
     // Centralized theme colors (matching InventoryScreen's enhanced colors)
     protected final Color BACKGROUND_COLOR = new Color(25, 25, 35, 240);
     protected final Color FRAME_BORDER_COLOR = new Color(100, 120, 150, 200);

@@ -6,14 +6,18 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList; // Import ArrayList
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import controller.InventoryController;
 import interactable.Interactable;
 import main.GamePanel;
 import main.KeyHandler;
+import object.FishItem;
 import object.IItem;
 import object.NoItem;
+import object.FishItem.FishCategory;
 
 public class Player extends Character {
 
@@ -41,6 +45,11 @@ public class Player extends Character {
     private NPC fiance = null;
     private NPC spouse = null;
 
+    // ikan ikanan
+    private int totalFishCaught = 0;    
+    private Map<FishCategory, Integer> fishCountPerCategory;
+    private List<String> caughtFishTypes = new ArrayList<>();
+
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
         this.keyH = keyH;
@@ -62,6 +71,11 @@ public class Player extends Character {
         inventory = new InventoryController(gp);
 
         setActiveItem(new NoItem(gp));
+
+        this.fishCountPerCategory = new EnumMap<>(FishCategory.class);
+        for (FishCategory category : FishCategory.values()) {
+            this.fishCountPerCategory.put(category, 0);
+        }
 
         setDefaultValues();
         getCharacterImage();
@@ -174,40 +188,6 @@ public class Player extends Character {
         return true;
     }
 
-    // // Propose & Marry
-    //  public NPC getFiance() {
-    //     return this.fiance;
-    // }
-
-    // public void setFiance(NPC npc) {
-    //     this.fiance = npc;
-    //     if (npc != null) { 
-    //         this.spouse = null;
-    //     }
-    // }
-
-    // public boolean hasFiance() {
-    //     return this.fiance != null;
-    // }
-
-    // public NPC getSpouse() {
-    //     return this.spouse;
-    // }
-
-    // public void setSpouse(NPC npc) {
-    //     this.spouse = npc;
-    //     if (npc != null) { 
-    //         if (this.fiance == npc) { 
-    //             this.fiance = null; 
-    //         }
-    //     }
-    // }
-
-    // public boolean hasSpouse() {
-    //     return this.spouse != null;
-    // }
-
-
     // untuk masak
     private List<String> unlockedRecipeIds = new ArrayList<>();
 
@@ -223,8 +203,6 @@ public class Player extends Character {
         }
     }
 
-    private int totalFishCaught = 0;
-
     public int getFishCaughtCount(){
         return totalFishCaught;
     }
@@ -232,8 +210,6 @@ public class Player extends Character {
     public void incrementFishCaughtCount(){
         totalFishCaught ++;
     }
-
-    private List<String> caughtFishTypes = new ArrayList<>();
 
     public boolean hasCaughtFish(String fishName){
         return caughtFishTypes.contains(fishName);
@@ -244,6 +220,35 @@ public class Player extends Character {
             caughtFishTypes.add(fishName);
         }
     }
+
+    public void recordCaughtFish(FishItem fish){
+        if (fish == null){
+            return;
+        }
+
+        this.totalFishCaught ++;
+
+        if(!this.caughtFishTypes.contains(fish.getName())){
+            this.caughtFishTypes.add(fish.getName());
+        }
+
+        FishCategory category = fish.getFishCategory();
+        this.fishCountPerCategory.put(category, this.fishCountPerCategory.getOrDefault(category, 0)+1);
+
+        System.out.println("Player recorded: " + fish.getName() + " (Category: " + category + ")");
+        System.out.println("Total fish caught: " + totalFishCaught);
+        System.out.println("Count for " + category + ": " + fishCountPerCategory.get(category));
+    }
+
+    public int getFishCountForCategory(FishCategory category) {
+        return this.fishCountPerCategory.getOrDefault(category, 0);
+    }
+
+    public Map<FishCategory, Integer> getAllFishCountsPerCategory() {
+
+        return new EnumMap<>(this.fishCountPerCategory);
+    }
+
 
     private boolean hasHarvested = false;
 

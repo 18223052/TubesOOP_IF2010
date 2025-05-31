@@ -51,6 +51,11 @@ public class KeyHandler implements KeyListener {
         } else if (gp.gameState == GamePanel.nameInputState) {
             handleNameInputState(code);
         }
+        else if (gp.gameState == GamePanel.helpState) {
+            handleHelpState(code);
+        } else if (gp.gameState == GamePanel.creditState) {
+            handleCreditsState(code);
+        }
         else if (gp.gameState == GamePanel.playState) {
             gp.isTimePaused = false;
             handlePlayState(code);
@@ -75,23 +80,43 @@ public class KeyHandler implements KeyListener {
     }
 
 
-
     public void handleTitleState(int code) {
         if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
-            gp.ui.titleScreen.moveSelectionUp(); 
-            gp.repaint(); 
+            gp.ui.titleScreen.moveSelectionUp();
+            gp.repaint();
         }
         if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
-            gp.ui.titleScreen.moveSelectionDown(); 
-            gp.repaint(); 
+            gp.ui.titleScreen.moveSelectionDown();
+            gp.repaint();
         }
         if (code == KeyEvent.VK_ENTER) {
-            if (gp.ui.getCommandNum() == 0) { 
+            int selectedCommand = gp.ui.getCommandNum();
+            if (selectedCommand == 0) {
                 gp.setGameState(GamePanel.nameInputState); 
-
-            } else if (gp.ui.getCommandNum() == 1) { 
+            } else if (selectedCommand == 1) {
+                gp.setGameState(GamePanel.helpState);
+                gp.repaint();
+            } else if (selectedCommand == 2) {
+                gp.setGameState(GamePanel.creditState);
+                gp.repaint();
+            } else if (selectedCommand == 3) {
                 System.exit(0);
             }
+        }
+    }
+
+    public void handleHelpState(int code) {
+
+        if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_ENTER) {
+            gp.setGameState(GamePanel.titleState);
+        }
+    }
+
+
+    public void handleCreditsState(int code) {
+
+        if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_ENTER) {
+            gp.setGameState(GamePanel.titleState);
         }
     }
 
@@ -101,9 +126,7 @@ public class KeyHandler implements KeyListener {
             if (!gp.playerNameInput.trim().isEmpty()) {
                 gp.startGame(); 
             } else {
-
-                gp.ui.setDialog("Nama tidak boleh kosong!");
-                gp.setGameState(GamePanel.dialogState);
+                
             }
         }
     }

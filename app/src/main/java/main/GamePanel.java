@@ -90,6 +90,9 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int fishingState = 11;
     public static final int nameInputState = 12;
     public static final int giftingState = 13;
+    public static final int helpState = 14;
+    public static final int creditState = 15;
+    
 
     public volatile int gameState;
     private final Object pauseLock = new Object();

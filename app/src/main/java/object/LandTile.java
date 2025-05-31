@@ -313,6 +313,7 @@ public class LandTile extends SuperObj {
                    
                     gp.setGameState(GamePanel.dialogState);
                     gp.repaint();
+                    gp.ui.clearDialog();
                     // gp.setGameState(GamePanel.playState);
                     // return;   
                 }
