@@ -8,8 +8,7 @@ import java.awt.FontMetrics;
 
 import entity.NPC;
 import main.GamePanel;
-import object.FishItem; //
-import entity.Player; //
+import object.FishItem;
 
 
 public class EndGameStatsScreen {
@@ -42,7 +41,7 @@ public class EndGameStatsScreen {
         FontMetrics fm = g2.getFontMetrics();
         if (fm == null) return 0;
         int length = fm.stringWidth(text);
-        int x = gp.screenWidth / 2 - length / 2; //
+        int x = gp.screenWidth / 2 - length / 2;
         return x;
     }
 

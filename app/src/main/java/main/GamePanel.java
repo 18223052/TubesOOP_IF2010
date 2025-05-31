@@ -148,6 +148,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     private Map<String, MapStateData> mapCache = new HashMap<>();
 
+    Sound sound = new Sound();
+
 
 
     public GamePanel() {
@@ -196,6 +198,8 @@ public class GamePanel extends JPanel implements Runnable {
         currentWeather = weatherManager.getWeatherForDay(gameTime.getGameDay());
 
         player.inventory = inventoryController;
+
+            playMusic(0);
     
         tileM.setup();
         // setupMap(); 
@@ -213,6 +217,8 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.clearNPCs();
         aSetter.setObj(); 
         aSetter.setNPC();
+        stopMusic();
+        playMusic(1);
     }
 
     public void saveGame(){
@@ -764,6 +770,21 @@ public class GamePanel extends JPanel implements Runnable {
             case sleepState: return "SLEEP";
             default: return "UNKNOWN(" + state + ")";
         }
+    }
+
+    public void playMusic(int i){
+        sound.setFile(i);
+        sound.play();
+        sound.loop();
+    }
+
+    public void stopMusic(){
+        sound.stop();
+    }
+
+    public void playSE(int i){
+        sound.setFile(i);
+        sound.play();
     }
 
     private class EmptyTileManager extends TileManager {
