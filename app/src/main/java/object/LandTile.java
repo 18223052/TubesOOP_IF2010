@@ -301,7 +301,9 @@ public class LandTile extends SuperObj {
                 System.out.println("Season berganti " + lastKnownSeason + " ke " + currentSeason + " untuk " + plantedCropType.name() + " at " + wX/gp.tileSize + "," + wY/gp.tileSize);
                 if (!plantedCropType.canGrowInSeason(currentSeason)) {
                     System.out.println(plantedCropType.name() + " wilted due to incompatible season: " + currentSeason);
+                    // gp.ui.clearDialog();
                     gp.ui.setDialog("Tanamanmu " + plantedCropType.name() + " mati karena pergantian season!");
+                    System.out.println("Tanamanmu " + plantedCropType.name() + " mati karena pergantian season!");
                     // gp.setGameState(GamePanel.dialogState);
                     // gp.repaint();
                     // if(gp.gameState != GamePanel.dialogState) {
@@ -311,9 +313,9 @@ public class LandTile extends SuperObj {
                     // gp.repaint();
                     toSoil(); 
                    
-                    gp.setGameState(GamePanel.dialogState);
-                    gp.repaint();
-                    gp.ui.clearDialog();
+                    // gp.setGameState(GamePanel.dialogState);
+                    // gp.repaint();
+                    
                     // gp.setGameState(GamePanel.playState);
                     // return;   
                 }

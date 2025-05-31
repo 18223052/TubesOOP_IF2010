@@ -31,7 +31,6 @@ public class CookingController {
                 return true; // Resep bawaan selalu terbuka
             case BOUGHT_FROM_STORE:
                 boolean unlocked = gp.player.isRecipeUnlocked(recipe.id);
-                // System.out.println("  > Player has recipe '" + recipe.id + "': " + unlocked); // DEBUG
                 return unlocked;
             case FISH_CAUGHT_COUNT:
 

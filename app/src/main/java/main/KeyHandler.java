@@ -26,14 +26,18 @@ public class KeyHandler implements KeyListener {
     public void keyTyped(KeyEvent e) {
         if (gp.gameState == GamePanel.nameInputState){
             char c = e.getKeyChar();
-            // Allow letters, digits, and space
+ 
             if (Character.isLetterOrDigit(c) || c == ' '){
                 if (gp.playerNameInput.length() < 12){ 
                     gp.playerNameInput += String.valueOf(c);
+                    // Clear error message when user starts typing
+                    gp.ui.nameInputScreen.setErrorMessage(""); 
                 }
             } else if (c == KeyEvent.VK_BACK_SPACE){
                 if (gp.playerNameInput.length() > 0){
                     gp.playerNameInput = gp.playerNameInput.substring(0,gp.playerNameInput.length() - 1);
+                    // Clear error message when user starts typing
+                    gp.ui.nameInputScreen.setErrorMessage(""); 
                 }
             }
 
@@ -122,11 +126,12 @@ public class KeyHandler implements KeyListener {
 
     public void handleNameInputState(int code) {
         if (code == KeyEvent.VK_ENTER) {
-
             if (!gp.playerNameInput.trim().isEmpty()) {
+                gp.ui.nameInputScreen.setErrorMessage(""); // Clear error on successful input
                 gp.startGame(); 
             } else {
-                
+                gp.ui.nameInputScreen.setErrorMessage("Nama tidak boleh kosong!"); // Set error message
+                gp.repaint();
             }
         }
     }
@@ -385,23 +390,23 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_M: // Marry
                 if (gp.npcController != null) {
 
-                    boolean canTryToMarry = gp.player.getFiance() == gp.currNPC && //
-                                            gp.player.inventory.hasItem("ring"); //
+                    boolean canTryToMarry = gp.player.getFiance() == gp.currNPC && 
+                                             gp.player.inventory.hasItem("ring"); 
 
 
                     if (canTryToMarry) {
                         gp.npcController.attemptMarry();
                     } else {
-                        if (gp.ui != null) { //
-                            String message = "Cannot marry " + gp.currNPC.getName() + " at this time."; //
-                            if (gp.player.getFiance() != gp.currNPC) { //
+                        if (gp.ui != null) { 
+                            String message = "Cannot marry " + gp.currNPC.getName() + " at this time."; 
+                            if (gp.player.getFiance() != gp.currNPC) { 
                                 message = "This is not your fiance!";
-                            } else if (!gp.player.inventory.hasItem("ring")) { //
+                            } else if (!gp.player.inventory.hasItem("ring")) { 
                                 message = "You need the Proposal Ring for the ceremony!";
                             }
 
-                            gp.ui.setDialog(message); //
-                            gp.setGameState(GamePanel.dialogState); //
+                            gp.ui.setDialog(message); 
+                            gp.setGameState(GamePanel.dialogState); 
                             gp.repaint();
                         }
                     }

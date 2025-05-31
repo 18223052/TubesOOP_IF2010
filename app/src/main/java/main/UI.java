@@ -22,8 +22,6 @@ import GUI.panels.TitleScreen;
 import GUI.panels.NPCContextMenu;
 import GUI.panels.NameInputScreen;
 import GUI.panels.PlayerStatsPanel;
-
-// --- Impor HelpScreen dan CreditsScreen ---
 import GUI.panels.HelpScreen;
 import GUI.panels.CreditsScreen;
 
@@ -48,9 +46,9 @@ public class UI {
     private StoreMenu storeMenu;
     private NPCContextMenu npcContextMenu;
     public TitleScreen titleScreen;
-    private NameInputScreen nameInputScreen;
+    public NameInputScreen nameInputScreen;
 
-    // --- Deklarasikan HelpScreen dan CreditsScreen ---
+
     public HelpScreen helpScreen;
     public CreditsScreen creditsScreen;
 

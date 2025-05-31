@@ -2,10 +2,7 @@
 package GUI.panels;
 
 import main.GamePanel;
-// Asumsi Player class memiliki metode getTeleportCount(), getTotalExpenditure(),
-// getharvestCount(), dan getFishCaughtCount().
-// Juga asumsi GameTime memiliki getGameDay() dan NPC memiliki getTotalTimesChatted().
-// import entity.Player; // jika diperlukan untuk tipe eksplisit
+
 
 import java.awt.Color;
 import java.awt.Font;
@@ -20,7 +17,7 @@ public class CharacterScreen extends BaseUIPanel {
     public void draw(Graphics2D g2) {
         final int frameX = gp.tileSize - 10;
         final int frameY = gp.tileSize - 20;
-        final int frameWidth = gp.tileSize * 5;
+        final int frameWidth = gp.tileSize * 7;
         final int frameHeight = gp.tileSize * 11; 
         drawSubWindow(g2, frameX, frameY, frameWidth, frameHeight); 
 
@@ -121,11 +118,7 @@ public class CharacterScreen extends BaseUIPanel {
         currentTextY += lineHeight;
 
         // Chatting freq
-        if (gp.currNPC != null) { 
-            value = String.valueOf(gp.currNPC.getTotalTimesChatted());
-        } else {
-            value = "0"; 
-        }
+        value = String.valueOf(gp.player.getChattingCount()); 
         valueTextX = getXforAllignToRight(value, tailX, g2);
         g2.drawString(value, valueTextX, currentTextY);
         currentTextY += lineHeight;

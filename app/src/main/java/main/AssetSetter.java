@@ -25,11 +25,11 @@ public class AssetSetter {
     }
     
     public void clearNPCs() {
-        System.out.println("DEBUG (AssetSetter): clearNPCs() dipanggil. Mengosongkan " + gp.npc.length + " slot NPC.");
+        // System.out.println("DEBUG (AssetSetter): clearNPCs() dipanggil. Mengosongkan " + gp.npc.length + " slot NPC.");
         for(int i = 0; i < gp.npc.length; i++) {
             gp.npc[i] = null;
         }
-        System.out.println("DEBUG (AssetSetter): clearNPCs() selesai.");
+        // System.out.println("DEBUG (AssetSetter): clearNPCs() selesai.");
     }
 
     public void setObj(){
@@ -37,7 +37,7 @@ public class AssetSetter {
         if(gp.currMap.equals("/maps/farmmm.txt")) {
             
 
-            System.out.println("DEBUG (AssetSetter): setObj() dipanggil untuk peta: " + gp.currMap);
+            // System.out.println("DEBUG (AssetSetter): setObj() dipanggil untuk peta: " + gp.currMap);
             // inisialisasi shippingbin
             ShippingBin shippingBin1 = new ShippingBin(gp);
             shippingBin1.wX = 20 * gp.tileSize;
@@ -49,7 +49,7 @@ public class AssetSetter {
                 LandTile landTile = new LandTile(gp);
                 landTile.wX = x * gp.tileSize;
                 landTile.wY = 35 * gp.tileSize;
-                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                // System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
                 gp.obj.add(landTile);
             }
 
@@ -57,7 +57,7 @@ public class AssetSetter {
                 LandTile landTile = new LandTile(gp);
                 landTile.wX = x * gp.tileSize;
                 landTile.wY = 36 * gp.tileSize;
-                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                // System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
                 gp.obj.add(landTile);
             }
 
@@ -78,7 +78,7 @@ public class AssetSetter {
                 LandTile landTile = new LandTile(gp);
                 landTile.wX = x * gp.tileSize;
                 landTile.wY = 28 * gp.tileSize;
-                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                // System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
                 gp.obj.add(landTile);
             }
 
@@ -86,7 +86,7 @@ public class AssetSetter {
                 LandTile landTile = new LandTile(gp);
                 landTile.wX = x * gp.tileSize;
                 landTile.wY = 29 * gp.tileSize;
-                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                // System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
                 gp.obj.add(landTile);
             }
 
@@ -108,7 +108,7 @@ public class AssetSetter {
                 LandTile landTile = new LandTile(gp);
                 landTile.wX = x * gp.tileSize;
                 landTile.wY = 28 * gp.tileSize;
-                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                // System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
                 gp.obj.add(landTile);
             }
 
@@ -116,7 +116,7 @@ public class AssetSetter {
                 LandTile landTile = new LandTile(gp);
                 landTile.wX = x * gp.tileSize;
                 landTile.wY = 29 * gp.tileSize;
-                System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
+                // System.out.println("ASSET_DEBUG: Membuat LandTile di Map: " + gp.currMap + " | wX: " + landTile.wX + ", wY: " + landTile.wY);
                 gp.obj.add(landTile);
             }
 
@@ -129,8 +129,8 @@ public class AssetSetter {
 
             // Store
             Store store = new Store(gp);
-            store.wX = 33 * gp.tileSize;
-            store.wY = 30 * gp.tileSize;
+            store.wX = 31 * gp.tileSize;
+            store.wY = 28 * gp.tileSize;
             gp.obj.add(store); 
 
             // Ocean (DIPOJOK ATAS KANAN)
@@ -188,7 +188,7 @@ public class AssetSetter {
             gp.obj.add(lake2);
         }
 
-        System.out.println("DEBUG (AssetSetter): setObj() selesai. Total objek: " + gp.obj.size());
+        // System.out.println("DEBUG (AssetSetter): setObj() selesai. Total objek: " + gp.obj.size());
     }
 
     public void setNPC(){
@@ -199,9 +199,9 @@ public class AssetSetter {
         }
         else if(gp.currMap.equals("/maps/worldmap.txt")) {
 
-            // gp.npc[0] = new NPC_abigail(gp, gp.itemFactory);
-            // gp.npc[0].wX = gp.tileSize*19;
-            // gp.npc[0].wY = gp.tileSize*29;
+            gp.npc[0] = new NPC_Emily(gp, gp.itemFactory);
+            gp.npc[0].wX = gp.tileSize*30;
+            gp.npc[0].wY = gp.tileSize*28;
 
         }
 

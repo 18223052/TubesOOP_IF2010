@@ -41,6 +41,7 @@ public class NPCController {
             gp.currNPC.addHeartPoints(10); // Gunakan konstanta
             gp.currNPC.recordChatSession();
             gp.currNPC.speak();
+            gp.player.incrementChattingCount();
             System.out.println("Total times chatted with " + gp.currNPC.getName() + ": " + gp.currNPC.getTotalTimesChatted());
         } else {
             System.out.println("NPCController: Chat dibatalkan karena pemain pingsan setelah pengurangan energi.");
@@ -246,7 +247,7 @@ public void giftItemToNPC(IItem itemToGift) {
         return;
     }
 
-    System.out.println("DEBUG (AttemptMarry): gp.currMap saat ini: " + gp.currMap);
+    // System.out.println("DEBUG (AttemptMarry): gp.currMap saat ini: " + gp.currMap);
     if (fiance.canMarryPlayer(gp.player, gp.gameTime.getGameDay())) {
 
         gp.player.deductEnergy(MARRY_ENERGY_COST);

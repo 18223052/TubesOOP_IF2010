@@ -346,7 +346,7 @@ public class InventoryController {
     public void sellItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             InventorySlot slot = inventory.get(index);
-            if (slot == null || slot.getItem() == null || slot.isEmpty()) { // Tambahkan pengecekan slot.isEmpty()
+            if (slot == null || slot.getItem() == null || slot.isEmpty()) {
                 System.out.println("Tidak ada item di slot yang dipilih untuk dijual atau slot kosong.");
                 return;
             }
