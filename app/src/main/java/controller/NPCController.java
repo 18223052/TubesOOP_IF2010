@@ -126,6 +126,7 @@ public void giftItemToNPC(IItem itemToGift) {
     gp.repaint();
 
     gp.gameTime.addTime(10);
+    gp.player.incrementGiftingCount();
 }
 
     public void attemptPropose(NPC targetNPC) {

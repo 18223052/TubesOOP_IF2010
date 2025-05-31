@@ -49,7 +49,7 @@ public class PlayerStatsPanel extends BaseUIPanel {
             int maxEnergy = gp.player.getMaxEnergy();
             int currentEnergy = gp.player.getEnergy();
 
-            // Teks "Energy" atau ikon
+    
             if (energyIcon != null) {
                 g2.drawImage(energyIcon, currentX, currentY, 32, 32, null);
             } else {

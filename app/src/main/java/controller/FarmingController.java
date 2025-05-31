@@ -318,6 +318,7 @@ public class FarmingController {
                 gameTime.addTime(TIME_COST_PER_TILE_MINUTES);
                 System.out.println("Kamu berhasil memanen " + harvestedCrop.getName() + "!");
                 player.setHasHarvested(true);
+                player.incrementHarvestCount();
             } else {
                 System.out.println("Panen gagal secara tidak terduga.");
                 gp.ui.setDialog("Panen gagal secara tidak terduga.");

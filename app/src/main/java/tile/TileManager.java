@@ -250,50 +250,52 @@ public class TileManager {
     }
 
     
-public void teleportPlayer(String newMapPath, int destX, int destY) {
-    // 1. Pengecekan Komponen Kritis (Pembatalan Silent)
-    if (gp.player == null || gp.ui == null || gp.gameTime == null || gp.currMap == null || gp.keyH == null) {
-        System.err.println("TeleportController: Teleportasi DIBATALKAN (silent) - komponen penting null."); // Log untuk developer
-        if (gp.keyH != null) {
-            gp.keyH.interactPressed = false; 
-        }
-        return; 
-    }
+    public void teleportPlayer(String newMapPath, int destX, int destY) {
 
-    String mapPathYangAkanDisimpan = gp.currMap;
-  
-
-    boolean isTeleportCostly = !mapPathYangAkanDisimpan.equals("/maps/rumah.txt") && !newMapPath.equals("/maps/rumah.txt");
-
-    if (isTeleportCostly) {
-        final int TELEPORT_ENERGY_COST = 10; 
-        int energyAfterTeleport = gp.player.getEnergy() - TELEPORT_ENERGY_COST;
-
-
-        if (energyAfterTeleport < Player.MIN_ENERGY_BEFORE_SLEEP) {
-            System.out.println("DEBUG (Teleport): Teleportasi DIBATALKAN (silent) - energi tidak cukup. Energi saat ini: " + gp.player.getEnergy()); // Log untuk developer
-            
-            gp.keyH.interactPressed = false; 
-
+        if (gp.player == null || gp.ui == null || gp.gameTime == null || gp.currMap == null || gp.keyH == null) {
+            System.err.println("TeleportController: Teleportasi DIBATALKAN (silent) - komponen penting null."); // Log untuk developer
+            if (gp.keyH != null) {
+                gp.keyH.interactPressed = false; 
+            }
             return; 
         }
-    }
+
+        String mapPathYangAkanDisimpan = gp.currMap;
+    
+
+        boolean isTeleportCostly = !mapPathYangAkanDisimpan.equals("/maps/rumah.txt") && !newMapPath.equals("/maps/rumah.txt");
+
+        if (isTeleportCostly) {
+            final int TELEPORT_ENERGY_COST = 10; 
+            int energyAfterTeleport = gp.player.getEnergy() - TELEPORT_ENERGY_COST;
 
 
-    System.out.println("DEBUG (Teleport): Memproses teleportasi ke: " + newMapPath); 
+            if (energyAfterTeleport < Player.MIN_ENERGY_BEFORE_SLEEP) {
+                System.out.println("DEBUG (Teleport): Teleportasi DIBATALKAN (silent) - energi tidak cukup. Energi saat ini: " + gp.player.getEnergy()); // Log untuk developer
+                
+                gp.keyH.interactPressed = false; 
 
-    gp.player.wX = destX * gp.tileSize;
-    gp.player.wY = destY * gp.tileSize;
+                return; 
+            }
+        }
 
-    gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
 
-    if (isTeleportCostly) {
-        final int TELEPORT_ENERGY_COST = 10;
-        final int TELEPORT_TIME_COST = 15;  
-        gp.player.deductEnergy(TELEPORT_ENERGY_COST);
-        gp.gameTime.addTime(TELEPORT_TIME_COST);
-    }
-    System.out.println("Teleportasi berhasil ke: " + newMapPath + " di (" + destX + "," + destY + ")");
+        System.out.println("DEBUG (Teleport): Memproses teleportasi ke: " + newMapPath); 
+
+        gp.player.wX = destX * gp.tileSize;
+        gp.player.wY = destY * gp.tileSize;
+
+        gp.changeMap(mapPathYangAkanDisimpan, newMapPath);
+
+        gp.player.incrementVisitingCount();
+
+        if (isTeleportCostly) {
+            final int TELEPORT_ENERGY_COST = 10;
+            final int TELEPORT_TIME_COST = 15;  
+            gp.player.deductEnergy(TELEPORT_ENERGY_COST);
+            gp.gameTime.addTime(TELEPORT_TIME_COST);
+        }
+        System.out.println("Teleportasi berhasil ke: " + newMapPath + " di (" + destX + "," + destY + ")");
 }
     
     public void loadMap(String filePath) {

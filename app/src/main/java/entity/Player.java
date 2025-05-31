@@ -41,6 +41,10 @@ public class Player extends Character {
     private int energy;
     private String farmMap;
     private int gold;
+    private int totalExpenditure;
+    private int visitingCounter =0;
+    private int harvestCounter =0;
+    private int giftingCounter =0;
     // private NPC partner;
     private NPC fiance = null;
     private NPC spouse = null;
@@ -123,6 +127,7 @@ public class Player extends Character {
 
         energy = 100;
         gold = 100;
+        totalExpenditure = 0;
         // name = "bobi";
         // farmMap = "anjoy";
         // partner = null;
@@ -186,6 +191,53 @@ public class Player extends Character {
         }
         System.out.println("Energi player berkurang " + amount + ". Energi tersisa: " + this.energy);
         return true;
+    }
+
+    public boolean deductGold(int amount){
+        if (amount <= 0 ){
+            System.out.println("Invalid amount to deduct");
+            return false;
+        }
+        if (this.gold >= amount){
+            this.gold -= amount;
+            this.totalExpenditure += amount;
+            System.out.println("player beli sebanyak " + amount);
+            return true;
+        } else {
+            System.out.println("gacukup");
+            return false;
+        }
+    }
+
+    public int getTotalExpenditure(){
+        return totalExpenditure;
+    }
+
+    public void incrementVisitingCount(){
+        this.visitingCounter ++;
+        System.out.println("jumlah teleport : " + this.visitingCounter);
+    }
+
+    public int getVisitingCount() {
+        return this.visitingCounter;
+    }
+
+    public void incrementHarvestCount(){
+        this.harvestCounter ++;
+        System.out.println("jumlah teleport : " + this.harvestCounter);
+    }
+
+    public int getharvestCount() {
+        return this.harvestCounter;
+    }
+
+    public void incrementGiftingCount(){
+        this.giftingCounter ++;
+        System.out.println("jumlah teleport : " + this.giftingCounter);
+    }
+
+    public int getGiftingCount() {
+        return this.giftingCounter;
     }
 
     // untuk masak
